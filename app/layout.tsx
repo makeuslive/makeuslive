@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Space_Grotesk } from 'next/font/google'
+import { Inter, Space_Grotesk, Agbalumo } from 'next/font/google'
 import type { ReactNode } from 'react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Analytics } from '@vercel/analytics/next'
@@ -20,10 +20,23 @@ const StarsCanvas = dynamic(
   () => import('@/components/canvas/stars-canvas').then((mod) => mod.StarsCanvas)
 )
 
-// Font - Using single font for performance
+// Fonts - Using Google Fonts for better compatibility
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap',
+})
+
 const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
   variable: '--font-general-sans',
+  display: 'swap',
+})
+
+const agbalumo = Agbalumo({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-agbalumo',
   display: 'swap',
 })
 
@@ -615,7 +628,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
     <html
       lang="en"
       className={cn(
+        inter.variable,
         spaceGrotesk.variable,
+        agbalumo.variable,
         'antialiased'
       )}
       suppressHydrationWarning
@@ -626,6 +641,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+        {/* Preconnect to external domains */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         {/* DNS Prefetch */}
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
         <link rel="dns-prefetch" href="https://www.google-analytics.com" />
