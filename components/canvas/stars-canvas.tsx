@@ -1,12 +1,12 @@
 'use client'
 
 import { memo, useRef, useState, Suspense } from 'react'
-import { Canvas, useFrame, type PointsProps } from '@react-three/fiber'
+import { Canvas, useFrame } from '@react-three/fiber'
 import { Points, PointMaterial } from '@react-three/drei'
 import * as random from 'maath/random'
 import type { Points as PointsType } from 'three'
 
-const StarBackground = memo((props: PointsProps) => {
+const StarBackground = memo((props: any) => {
   const ref = useRef<PointsType | null>(null)
 
   // Optimize: Reduce star count significantly for smoother mobile performance

@@ -378,6 +378,7 @@ export const Contact = memo<ContactProps>(({ className }) => {
                       <div className="form-field">
                         <Input
                           {...register('name')}
+                          id="contact-name"
                           label="Name"
                           placeholder="Enter your name"
                           error={errors.name?.message}
@@ -388,6 +389,7 @@ export const Contact = memo<ContactProps>(({ className }) => {
                       <div className="form-field">
                         <Input
                           {...register('website')}
+                          id="contact-website"
                           type="url"
                           label="Website"
                           placeholder="Enter URL"
@@ -399,6 +401,7 @@ export const Contact = memo<ContactProps>(({ className }) => {
                       <div className="form-field grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <Input
                           {...register('email')}
+                          id="contact-email"
                           type="email"
                           label="Email"
                           placeholder="Enter email"
@@ -406,6 +409,7 @@ export const Contact = memo<ContactProps>(({ className }) => {
                         />
                         <Input
                           {...register('phone')}
+                          id="contact-phone"
                           type="tel"
                           label="Phone"
                           placeholder="Enter number"
@@ -417,6 +421,7 @@ export const Contact = memo<ContactProps>(({ className }) => {
                       <div className="form-field">
                         <Textarea
                           {...register('message')}
+                          id="contact-message"
                           label="Message"
                           placeholder="Type your message"
                           error={errors.message?.message}
@@ -544,7 +549,7 @@ export const Contact = memo<ContactProps>(({ className }) => {
             </div>
           </div>
         </div>
-      </section>
+      </section >
     </>
   )
 })
