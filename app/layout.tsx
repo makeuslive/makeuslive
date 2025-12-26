@@ -17,8 +17,7 @@ import './globals.css'
 
 // Lazy load heavy canvas component
 const StarsCanvas = dynamic(
-  () => import('@/components/canvas/stars-canvas').then((mod) => mod.StarsCanvas),
-  { ssr: false }
+  () => import('@/components/canvas/stars-canvas').then((mod) => mod.StarsCanvas)
 )
 
 // Fonts - Using Google Fonts for better compatibility
