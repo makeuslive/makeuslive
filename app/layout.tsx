@@ -6,6 +6,7 @@ import { Providers } from '@/components/providers'
 import { Navbar } from '@/components/layout/navbar'
 import { Footer } from '@/components/layout/footer'
 import { StarsCanvas } from '@/components/canvas/stars-canvas'
+import { GoogleAnalytics } from '@/components/analytics/GoogleAnalytics'
 import { COPY } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 
@@ -307,9 +308,11 @@ export const metadata: Metadata = {
 
   // Verification for search engines
   verification: {
-    google: 'your-google-verification-code',
-    yandex: 'your-yandex-verification-code',
-    // bing: 'your-bing-verification-code',
+    google: process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION,
+    yandex: process.env.NEXT_PUBLIC_YANDEX_VERIFICATION,
+    other: {
+      'bing-site-verification': process.env.NEXT_PUBLIC_BING_VERIFICATION || '',
+    },
   },
 
   // Category
@@ -645,6 +648,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         )}
       >
         <Providers>
+          <GoogleAnalytics GA_MEASUREMENT_ID={process.env.NEXT_PUBLIC_GA_ID || 'G-EC3FCCNML9'} />
           {/* Background canvas */}
           <StarsCanvas />
 

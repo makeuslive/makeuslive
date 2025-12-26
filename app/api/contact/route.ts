@@ -226,6 +226,36 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // 3. Track Conversion in Google Analytics (Server-Side)
+    // This ensures reliable tracking even if client-side scripts are blocked
+    const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_ID
+    const GA_API_SECRET = process.env.GA_API_SECRET
+
+    if (GA_MEASUREMENT_ID && GA_API_SECRET) {
+      try {
+        // Generate a pseudo-random client ID if one wasn't provided in the request
+        // In a real app, you might pass the client_id from the frontend cookie (_ga)
+        const clientId = 'backend-' + Math.random().toString(36).substring(7)
+        
+        await fetch(`https://www.google-analytics.com/mp/collect?measurement_id=${GA_MEASUREMENT_ID}&api_secret=${GA_API_SECRET}`, {
+          method: 'POST',
+          body: JSON.stringify({
+            client_id: clientId,
+            events: [{
+              name: 'generate_lead',
+              params: {
+                source: 'contact_form',
+                engagement_time_msec: '100',
+              }
+            }]
+          })
+        })
+        console.log('Main GA Event Sent')
+      } catch (gaError) {
+        console.error('Failed to send GA event:', gaError)
+      }
+    }
+
     return NextResponse.json({
       success: true,
       message: 'Thank you! Your message has been received.',
