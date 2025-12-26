@@ -142,15 +142,17 @@ export const Cases = memo<CasesProps>(({ className }) => {
         className="relative"
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
+        onTouchStart={() => setIsPaused(true)}
+        onTouchEnd={() => setIsPaused(false)}
       >
-        {/* Gradient masks for fade effect */}
-        <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-bg to-transparent z-10 pointer-events-none" />
-        <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-bg to-transparent z-10 pointer-events-none" />
+        {/* Gradient masks for fade effect - smaller on mobile */}
+        <div className="absolute left-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-r from-bg to-transparent z-10 pointer-events-none" />
+        <div className="absolute right-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-l from-bg to-transparent z-10 pointer-events-none" />
 
         {/* Scrolling track */}
         <div
           ref={trackRef}
-          className="flex gap-6 py-4"
+          className="flex gap-4 md:gap-6 py-4"
           style={{ width: 'fit-content' }}
         >
           {duplicatedItems.map((caseItem, index) => (
@@ -158,8 +160,8 @@ export const Cases = memo<CasesProps>(({ className }) => {
               key={`${caseItem.id}-${index}`}
               className={cn(
                 'case-card group relative flex-shrink-0',
-                'w-[350px] md:w-[400px] h-[280px] md:h-[320px]',
-                'rounded-2xl overflow-hidden',
+                'w-[280px] sm:w-[320px] md:w-[400px] h-[240px] sm:h-[280px] md:h-[320px]',
+                'rounded-xl md:rounded-2xl overflow-hidden',
                 'bg-card border border-border/20',
                 'cursor-pointer transition-all duration-500 ease-out-expo',
                 'hover:border-gold/30 hover:scale-[1.02]',

@@ -73,10 +73,15 @@ export const Navbar = memo(() => {
         ref={navRef}
         className={cn(
           'fixed top-0 left-0 right-0 z-50',
-          'py-4',
-          'transition-all duration-300',
-          isScrolled ? 'glass-nav' : 'bg-transparent'
+          'py-4'
         )}
+        style={{
+          transition: 'background-color 0.3s ease, backdrop-filter 0.3s ease, box-shadow 0.3s ease',
+          backdropFilter: isScrolled ? 'blur(12px) saturate(180%)' : 'blur(0px)',
+          WebkitBackdropFilter: isScrolled ? 'blur(12px) saturate(180%)' : 'blur(0px)',
+          backgroundColor: isScrolled ? 'rgba(5, 5, 5, 0.7)' : 'transparent',
+          boxShadow: isScrolled ? '0 4px 30px rgba(0, 0, 0, 0.15)' : 'none',
+        }}
       >
         <div className="max-w-7xl mx-auto px-4 md:px-8">
           {/* Desktop: 3-column layout for true center alignment */}

@@ -261,9 +261,17 @@ export const Contact = memo<ContactProps>(({ className }) => {
               />
             </div>
 
-            {/* Glass Morphism Overlay - Matching services section */}
+            {/* Glass Morphism Overlay - Inline styles for guaranteed blur */}
             <div
-              className="absolute inset-0 rounded-[30px] z-[1] glass-services"
+              className="absolute inset-0 rounded-[30px]"
+              style={{
+                zIndex: 1,
+                backdropFilter: 'blur(9px) saturate(193%)',
+                WebkitBackdropFilter: 'blur(9px) saturate(193%)',
+                backgroundColor: 'rgba(14, 17, 17, 0.7)',
+                borderRadius: '30px',
+                border: '1px solid rgba(255, 255, 255, 0.125)',
+              }}
             />
 
             {/* Subtle gradient overlay for additional depth and light angle simulation */}

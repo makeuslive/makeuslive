@@ -166,44 +166,13 @@ p {
   }
 
   .glass-card {
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow:
-      0 8px 32px rgba(0, 0, 0, 0.2),
-      inset 0 1px 0 rgba(255, 255, 255, 0.1),
-      inset 0 0 16px rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(11px) saturate(193%);
+    -webkit-backdrop-filter: blur(11px) saturate(193%);
+    background-color: rgba(17, 25, 40, 0.81);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.125);
     position: relative;
     overflow: hidden;
-  }
-
-  .glass-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(90deg,
-        transparent,
-        rgba(255, 255, 255, 0.4),
-        transparent);
-    z-index: 10;
-  }
-
-  .glass-card::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 1px;
-    height: 100%;
-    background: linear-gradient(180deg,
-        rgba(255, 255, 255, 0.4),
-        transparent,
-        transparent);
-    z-index: 10;
   }
 
   .glass-nav {
@@ -549,4 +518,117 @@ p {
 /* Prevent layout shift */
 .no-shift {
   contain: layout;
+}
+
+/* ================================
+   Glassmorphism Styles (High Specificity)
+   ================================ */
+.glass-services {
+  backdrop-filter: blur(11px) saturate(193%) !important;
+  -webkit-backdrop-filter: blur(11px) saturate(193%) !important;
+  background-color: rgba(17, 25, 40, 0.81) !important;
+  border-radius: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.125);
+}
+
+.glass-card {
+  backdrop-filter: blur(11px) saturate(193%) !important;
+  -webkit-backdrop-filter: blur(11px) saturate(193%) !important;
+  background-color: rgba(17, 25, 40, 0.81) !important;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.125);
+}
+
+/* ================================
+   Mobile Optimization Styles
+   ================================ */
+
+/* Touch-friendly minimum sizes */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Touch feedback - active state */
+button:active,
+a:active,
+[role="button"]:active {
+  transform: scale(0.98);
+}
+
+/* Fluid typography using clamp */
+.text-fluid-hero {
+  font-size: clamp(2.5rem, 8vw, 6rem);
+}
+
+.text-fluid-heading {
+  font-size: clamp(1.75rem, 5vw, 3.5rem);
+}
+
+.text-fluid-subheading {
+  font-size: clamp(1rem, 2.5vw, 1.5rem);
+}
+
+/* Mobile-specific reduced blur for performance */
+@media (max-width: 768px) {
+
+  .glass-services,
+  .glass-card {
+    backdrop-filter: blur(8px) saturate(150%) !important;
+    -webkit-backdrop-filter: blur(8px) saturate(150%) !important;
+  }
+
+  /* Reduce animation complexity on mobile */
+  .animate-float {
+    animation-duration: 8s;
+  }
+
+  /* Smaller shadows on mobile */
+  .shadow-card {
+    box-shadow: 8px 7px 12px rgba(0, 0, 0, 0.35);
+  }
+
+  /* Better touch spacing */
+  .section {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+}
+
+/* Very small screens */
+@media (max-width: 375px) {
+
+  .glass-services,
+  .glass-card {
+    backdrop-filter: blur(6px) saturate(120%) !important;
+    -webkit-backdrop-filter: blur(6px) saturate(120%) !important;
+    border-radius: 20px;
+  }
+}
+
+/* Prevent iOS zoom on input focus */
+input,
+textarea,
+select {
+  font-size: 16px !important;
+}
+
+@media (min-width: 768px) {
+
+  input,
+  textarea,
+  select {
+    font-size: inherit !important;
+  }
+}
+
+/* Touch-specific hover removal */
+@media (hover: none) and (pointer: coarse) {
+  .hover\:scale-\[1\.02\]:hover {
+    transform: none;
+  }
+
+  .hover\:border-gold\/30:hover {
+    border-color: inherit;
+  }
 }

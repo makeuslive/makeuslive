@@ -39,7 +39,7 @@ export const HowWeWork = memo<HowWeWorkProps>(({ className }) => {
       const steps = gsap.utils.toArray('.process-step')
       steps.forEach((step, index) => {
         const element = step as HTMLElement
-        
+
         gsap.from(element, {
           x: index % 2 === 0 ? -60 : 60,
           opacity: 0,
@@ -90,13 +90,13 @@ export const HowWeWork = memo<HowWeWorkProps>(({ className }) => {
     >
       <div className="max-w-7xl mx-auto px-4 md:px-8">
         {/* Header */}
-        <div className="process-header text-center mb-20">
+        <div className="process-header text-center mb-12 md:mb-20">
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gold/10 border border-gold/20 mb-6">
             <span className="w-2 h-2 rounded-full bg-gold animate-pulse" />
             <span className="text-sm font-medium text-gold">{COPY.howWeWork.badge}</span>
           </div>
-          
+
           <h2 className="section-heading text-text">
             {COPY.howWeWork.heading}
           </h2>
@@ -120,21 +120,21 @@ export const HowWeWork = memo<HowWeWorkProps>(({ className }) => {
               >
                 {/* Content Card */}
                 <div className={cn(
-                  'flex-1 p-6 md:p-8 rounded-2xl',
+                  'flex-1 p-4 sm:p-6 md:p-8 rounded-xl md:rounded-2xl',
                   'bg-card/50 backdrop-blur-sm border border-border/20',
                   'transition-all duration-500 hover:border-gold/30',
                   index % 2 === 0 ? 'md:text-right' : 'md:text-left'
                 )}>
                   {/* Step Number */}
-                  <span className="step-number inline-block text-5xl md:text-6xl font-bold text-gold/20 mb-4">
+                  <span className="step-number inline-block text-4xl sm:text-5xl md:text-6xl font-bold text-gold/20 mb-3 md:mb-4">
                     {step.number}
                   </span>
-                  
-                  <h3 className="text-2xl font-bold text-text mb-3">
+
+                  <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-text mb-2 md:mb-3">
                     {step.title}
                   </h3>
-                  
-                  <p className="text-text-muted leading-relaxed">
+
+                  <p className="text-sm md:text-base text-text-muted leading-relaxed">
                     {step.description}
                   </p>
                 </div>
@@ -142,13 +142,14 @@ export const HowWeWork = memo<HowWeWorkProps>(({ className }) => {
                 {/* Center Icon */}
                 <div className="relative z-10 flex-shrink-0 order-first md:order-none">
                   <div className={cn(
-                    'w-16 h-16 rounded-full',
+                    'w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full',
                     'bg-gradient-to-br from-gold to-gold-dark',
                     'flex items-center justify-center',
                     'shadow-lg shadow-gold/20',
                     'transition-transform duration-500 hover:scale-110'
                   )}>
-                    <Icon name={step.icon} size={28} className="text-bg" />
+                    <Icon name={step.icon} size={24} className="text-bg md:hidden" />
+                    <Icon name={step.icon} size={28} className="text-bg hidden md:block" />
                   </div>
                 </div>
 

@@ -114,9 +114,9 @@ export const Hero = memo<HeroProps>(({ className }) => {
         <div className="absolute inset-0 bg-gradient-to-b from-bg/40 via-transparent to-bg" />
         <div className="absolute inset-0 bg-gradient-radial from-transparent via-transparent to-bg/80" />
 
-        {/* Animated gradient orbs */}
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gold/5 rounded-full blur-3xl animate-float" />
-        <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-gold/3 rounded-full blur-3xl animate-float" style={{ animationDelay: '-3s' }} />
+        {/* Animated gradient orbs - smaller on mobile for performance */}
+        <div className="absolute top-1/4 left-1/4 w-48 md:w-96 h-48 md:h-96 bg-gold/5 rounded-full blur-2xl md:blur-3xl animate-float" />
+        <div className="absolute bottom-1/4 right-1/4 w-32 md:w-64 h-32 md:h-64 bg-gold/3 rounded-full blur-2xl md:blur-3xl animate-float" style={{ animationDelay: '-3s' }} />
       </div>
 
       {/* Content */}
@@ -130,10 +130,11 @@ export const Hero = memo<HeroProps>(({ className }) => {
         <p
           className={cn(
             'hero-tagline',
-            'text-xl md:text-2xl lg:text-3xl',
+            'text-lg sm:text-xl md:text-2xl lg:text-3xl',
             'font-bold italic text-text-muted',
-            'max-w-3xl mx-auto mb-10',
-            'drop-shadow-lg'
+            'max-w-[90%] sm:max-w-xl md:max-w-2xl lg:max-w-3xl mx-auto mb-8 md:mb-10',
+            'drop-shadow-lg',
+            'leading-relaxed'
           )}
         >
           {COPY.hero.tagline}
@@ -157,12 +158,12 @@ export const Hero = memo<HeroProps>(({ className }) => {
         </div>
       </div>
 
-      {/* Scroll Indicator */}
-      <div className="scroll-indicator absolute bottom-8 left-1/2 -translate-x-1/2">
+      {/* Scroll Indicator - hidden on very small screens */}
+      <div className="scroll-indicator absolute bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 hidden sm:block">
         <div className="flex flex-col items-center gap-2 text-text-dim">
-          <span className="text-sm font-medium">Scroll to explore</span>
-          <div className="w-6 h-10 rounded-full border-2 border-text-dim/50 flex items-start justify-center p-1">
-            <div className="w-1.5 h-3 bg-gold rounded-full animate-bounce" />
+          <span className="text-xs md:text-sm font-medium">Scroll to explore</span>
+          <div className="w-5 md:w-6 h-8 md:h-10 rounded-full border-2 border-text-dim/50 flex items-start justify-center p-1">
+            <div className="w-1 md:w-1.5 h-2.5 md:h-3 bg-gold rounded-full animate-bounce" />
           </div>
         </div>
       </div>

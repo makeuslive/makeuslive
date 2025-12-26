@@ -37,13 +37,12 @@ const StarRating = memo(({ rating }: { rating: number }) => (
 ))
 StarRating.displayName = 'StarRating'
 
-// Testimonial Card Component
 const TestimonialCard = memo(({ testimonial }: { testimonial: TestimonialItem }) => (
   <div
     className={cn(
       'testimonial-card flex-shrink-0',
-      'w-[380px] md:w-[420px]',
-      'rounded-2xl p-6 md:p-8',
+      'w-[300px] sm:w-[340px] md:w-[420px]',
+      'rounded-xl md:rounded-2xl p-5 sm:p-6 md:p-8',
       'bg-card-light',
       'border border-white/10',
       'shadow-card',
@@ -145,10 +144,10 @@ export const Testimonials = memo<TestimonialsProps>(({ className }) => {
       ref={sectionRef}
       className={cn('section relative overflow-hidden', className)}
     >
-      {/* Background decoration */}
+      {/* Background decoration - smaller on mobile */}
       <div className="absolute inset-0 -z-10">
-        <div className="absolute top-1/2 left-1/4 w-96 h-96 bg-gold/5 rounded-full blur-3xl animate-float" />
-        <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-gold/3 rounded-full blur-3xl animate-float" style={{ animationDelay: '-2s' }} />
+        <div className="absolute top-1/2 left-1/4 w-48 md:w-96 h-48 md:h-96 bg-gold/5 rounded-full blur-2xl md:blur-3xl animate-float" />
+        <div className="absolute bottom-0 right-1/4 w-32 md:w-64 h-32 md:h-64 bg-gold/3 rounded-full blur-2xl md:blur-3xl animate-float" style={{ animationDelay: '-2s' }} />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 md:px-8">
@@ -177,8 +176,8 @@ export const Testimonials = memo<TestimonialsProps>(({ className }) => {
         <div className="absolute left-0 top-0 bottom-0 w-20 md:w-32 bg-gradient-to-r from-bg to-transparent z-10 pointer-events-none" />
         <div className="absolute right-0 top-0 bottom-0 w-20 md:w-32 bg-gradient-to-l from-bg to-transparent z-10 pointer-events-none" />
 
-        {/* Scrolling Container */}
-        <div className="marquee-track flex gap-6 animate-marquee hover:[animation-play-state:paused]">
+        {/* Scrolling Container - touch pause */}
+        <div className="marquee-track flex gap-4 md:gap-6 animate-marquee hover:[animation-play-state:paused] active:[animation-play-state:paused]">
           {duplicatedItems.map((testimonial, index) => (
             <TestimonialCard
               key={`${testimonial.id}-${index}`}
