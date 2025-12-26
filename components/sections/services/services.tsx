@@ -44,32 +44,11 @@ const SERVICES_DATA = [
 
 export const Services = memo<ServicesProps>(({ className }) => {
   const sectionRef = useRef<HTMLElement>(null)
-  const imageRef = useRef<HTMLDivElement>(null)
   const [activeService, setActiveService] = useState(0)
 
   const handleServiceClick = useCallback((index: number) => {
     if (index === activeService) return
-
-    // Animate image transition
-    if (imageRef.current) {
-      gsap.to(imageRef.current, {
-        opacity: 0,
-        scale: 0.95,
-        duration: 0.3,
-        ease: 'power2.in',
-        onComplete: () => {
-          setActiveService(index)
-          gsap.to(imageRef.current, {
-            opacity: 1,
-            scale: 1,
-            duration: 0.4,
-            ease: 'power2.out',
-          })
-        },
-      })
-    } else {
-      setActiveService(index)
-    }
+    setActiveService(index)
   }, [activeService])
 
   useEffect(() => {
@@ -77,12 +56,6 @@ export const Services = memo<ServicesProps>(({ className }) => {
     if (!section) return
 
     const ctx = gsap.context(() => {
-      // Set initial visible states to prevent hiding
-      gsap.set('.services-section-header', { opacity: 1, y: 0 })
-      gsap.set('.services-glass-container', { opacity: 1, y: 0 })
-      gsap.set('.service-item', { opacity: 1, x: 0 })
-      gsap.set('.services-image-panel', { opacity: 1, x: 0 })
-
       // Section header animation
       gsap.from('.services-section-header', {
         y: 60,
@@ -96,42 +69,16 @@ export const Services = memo<ServicesProps>(({ className }) => {
         },
       })
 
-      // Glass container animation
-      gsap.from('.services-glass-container', {
-        y: 80,
-        opacity: 0,
-        duration: 1,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: '.services-glass-container',
-          start: 'top 85%',
-          toggleActions: 'play none none reverse',
-        },
-      })
-
-      // Service items stagger - ensure all are visible
-      gsap.from('.service-item', {
-        x: -40,
+      // Service items stagger
+      gsap.from('.service-item-wrapper', {
+        x: -20,
         opacity: 0,
         duration: 0.6,
         stagger: 0.1,
         ease: 'power3.out',
         scrollTrigger: {
           trigger: '.services-list',
-          start: 'top 85%',
-          toggleActions: 'play none none reverse',
-        },
-      })
-
-      // Image panel animation
-      gsap.from('.services-image-panel', {
-        x: 100,
-        opacity: 0,
-        duration: 1,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: '.services-image-panel',
-          start: 'top 85%',
+          start: 'top 90%',
           toggleActions: 'play none none reverse',
         },
       })
@@ -157,62 +104,69 @@ export const Services = memo<ServicesProps>(({ className }) => {
           </h2>
         </div>
 
-        {/* Container with background image and glass overlay */}
-        <div className="relative rounded-[30px] overflow-hidden min-h-[500px] md:min-h-[550px] lg:min-h-[611px] z-10">
-          {/* Background Image Layer - Behind everything */}
-          <div className="absolute inset-0 z-0">
-            <Image
-              src="/images/services-art.png"
-              alt=""
-              fill
-              className="object-cover"
-              priority
-            />
+        {/* Unified Container: Glass and Image Merged */}
+        <div
+          className="relative rounded-[30px] overflow-hidden min-h-[500px] md:min-h-[550px] lg:min-h-[611px] z-10 shadow-card transition-all duration-500 group"
+        >
+          {/* Dynamic Background Image - Covers entire container */}
+          <div className="absolute inset-0 z-0 transition-transform duration-700 group-hover:scale-105">
+            {SERVICES_DATA.map((service, index) => (
+              <div
+                key={service.id}
+                className={cn(
+                  "absolute inset-0 transition-opacity duration-700 ease-in-out",
+                  activeService === index ? "opacity-100" : "opacity-0"
+                )}
+              >
+                <Image
+                  src={service.image}
+                  alt=""
+                  fill
+                  className="object-cover"
+                  priority={index === 0}
+                />
+              </div>
+            ))}
           </div>
 
-          {/* Glass Morphism Overlay - Optimized with Figma settings */}
-          <div 
-            className="services-glass-container absolute inset-0 rounded-[30px] z-[1] glass-services"
-          />
-          
-          {/* Subtle gradient overlay for additional depth and light angle simulation */}
-          <div 
-            className="absolute inset-0 rounded-[30px] z-[1] pointer-events-none"
+          {/* Unified Glass Gradient Overlay - Left to Right Fade */}
+          {/* This creates the "Glass Text Panel" flowing into "Clear Image" */}
+          <div
+            className="absolute inset-0 z-[1] pointer-events-none"
             style={{
-              background: `
-                linear-gradient(
-                  135deg, 
-                  rgba(255, 255, 255, 0.03) 0%, 
-                  transparent 40%,
-                  transparent 60%, 
-                  rgba(0, 0, 0, 0.15) 100%
-                )
-              `,
+              background: `linear-gradient(90deg, 
+                rgba(5, 5, 5, 0.9) 0%, 
+                rgba(5, 5, 5, 0.7) 40%, 
+                rgba(5, 5, 5, 0.2) 70%, 
+                transparent 100%)`,
+              backdropFilter: 'blur(20px)',
+              WebkitBackdropFilter: 'blur(20px)',
+              maskImage: 'linear-gradient(to right, black 50%, transparent 100%)',
+              WebkitMaskImage: 'linear-gradient(to right, black 55%, transparent 100%)' // Mask the blur so right side is crisp
             }}
           />
 
-          {/* Content Grid - On top of glass */}
+          {/* Dark gradient for text readability without blur on the left */}
+          <div className="absolute inset-0 z-[1] bg-gradient-to-r from-black/80 via-black/50 to-transparent" />
+
+          {/* Content Grid */}
           <div className="relative grid lg:grid-cols-2 min-h-[500px] md:min-h-[550px] lg:min-h-[611px] z-[2]">
             {/* Left Column - Text Content */}
             <div className="p-6 md:p-8 lg:p-12 xl:p-16 flex flex-col justify-center relative z-[3]">
               {/* Heading */}
               <div className="mb-6 md:mb-8 lg:mb-10">
-                <h3 
-                  className="text-xl md:text-2xl lg:text-3xl xl:text-[36px] font-bold text-text leading-tight mb-3 md:mb-4"
-                  style={{ textShadow: '0 4px 4px rgba(0,0,0,0.25)' }}
+                <h3
+                  className="text-xl md:text-2xl lg:text-3xl xl:text-[36px] font-bold text-text leading-tight mb-3 md:mb-4 bg-clip-text"
                 >
                   We design, build, & scale<br className="hidden md:block" />
                   with AI at the core
                 </h3>
-                <p 
-                  className="text-sm md:text-base lg:text-lg text-[#CCC9C9] leading-relaxed max-w-md"
-                  style={{ textShadow: '0 4px 4px rgba(0,0,0,0.25)' }}
-                >
+                <p className="text-sm md:text-base lg:text-lg text-[#CCC9C9] leading-relaxed max-w-md">
                   We partner with founders and teams to build brands, design software, and deploy AI systems that solve real business problems.
                 </p>
               </div>
 
-              {/* Interactive Services List - Fixed visibility with proper spacing */}
+              {/* Interactive Services List */}
               <div className="services-list space-y-0 pl-4 flex flex-col justify-start min-h-[160px] md:min-h-[176px] relative z-[4]">
                 {SERVICES_DATA.map((service, index) => (
                   <div
@@ -223,24 +177,18 @@ export const Services = memo<ServicesProps>(({ className }) => {
                       onClick={() => handleServiceClick(index)}
                       className={cn(
                         'service-item w-full text-left py-2 md:py-3 transition-all duration-300',
-                        'text-text text-base md:text-lg lg:text-xl font-medium',
-                        'hover:text-gold relative block',
+                        'text-base md:text-lg lg:text-xl font-medium relative block',
                         'focus:outline-none focus-visible:ring-2 focus-visible:ring-gold/50 rounded',
-                        'min-h-[40px] md:min-h-[44px] flex items-center'
+                        'min-h-[40px] md:min-h-[44px] flex items-center',
+                        activeService === index ? 'text-text translate-x-2' : 'text-text/50 hover:text-text/80'
                       )}
-                      style={{ textShadow: '0 4px 4px rgba(0,0,0,0.25)' }}
                     >
-                      <span className={cn(
-                        'relative inline-block transition-colors duration-300',
-                        activeService === index ? 'text-text' : 'text-text/70'
-                      )}>
-                        {service.title}
-                      </span>
-                      {/* Gold underline for active */}
-                      <div 
+                      <span className="relative z-10">{service.title}</span>
+                      {/* Active Indicator Line */}
+                      <div
                         className={cn(
-                          'absolute bottom-0 left-0 h-[2px] bg-gold-dark transition-all duration-500',
-                          activeService === index ? 'w-[249px] opacity-100' : 'w-0 opacity-0'
+                          'absolute left-[-16px] top-1/2 -translate-y-1/2 w-[3px] bg-gold rounded-full transition-all duration-300',
+                          activeService === index ? 'h-6 opacity-100' : 'h-0 opacity-0'
                         )}
                       />
                     </button>
@@ -249,52 +197,15 @@ export const Services = memo<ServicesProps>(({ className }) => {
               </div>
             </div>
 
-            {/* Right Column - Clean Image Panel (No Glass Morphism) */}
-            <div className="services-image-panel relative p-4 md:p-6 lg:p-8 flex items-center justify-center z-[3]">
-              <div 
-                ref={imageRef}
-                className="relative w-full max-w-[679px] aspect-square lg:aspect-[679/499] rounded-[14px] overflow-hidden"
-                style={{
-                  boxShadow: '16px 14px 24px rgba(0,0,0,0.44)',
-                }}
-              >
-                {/* Dynamic Background Image - Clean, no blur */}
-                <Image
-                  src={currentService.image}
-                  alt={currentService.title}
-                  fill
-                  className="object-cover transition-opacity duration-300"
-                />
-                
-                {/* Subtle dark overlay for text readability */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-                
-                {/* Quote at bottom - Clean text overlay */}
-                <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 lg:p-8 z-10">
-                  <p 
-                    className="text-lg md:text-xl lg:text-2xl xl:text-[28px] font-medium text-text italic leading-tight"
-                    style={{ textShadow: '0 4px 8px rgba(0,0,0,0.8)' }}
-                  >
-                    {currentService.quote}
-                  </p>
-                </div>
+            {/* Right Column - Transparent Area + Quote */}
+            <div className="services-image-panel relative p-4 md:p-6 lg:p-8 flex flex-col justify-end items-end z-[3]">
+              {/* Clean area showing the background image */}
 
-                {/* Service indicator dots */}
-                <div className="absolute top-4 right-4 flex gap-2 z-10">
-                  {SERVICES_DATA.map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={() => handleServiceClick(index)}
-                      className={cn(
-                        'w-2 h-2 rounded-full transition-all duration-300',
-                        activeService === index 
-                          ? 'bg-gold scale-125' 
-                          : 'bg-white/30 hover:bg-white/50'
-                      )}
-                      aria-label={`View ${SERVICES_DATA[index].title}`}
-                    />
-                  ))}
-                </div>
+              {/* Floating Glass Quote Card */}
+              <div className="relative max-w-sm mb-8 mr-4 md:mr-8 p-6 rounded-2xl border border-white/10 bg-black/40 backdrop-blur-md shadow-glass transform transition-all duration-500 hover:scale-105">
+                <p className="text-lg md:text-xl font-medium text-text italic leading-tight">
+                  "{currentService.quote}"
+                </p>
               </div>
             </div>
           </div>
