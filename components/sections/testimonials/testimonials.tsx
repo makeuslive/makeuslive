@@ -41,7 +41,7 @@ const TestimonialCard = memo(({ testimonial }: { testimonial: TestimonialItem })
   <div
     className={cn(
       'testimonial-card flex-shrink-0',
-      'w-[85vw] max-w-[320px] sm:w-[340px] md:w-[400px]',
+      'w-[72vw] max-w-[260px] sm:w-[300px] md:w-[360px]',
       'rounded-2xl',
       'bg-card-light',
       'border border-white/10',
@@ -53,7 +53,7 @@ const TestimonialCard = memo(({ testimonial }: { testimonial: TestimonialItem })
     {/* Top gradient accent */}
     <div className="h-1 bg-gradient-to-r from-gold via-gold-dark to-gold/50" />
 
-    <div className="p-5 sm:p-6">
+    <div className="p-3.5 sm:p-5">
       {/* Quote Icon + Rating Row */}
       <div className="flex items-start justify-between mb-4">
         <div className="w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center">
@@ -64,34 +64,22 @@ const TestimonialCard = memo(({ testimonial }: { testimonial: TestimonialItem })
         )}
       </div>
 
-      {/* Quote - larger text for readability */}
-      <blockquote className="text-bg/85 mb-5 leading-relaxed text-sm sm:text-base font-medium line-clamp-4 min-h-[80px]">
+      {/* Quote - compact for mobile */}
+      <blockquote className="text-bg/85 mb-3 sm:mb-5 leading-snug sm:leading-relaxed text-xs sm:text-sm font-medium line-clamp-3 sm:line-clamp-4">
         &ldquo;{testimonial.quote}&rdquo;
       </blockquote>
 
-      {/* Author section with better visual separation */}
-      <div className="flex items-center gap-3 pt-4 border-t border-bg/10">
-        {/* Avatar with gradient background */}
-        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-gold to-gold-dark flex items-center justify-center text-bg font-bold text-lg shadow-md flex-shrink-0">
+      {/* Author section - compact */}
+      <div className="flex items-center gap-2 sm:gap-3 pt-2.5 sm:pt-4 border-t border-bg/10">
+        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-gold to-gold-dark flex items-center justify-center text-bg font-bold text-xs sm:text-sm shadow-md flex-shrink-0">
           {testimonial.author.charAt(0)}
         </div>
         <div className="min-w-0 flex-1">
-          <p className="font-semibold text-bg text-sm sm:text-base truncate">
+          <p className="font-semibold text-bg text-[11px] sm:text-sm truncate">
             {testimonial.author}
           </p>
-          <p className="text-bg/60 text-xs sm:text-sm truncate">{testimonial.role}</p>
+          <p className="text-bg/60 text-[9px] sm:text-xs truncate">{testimonial.role}</p>
         </div>
-        {/* Industry badge on mobile */}
-        <span className="hidden sm:inline-flex px-2.5 py-1 rounded-full bg-bg/10 text-xs font-medium text-bg/70">
-          {testimonial.industry}
-        </span>
-      </div>
-
-      {/* Industry badge visible on mobile below author */}
-      <div className="sm:hidden mt-3">
-        <span className="inline-flex px-2.5 py-1 rounded-full bg-bg/10 text-xs font-medium text-bg/70">
-          {testimonial.industry}
-        </span>
       </div>
     </div>
   </div>
@@ -181,17 +169,17 @@ export const Testimonials = memo<TestimonialsProps>(({ className }) => {
         </div>
       </div>
 
-      {/* Horizontal Infinite Scroll Marquee - Full Width */}
+      {/* Horizontal Scroll - Touch scrollable on mobile, auto-animate on desktop */}
       <div
         ref={marqueeRef}
-        className="testimonials-marquee relative w-full overflow-hidden py-4"
+        className="testimonials-marquee relative w-full overflow-x-auto md:overflow-hidden py-4 no-scrollbar"
       >
-        {/* Gradient Masks for smooth fade effect */}
-        <div className="absolute left-0 top-0 bottom-0 w-20 md:w-32 bg-gradient-to-r from-bg to-transparent z-10 pointer-events-none" />
-        <div className="absolute right-0 top-0 bottom-0 w-20 md:w-32 bg-gradient-to-l from-bg to-transparent z-10 pointer-events-none" />
+        {/* Gradient Masks - sticky so they stay fixed during scroll */}
+        <div className="sticky left-0 top-0 bottom-0 w-12 sm:w-20 md:w-40 bg-gradient-to-r from-bg via-bg/80 to-transparent z-10 pointer-events-none h-full float-left -mr-12 sm:-mr-20 md:-mr-40" />
+        <div className="sticky right-0 top-0 bottom-0 w-12 sm:w-20 md:w-40 bg-gradient-to-l from-bg via-bg/80 to-transparent z-10 pointer-events-none h-full float-right -ml-12 sm:-ml-20 md:-ml-40" />
 
-        {/* Scrolling Container - touch pause */}
-        <div className="marquee-track flex gap-4 md:gap-6 animate-marquee hover:[animation-play-state:paused] active:[animation-play-state:paused]">
+        {/* Scrolling Container - manual scroll on mobile, auto-animate on desktop */}
+        <div className="marquee-track flex gap-4 md:gap-6 md:animate-marquee md:hover:[animation-play-state:paused] px-4 md:px-0">
           {duplicatedItems.map((testimonial, index) => (
             <TestimonialCard
               key={`${testimonial.id}-${index}`}

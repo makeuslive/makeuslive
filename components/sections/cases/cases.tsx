@@ -137,22 +137,20 @@ export const Cases = memo<CasesProps>(({ className }) => {
         </div>
       </div>
 
-      {/* Infinite Scroll Track */}
+      {/* Infinite Scroll Track - Touch scrollable on mobile */}
       <div
-        className="relative"
+        className="relative overflow-x-auto md:overflow-hidden no-scrollbar"
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
-        onTouchStart={() => setIsPaused(true)}
-        onTouchEnd={() => setIsPaused(false)}
       >
-        {/* Gradient masks for fade effect - smaller on mobile */}
-        <div className="absolute left-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-r from-bg to-transparent z-10 pointer-events-none" />
-        <div className="absolute right-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-l from-bg to-transparent z-10 pointer-events-none" />
+        {/* Gradient masks - sticky so they stay fixed during scroll */}
+        <div className="sticky left-0 top-0 bottom-0 w-12 sm:w-20 md:w-40 bg-gradient-to-r from-bg via-bg/80 to-transparent z-10 pointer-events-none h-full float-left -mr-12 sm:-mr-20 md:-mr-40" />
+        <div className="sticky right-0 top-0 bottom-0 w-12 sm:w-20 md:w-40 bg-gradient-to-l from-bg via-bg/80 to-transparent z-10 pointer-events-none h-full float-right -ml-12 sm:-ml-20 md:-ml-40" />
 
-        {/* Scrolling track */}
+        {/* Scrolling track - manual scroll on mobile, GSAP on desktop */}
         <div
           ref={trackRef}
-          className="flex gap-4 md:gap-6 py-4"
+          className="flex gap-4 md:gap-6 py-4 px-4 md:px-0"
           style={{ width: 'fit-content' }}
         >
           {duplicatedItems.map((caseItem, index) => (
