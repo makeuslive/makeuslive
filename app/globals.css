@@ -214,19 +214,13 @@ p {
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   }
 
-  /* Glass morphism for services section - Figma Glass Effect */
+  /* Glass morphism for services section - Glass UI generator specs */
   .glass-services {
-    /* Figma: SOLID fill rgba(6,6,6) at 50% opacity */
-    background: rgba(6, 6, 6, 0.5);
-    /* Figma: Frost=100 → blur(100px) */
-    backdrop-filter: blur(100px);
-    -webkit-backdrop-filter: blur(100px);
+    backdrop-filter: blur(11px) saturate(193%);
+    -webkit-backdrop-filter: blur(11px) saturate(193%);
+    background-color: rgba(17, 25, 40, 0.81);
     border-radius: 30px;
-    /* Figma: Drop shadow offset(8,5) blur(10) color rgba(38,38,38,0.4) */
-    box-shadow:
-      8px 5px 10px rgba(38, 38, 38, 0.4),
-      inset 2px 2px 20px rgba(255, 255, 255, 0.06),
-      inset -2px -2px 20px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.125);
     position: relative;
     overflow: hidden;
     /* Hardware acceleration */
@@ -243,11 +237,10 @@ p {
     right: 0;
     height: 1px;
     background: linear-gradient(90deg,
-        rgba(255, 255, 255, 0.2) 0%,
-        rgba(255, 255, 255, 0.1) 50%,
-        transparent 100%);
+        transparent,
+        rgba(255, 255, 255, 0.8),
+        transparent);
     z-index: 10;
-    pointer-events: none;
   }
 
   .glass-services::after {
@@ -258,11 +251,10 @@ p {
     width: 1px;
     height: 100%;
     background: linear-gradient(180deg,
-        rgba(255, 255, 255, 0.15) 0%,
-        rgba(255, 255, 255, 0.05) 50%,
-        transparent 100%);
+        rgba(255, 255, 255, 0.8),
+        transparent,
+        rgba(255, 255, 255, 0.3));
     z-index: 10;
-    pointer-events: none;
   }
 
   /* Backdrop filter fallback for older browsers */

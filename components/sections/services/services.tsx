@@ -5,7 +5,6 @@ import Image from 'next/image'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { cn } from '@/lib/utils'
-import { GlassEffect } from '@/components/effects/glass-effect'
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
@@ -188,20 +187,26 @@ export const Services = memo<ServicesProps>(({ className }) => {
             />
           </div>
 
-          {/* WebGL Glass Effect Overlay - Figma Glass settings */}
-          <div className="services-glass-container absolute inset-0 rounded-[30px] z-[1] overflow-hidden">
-            <GlassEffect
-              config={{
-                frost: 100,
-                refraction: 100,
-                depth: 55,
-                lightAngle: -30,
-                lightIntensity: 0.4,
-                dispersion: 100,
-                backgroundColor: 'rgba(6, 6, 6, 0.5)',
-              }}
-            />
-          </div>
+          {/* Glass Morphism Overlay - Optimized with Figma settings */}
+          <div
+            className="services-glass-container absolute inset-0 rounded-[30px] z-[1] glass-services"
+          />
+
+          {/* Subtle gradient overlay for additional depth and light angle simulation */}
+          <div
+            className="absolute inset-0 rounded-[30px] z-[1] pointer-events-none"
+            style={{
+              background: `
+                linear-gradient(
+                  135deg, 
+                  rgba(255, 255, 255, 0.03) 0%, 
+                  transparent 40%,
+                  transparent 60%, 
+                  rgba(0, 0, 0, 0.15) 100%
+                )
+              `,
+            }}
+          />
 
           {/* Content Grid - On top of glass */}
           <div className="relative grid lg:grid-cols-2 min-h-[500px] md:min-h-[550px] lg:min-h-[611px] z-[2]">
