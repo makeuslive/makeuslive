@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getCollection } from '@/lib/mongodb'
 import { contactFormSchema } from '@/lib/validations'
+import nodemailer from 'nodemailer'
+import { getAdminEmailTemplate, getUserConfirmationEmailTemplate } from '@/lib/email-templates'
 
 interface ContactSubmission {
   name: string
@@ -19,6 +21,8 @@ interface ContactSubmission {
   ipAddress?: string
   userAgent?: string
 }
+
+const MAX_TOTAL_ATTACHMENT_SIZE = 12 * 1024 * 1024 // 12MB total limit (safe for 16MB Mongo doc)
 
 export async function POST(request: NextRequest) {
   try {
@@ -56,13 +60,28 @@ export async function POST(request: NextRequest) {
     const attachments: ContactSubmission['attachments'] = []
     const files = formData.getAll('attachments') as File[]
     
-    const maxFileSize = parseInt(process.env.MAX_FILE_SIZE || '10485760', 10) // 10MB default
+    // Check total size to prevent MongoDB document size limit errors
+    // MongoDB limit is 16MB. Base64 encoding adds ~33% overhead.
+    // 12MB binary ~= 16MB base64. We use 12MB as a safe upper bound.
+    const totalSize = files.reduce((acc, file) => acc + (file.size || 0), 0)
+    
+    if (totalSize > MAX_TOTAL_ATTACHMENT_SIZE) {
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: `Total attachment size exceeds the limit. Please upload less than ${(MAX_TOTAL_ATTACHMENT_SIZE / 1024 / 1024).toFixed(1)}MB total.` 
+        },
+        { status: 400 }
+      )
+    }
+
+    const maxFileSize = parseInt(process.env.MAX_FILE_SIZE || '10485760', 10) // 10MB individual default
     const allowedTypes = (process.env.ALLOWED_FILE_TYPES || '.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.zip,.rar').split(',')
 
     for (const file of files) {
       if (file.size === 0) continue
 
-      // Validate file size
+      // Validate individual file size
       if (file.size > maxFileSize) {
         return NextResponse.json(
           { 
@@ -79,7 +98,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json(
           { 
             success: false, 
-            error: `File type ${fileExtension} is not allowed. Allowed types: ${allowedTypes.join(', ')}` 
+            error: `File type ${fileExtension} is not allowed.` 
           },
           { status: 400 }
         )
@@ -100,7 +119,7 @@ export async function POST(request: NextRequest) {
     // Prepare submission document
     const submission: ContactSubmission = {
       name,
-      email,
+      email, // This is the user's email
       website: website || undefined,
       phone: phone || undefined,
       message,
@@ -111,18 +130,105 @@ export async function POST(request: NextRequest) {
       userAgent: request.headers.get('user-agent') || undefined,
     }
 
-    // Save to MongoDB
-    const collection = await getCollection('contact_submissions')
-    const result = await collection.insertOne(submission)
+    // 1. Save to MongoDB
+    try {
+      const collection = await getCollection('contact_submissions')
+      const result = await collection.insertOne(submission)
 
-    if (!result.acknowledged) {
-      throw new Error('Failed to save submission')
+      if (!result.acknowledged) {
+        throw new Error('Failed to save submission to database')
+      }
+    } catch (dbError) {
+      console.error('Database connection error:', dbError)
+      // We continue to try sending email even if DB fails, or throw? 
+      // safer to throw as we want to ensure data persistence
+      throw new Error('Failed to save submission. Please try again later.')
+    }
+
+    // 2. Send Email Notifications (if configured)
+    if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
+      try {
+        const transporter = nodemailer.createTransport({
+          host: process.env.SMTP_HOST,
+          port: parseInt(process.env.SMTP_PORT || '587'),
+          secure: process.env.SMTP_SECURE === 'true',
+          auth: {
+            user: process.env.SMTP_USER,
+            pass: process.env.SMTP_PASS,
+          },
+          // GoDaddy/Outlook specific settings to prevent connection issues
+          tls: {
+            ciphers: 'SSLv3',
+            rejectUnauthorized: false, // Helps with some self-signed cert issues or strict firewalls
+          },
+        })
+
+        // Verify connection configuration
+        try {
+          await transporter.verify()
+          console.log('SMTP Connection established successfully')
+        } catch (verifyError) {
+          console.error('SMTP Connection Failed:', verifyError)
+          // We don't throw here to ensure the DB save is still acknowledged
+          // But we return this info allows debugging
+        }
+
+        // Format attachments for Nodemailer
+        const mailAttachments = attachments.map(att => ({
+          filename: att.filename,
+          content: Buffer.from(att.data, 'base64'),
+          contentType: att.contentType,
+        }))
+
+        const defaultFrom = process.env.SMTP_FROM || '"MakeUsLive" <noreply@makeuslive.com>'
+
+        // Prepare email promises
+        const emailPromises = []
+
+        // 1. Email to Admin
+        emailPromises.push(
+          transporter.sendMail({
+            from: defaultFrom,
+            to: process.env.CONTACT_EMAIL || process.env.SMTP_USER, // Send to admin
+            replyTo: email, // Reply to the user
+            subject: `New Inquiry: ${name}`,
+            html: getAdminEmailTemplate({
+              name,
+              email,
+              phone: phone || undefined,
+              website: website || undefined,
+              message,
+              ip: submission.ipAddress || 'unknown'
+            }),
+            attachments: mailAttachments,
+          })
+        )
+
+        // 2. Confirmation Email to User
+        emailPromises.push(
+          transporter.sendMail({
+            from: defaultFrom,
+            to: email, // Send to the user who submitted the form
+            subject: `We've received your message - MakeUsLive`,
+            html: getUserConfirmationEmailTemplate({
+              name,
+              message
+            }),
+          })
+        )
+
+        // Send all emails
+        await Promise.allSettled(emailPromises)
+        
+      } catch (emailError) {
+        console.error('Failed to send email notification:', emailError)
+        // We don't fail the request if email sending fails, as long as it's saved in DB
+      }
     }
 
     return NextResponse.json({
       success: true,
       message: 'Thank you! Your message has been received.',
-      submissionId: result.insertedId.toString(),
     })
 
   } catch (error) {

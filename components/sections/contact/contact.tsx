@@ -34,6 +34,8 @@ const ALLOWED_FILE_TYPES = ['.pdf', '.doc', '.docx', '.ppt', '.pptx', '.xls', '.
 const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
 const MAX_FILES = 5
 
+const MAX_TOTAL_SIZE = 12 * 1024 * 1024 // 12MB
+
 export const Contact = memo<ContactProps>(({ className }) => {
   const sectionRef = useRef<HTMLElement>(null)
   const formRef = useRef<HTMLFormElement>(null)
@@ -72,7 +74,10 @@ export const Contact = memo<ContactProps>(({ className }) => {
       return
     }
 
-    // Validate each file
+    let validFiles: File[] = []
+    let currentTotalSize = attachments.reduce((acc, file) => acc + file.size, 0)
+
+    // Validate each file and total size
     for (const file of files) {
       const ext = '.' + file.name.split('.').pop()?.toLowerCase()
 
@@ -85,12 +90,20 @@ export const Contact = memo<ContactProps>(({ className }) => {
         setFileError(`File ${file.name} exceeds 10MB limit`)
         return
       }
+
+      if (currentTotalSize + file.size > MAX_TOTAL_SIZE) {
+        setFileError(`Total file size cannot exceed 12MB`)
+        return
+      }
+
+      currentTotalSize += file.size
+      validFiles.push(file)
     }
 
-    setAttachments(prev => [...prev, ...files])
+    setAttachments(prev => [...prev, ...validFiles])
     // Reset input so same file can be selected again
     if (e.target) e.target.value = ''
-  }, [attachments.length])
+  }, [attachments])
 
   // Remove a file from attachments
   const removeFile = useCallback((index: number) => {
