@@ -45,6 +45,7 @@ const SERVICES_DATA = [
 export const Services = memo<ServicesProps>(({ className }) => {
   const sectionRef = useRef<HTMLElement>(null)
   const imageRef = useRef<HTMLDivElement>(null)
+  const bgRef = useRef<HTMLDivElement>(null) // Ref for parallax BG
   const [activeService, setActiveService] = useState(0)
 
   const handleServiceClick = useCallback((index: number) => {
@@ -135,6 +136,22 @@ export const Services = memo<ServicesProps>(({ className }) => {
           toggleActions: 'play none none reverse',
         },
       })
+      // Background Parallax
+      gsap.fromTo(bgRef.current,
+        { y: -50, scale: 1.1 },
+        {
+          y: 50,
+          scale: 1.1, // Maintain scale to avoid edges showing
+          ease: 'none',
+          scrollTrigger: {
+            trigger: '.services-container-wrapper',
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: true
+          }
+        }
+      )
+
     }, section)
 
     return () => ctx.revert()
@@ -158,9 +175,9 @@ export const Services = memo<ServicesProps>(({ className }) => {
         </div>
 
         {/* Container with background image and glass overlay */}
-        <div className="relative rounded-[30px] overflow-hidden min-h-[500px] md:min-h-[550px] lg:min-h-[611px] z-10">
-          {/* Background Image Layer - Behind everything */}
-          <div className="absolute inset-0 z-0">
+        <div className="services-container-wrapper relative rounded-[30px] overflow-hidden min-h-[500px] md:min-h-[550px] lg:min-h-[611px] z-10">
+          {/* Background Image Layer - Parallax Enabled */}
+          <div ref={bgRef} className="absolute inset-x-0 -top-[10%] -bottom-[10%] z-0">
             <Image
               src="/images/services-art.png"
               alt=""

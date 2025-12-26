@@ -46,9 +46,9 @@ export const Navbar = memo(() => {
       setIsScrolled(currentScrollY > 50)
 
       if (currentScrollY > lastScrollY.current && currentScrollY > 100) {
-        gsap.to(nav, { y: -100, duration: 0.3, ease: 'power2.out' })
+        gsap.to(nav, { y: -100, duration: 0.5, ease: 'power3.out' })
       } else {
-        gsap.to(nav, { y: 0, duration: 0.3, ease: 'power2.out' })
+        gsap.to(nav, { y: 0, duration: 0.5, ease: 'power3.out' })
       }
 
       lastScrollY.current = currentScrollY

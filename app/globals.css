@@ -174,10 +174,11 @@ p {
   }
 
   .glass-nav {
-    background: rgba(5, 5, 5, 0.8);
+    background: rgba(5, 5, 5, 0.6);
     backdrop-filter: blur(var(--blur-nav));
     -webkit-backdrop-filter: blur(var(--blur-nav));
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: none;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   }
 
   /* Glass morphism for services section - optimized */
