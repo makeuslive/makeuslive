@@ -41,43 +41,57 @@ const TestimonialCard = memo(({ testimonial }: { testimonial: TestimonialItem })
   <div
     className={cn(
       'testimonial-card flex-shrink-0',
-      'w-[300px] sm:w-[340px] md:w-[420px]',
-      'rounded-xl md:rounded-2xl p-5 sm:p-6 md:p-8',
+      'w-[85vw] max-w-[320px] sm:w-[340px] md:w-[400px]',
+      'rounded-2xl',
       'bg-card-light',
       'border border-white/10',
-      'shadow-card',
-      'select-none'
+      'shadow-lg',
+      'select-none',
+      'overflow-hidden'
     )}
   >
-    {/* Industry Tag + Rating */}
-    <div className="flex items-center justify-between mb-4">
-      <span className="inline-flex px-3 py-1 rounded-full bg-bg/10 text-xs font-medium text-bg/70">
-        {testimonial.industry}
-      </span>
-      {'rating' in testimonial && (
-        <StarRating rating={testimonial.rating} />
-      )}
-    </div>
+    {/* Top gradient accent */}
+    <div className="h-1 bg-gradient-to-r from-gold via-gold-dark to-gold/50" />
 
-    {/* Quote Icon */}
-    <QuoteIcon size={28} className="text-gold/40 mb-4" />
-
-    {/* Quote */}
-    <blockquote className="text-bg/80 mb-6 leading-relaxed text-sm md:text-base line-clamp-4">
-      &ldquo;{testimonial.quote}&rdquo;
-    </blockquote>
-
-    {/* Author */}
-    <div className="flex items-center gap-3 pt-4 border-t border-bg/10">
-      {/* Avatar */}
-      <div className="w-11 h-11 rounded-full bg-gradient-to-br from-gold to-gold-dark flex items-center justify-center text-bg font-bold text-base shadow-lg">
-        {testimonial.author.charAt(0)}
+    <div className="p-5 sm:p-6">
+      {/* Quote Icon + Rating Row */}
+      <div className="flex items-start justify-between mb-4">
+        <div className="w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center">
+          <QuoteIcon size={20} className="text-gold" />
+        </div>
+        {'rating' in testimonial && (
+          <StarRating rating={testimonial.rating} />
+        )}
       </div>
-      <div>
-        <p className="font-semibold text-bg text-sm">
-          {testimonial.author}
-        </p>
-        <p className="text-bg/60 text-xs">{testimonial.role}</p>
+
+      {/* Quote - larger text for readability */}
+      <blockquote className="text-bg/85 mb-5 leading-relaxed text-sm sm:text-base font-medium line-clamp-4 min-h-[80px]">
+        &ldquo;{testimonial.quote}&rdquo;
+      </blockquote>
+
+      {/* Author section with better visual separation */}
+      <div className="flex items-center gap-3 pt-4 border-t border-bg/10">
+        {/* Avatar with gradient background */}
+        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-gold to-gold-dark flex items-center justify-center text-bg font-bold text-lg shadow-md flex-shrink-0">
+          {testimonial.author.charAt(0)}
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="font-semibold text-bg text-sm sm:text-base truncate">
+            {testimonial.author}
+          </p>
+          <p className="text-bg/60 text-xs sm:text-sm truncate">{testimonial.role}</p>
+        </div>
+        {/* Industry badge on mobile */}
+        <span className="hidden sm:inline-flex px-2.5 py-1 rounded-full bg-bg/10 text-xs font-medium text-bg/70">
+          {testimonial.industry}
+        </span>
+      </div>
+
+      {/* Industry badge visible on mobile below author */}
+      <div className="sm:hidden mt-3">
+        <span className="inline-flex px-2.5 py-1 rounded-full bg-bg/10 text-xs font-medium text-bg/70">
+          {testimonial.industry}
+        </span>
       </div>
     </div>
   </div>

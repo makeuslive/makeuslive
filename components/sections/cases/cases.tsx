@@ -176,21 +176,21 @@ export const Cases = memo<CasesProps>(({ className }) => {
               <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br from-gold/10 to-transparent" />
 
               {/* Content */}
-              <div className="relative z-10 h-full p-6 flex flex-col justify-between">
+              <div className="relative z-10 h-full p-4 sm:p-5 md:p-6 flex flex-col justify-between">
                 {/* Top row */}
-                <div className="flex items-start justify-between">
+                <div className="flex items-start justify-between gap-2">
                   {/* Category tag */}
-                  <span className="inline-flex px-3 py-1 rounded-full bg-white/5 text-xs font-medium text-text-muted">
+                  <span className="inline-flex px-2.5 py-1 rounded-full bg-white/5 text-[10px] sm:text-xs font-medium text-text-muted">
                     {caseItem.category}
                   </span>
 
-                  {/* Stats badge */}
+                  {/* Stats badge - more compact on mobile */}
                   {'stats' in caseItem && caseItem.stats && (
-                    <div className="text-right">
-                      <span className="text-2xl font-bold text-gold">
+                    <div className="text-right flex-shrink-0">
+                      <span className="text-lg sm:text-xl md:text-2xl font-bold text-gold block leading-none">
                         {caseItem.stats.metric}
                       </span>
-                      <span className="block text-xs text-text-dim">
+                      <span className="text-[10px] sm:text-xs text-text-dim">
                         {caseItem.stats.label}
                       </span>
                     </div>
@@ -199,13 +199,13 @@ export const Cases = memo<CasesProps>(({ className }) => {
 
                 {/* Bottom row */}
                 <div>
-                  {/* Tags */}
+                  {/* Tags - horizontal scroll on mobile */}
                   {'tags' in caseItem && caseItem.tags && (
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {caseItem.tags.map((tag) => (
+                    <div className="flex gap-1.5 sm:gap-2 mb-3 sm:mb-4 overflow-x-auto no-scrollbar">
+                      {caseItem.tags.slice(0, 3).map((tag) => (
                         <span
                           key={tag}
-                          className="px-2 py-0.5 rounded bg-gold/10 text-xs text-gold"
+                          className="flex-shrink-0 px-2 py-0.5 rounded bg-gold/10 text-[10px] sm:text-xs text-gold whitespace-nowrap"
                         >
                           {tag}
                         </span>
@@ -214,22 +214,22 @@ export const Cases = memo<CasesProps>(({ className }) => {
                   )}
 
                   {/* Title + Arrow */}
-                  <div className="flex items-end justify-between gap-4">
-                    <div>
-                      <h3 className="font-semibold text-xl text-text mb-1">
+                  <div className="flex items-end justify-between gap-3">
+                    <div className="min-w-0 flex-1">
+                      <h3 className="font-semibold text-base sm:text-lg md:text-xl text-text mb-0.5 sm:mb-1 truncate">
                         {caseItem.title}
                       </h3>
                       {'description' in caseItem && (
-                        <p className="text-sm text-text-muted line-clamp-2">
+                        <p className="text-xs sm:text-sm text-text-muted line-clamp-2">
                           {caseItem.description}
                         </p>
                       )}
                     </div>
 
-                    {/* Arrow CTA */}
-                    <div className="flex-shrink-0 p-3 rounded-full bg-white/5 group-hover:bg-gold group-hover:text-bg transition-all duration-300 transform group-hover:scale-110">
+                    {/* Arrow CTA - touch-friendly */}
+                    <div className="flex-shrink-0 w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-full bg-white/5 group-hover:bg-gold group-hover:text-bg transition-all duration-300 flex items-center justify-center">
                       <ArrowRight
-                        size={20}
+                        size={18}
                         className="group-hover:-rotate-45 transition-transform duration-300"
                       />
                     </div>
