@@ -79,6 +79,11 @@ export interface CaseItem {
   title: string
   category: string
   image: string
+  stats?: {
+    metric: string
+    label: string
+  }
+  tags?: string[]
 }
 
 /**
@@ -90,6 +95,8 @@ export interface TestimonialItem {
   author: string
   role: string
   industry: string
+  rating: number
+  avatar: string
 }
 
 /**
@@ -101,6 +108,26 @@ export interface StepItem {
   title: string
   description: string
   icon: string
+}
+
+/**
+ * Blog post item
+ */
+export interface PostItem {
+  id: string
+  title: string
+  excerpt: string
+  date: string
+  author: {
+    name: string
+    avatar: string
+  }
+  image: string
+  category: string
+  slug: string
+  featured?: boolean
+  readTime?: string
+  gradient?: string
 }
 
 /**

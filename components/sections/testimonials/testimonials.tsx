@@ -1,11 +1,12 @@
 'use client'
 
-import { memo, useEffect, useRef } from 'react'
+import { memo, useEffect, useRef, useState } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { cn } from '@/lib/utils'
 import { COPY } from '@/lib/constants'
 import { QuoteIcon } from '@/components/ui'
+import { TestimonialItem } from '@/types'
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
@@ -14,6 +15,7 @@ if (typeof window !== 'undefined') {
 interface TestimonialsProps {
   className?: string
 }
+
 
 // Star rating component
 const StarRating = memo(({ rating }: { rating: number }) => (
@@ -36,7 +38,7 @@ const StarRating = memo(({ rating }: { rating: number }) => (
 StarRating.displayName = 'StarRating'
 
 // Testimonial Card Component
-const TestimonialCard = memo(({ testimonial }: { testimonial: (typeof COPY.testimonials.items)[number] }) => (
+const TestimonialCard = memo(({ testimonial }: { testimonial: TestimonialItem }) => (
   <div
     className={cn(
       'testimonial-card flex-shrink-0',
@@ -86,6 +88,22 @@ TestimonialCard.displayName = 'TestimonialCard'
 export const Testimonials = memo<TestimonialsProps>(({ className }) => {
   const sectionRef = useRef<HTMLElement>(null)
   const marqueeRef = useRef<HTMLDivElement>(null)
+  const [items, setItems] = useState<TestimonialItem[]>(COPY.testimonials.items as unknown as TestimonialItem[]) // Fallback
+
+  useEffect(() => {
+    const fetchTestimonials = async () => {
+      try {
+        const res = await fetch('/api/testimonials')
+        const data = await res.json()
+        if (data.success && data.data && data.data.length > 0) {
+          setItems(data.data)
+        }
+      } catch (error) {
+        console.error('Failed to fetch testimonials:', error)
+      }
+    }
+    fetchTestimonials()
+  }, [])
 
   useEffect(() => {
     const section = sectionRef.current
@@ -120,8 +138,7 @@ export const Testimonials = memo<TestimonialsProps>(({ className }) => {
   }, [])
 
   // Double the items for seamless infinite scroll
-  const testimonialItems = COPY.testimonials.items
-  const duplicatedItems = [...testimonialItems, ...testimonialItems]
+  const duplicatedItems = [...items, ...items]
 
   return (
     <section

@@ -1,5 +1,6 @@
 'use client'
 
+import { PostItem } from '@/types'
 import { memo, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { gsap } from 'gsap'
@@ -11,69 +12,13 @@ if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
 }
 
-// Blog posts data with enhanced content
-const BLOG_POSTS = [
-  {
-    id: 'post-1',
-    title: 'The Future of AI in Web Development',
-    excerpt: 'Exploring how artificial intelligence is revolutionizing the way we build and deploy web applications. From code generation to automated testing.',
-    category: 'AI & Technology',
-    date: 'Dec 20, 2024',
-    readTime: '5 min',
-    gradient: 'from-purple-600/30 via-indigo-600/20 to-transparent',
-    featured: true,
-  },
-  {
-    id: 'post-2',
-    title: 'Building Design Systems That Scale',
-    excerpt: 'A comprehensive guide to creating design systems that grow with your product and team.',
-    category: 'Design',
-    date: 'Dec 15, 2024',
-    readTime: '8 min',
-    gradient: 'from-emerald-600/30 via-teal-600/20 to-transparent',
-  },
-  {
-    id: 'post-3',
-    title: 'Next.js 15: What You Need to Know',
-    excerpt: 'Breaking down the latest features and improvements in Next.js 15 and how to leverage them.',
-    category: 'Development',
-    date: 'Dec 10, 2024',
-    readTime: '6 min',
-    gradient: 'from-blue-600/30 via-cyan-600/20 to-transparent',
-  },
-  {
-    id: 'post-4',
-    title: 'Creating Smooth Animations with GSAP',
-    excerpt: 'Master scroll-triggered animations and create buttery smooth experiences for your users.',
-    category: 'Animation',
-    date: 'Dec 5, 2024',
-    readTime: '7 min',
-    gradient: 'from-orange-600/30 via-red-600/20 to-transparent',
-  },
-  {
-    id: 'post-5',
-    title: 'The Psychology of User Experience',
-    excerpt: 'Understanding how users think and make decisions to create more intuitive interfaces.',
-    category: 'UX Research',
-    date: 'Nov 28, 2024',
-    readTime: '10 min',
-    gradient: 'from-pink-600/30 via-rose-600/20 to-transparent',
-  },
-  {
-    id: 'post-6',
-    title: 'Optimizing React Performance',
-    excerpt: 'Advanced techniques for building lightning-fast React applications at scale.',
-    category: 'Development',
-    date: 'Nov 20, 2024',
-    readTime: '12 min',
-    gradient: 'from-yellow-600/30 via-amber-600/20 to-transparent',
-  },
-]
+// Initial state or fallback
+const BLOG_POSTS: PostItem[] = []
 
 const CATEGORIES = ['All', 'AI & Technology', 'Design', 'Development', 'UX Research', 'Animation']
 
 // Featured blog card (large)
-const FeaturedBlogCard = memo(({ post }: { post: typeof BLOG_POSTS[0] }) => (
+const FeaturedBlogCard = memo(({ post }: { post: PostItem }) => (
   <div
     className={cn(
       'blog-card group relative rounded-3xl overflow-hidden',
@@ -143,7 +88,7 @@ const FeaturedBlogCard = memo(({ post }: { post: typeof BLOG_POSTS[0] }) => (
 FeaturedBlogCard.displayName = 'FeaturedBlogCard'
 
 // Standard blog card
-const BlogCard = memo(({ post }: { post: typeof BLOG_POSTS[0] }) => (
+const BlogCard = memo(({ post }: { post: PostItem }) => (
   <div
     className={cn(
       'blog-card group relative rounded-2xl overflow-hidden',
@@ -200,10 +145,26 @@ BlogCard.displayName = 'BlogCard'
 export default function BlogPage() {
   const pageRef = useRef<HTMLDivElement>(null)
   const [activeCategory, setActiveCategory] = useState('All')
+  const [posts, setPosts] = useState<PostItem[]>([])
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const res = await fetch('/api/posts')
+        const data = await res.json()
+        if (data.success) {
+          setPosts(data.data)
+        }
+      } catch (error) {
+        console.error('Failed to fetch posts:', error)
+      }
+    }
+    fetchPosts()
+  }, [])
 
   const filteredPosts = activeCategory === 'All'
-    ? BLOG_POSTS
-    : BLOG_POSTS.filter(post => post.category === activeCategory)
+    ? posts
+    : posts.filter(post => post.category === activeCategory)
 
   useEffect(() => {
     const page = pageRef.current

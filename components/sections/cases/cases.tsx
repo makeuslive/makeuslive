@@ -6,6 +6,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { cn } from '@/lib/utils'
 import { COPY } from '@/lib/constants'
 import { ArrowRight } from '@/components/ui'
+import { CaseItem } from '@/types'
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
@@ -21,8 +22,31 @@ export const Cases = memo<CasesProps>(({ className }) => {
   const [isPaused, setIsPaused] = useState(false)
   const animationRef = useRef<gsap.core.Tween | null>(null)
 
-  // Duplicate items for infinite scroll effect
-  const duplicatedItems = [...COPY.cases.items, ...COPY.cases.items]
+  const [works, setWorks] = useState<CaseItem[]>(COPY.cases.items as unknown as CaseItem[]) // Default to static, replace with API
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchWorks = async () => {
+      try {
+        const res = await fetch('/api/works')
+        const data = await res.json()
+        if (data.success && data.data && data.data.length > 0) {
+          setWorks(data.data)
+        }
+      } catch (error) {
+        console.error('Failed to fetch works:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    // Seed and fetch
+    fetch('/api/seed').then(() => fetchWorks())
+  }, [])
+
+  // Duplicate items for infinite scroll effect (ensure we have enough items)
+  const itemsToDisplay = works.length > 0 ? works : COPY.cases.items
+  const duplicatedItems = [...itemsToDisplay, ...itemsToDisplay]
 
   useEffect(() => {
     const section = sectionRef.current

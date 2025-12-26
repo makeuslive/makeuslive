@@ -67,7 +67,7 @@ export const COPY = {
   },
   hero: {
     greeting: 'नमस्ते',
-    tagline: 'We build Products, systems and stories that scale.',
+    tagline: 'We build Products, Systems and Stories that scale.',
     cta: 'Explore Our Work',
   },
   services: {
