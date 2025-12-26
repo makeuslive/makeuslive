@@ -180,7 +180,7 @@ export const Services = memo<ServicesProps>(({ className }) => {
           <div ref={bgRef} className="absolute inset-x-0 -top-[10%] -bottom-[10%] z-0">
             <Image
               src="/images/services-art.png"
-              alt=""
+              alt="Services Background Art"
               fill
               className="object-cover"
               priority
