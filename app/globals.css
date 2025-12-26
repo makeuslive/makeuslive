@@ -1,0 +1,492 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ================================
+   CSS Custom Properties (Design Tokens)
+   ================================ */
+:root {
+  /* Colors */
+  --color-bg: #050505;
+  --color-bg-dark: #030014;
+  --color-text: #e0e0e0;
+  --color-text-muted: #cdcccc;
+  --color-text-dim: #8f8f8f;
+  --color-gold: #ddceaf;
+  --color-gold-dark: #d2ae4a;
+  --color-card: #0e1a1e;
+  --color-card-light: #f8f6f0;
+  --color-border: #4b4b4b;
+  --color-glass: rgba(6, 6, 6, 0.5);
+
+  /* Shadows */
+  --shadow-hero: 12px 10px 9px rgba(0, 0, 0, 0.85);
+  --shadow-card: 16px 14px 24px rgba(0, 0, 0, 0.44);
+  --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.4);
+
+  /* Timing */
+  --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+  --duration-fast: 0.3s;
+  --duration-normal: 0.6s;
+  --duration-slow: 1.2s;
+
+  /* Blur */
+  --blur-glass: 100px;
+  --blur-glass-services: 80px;
+  --blur-nav: 12px;
+
+  /* Glass morphism specific */
+  --glass-border: rgba(255, 255, 255, 0.06);
+  --glass-highlight: rgba(255, 255, 255, 0.05);
+  --glass-glow: rgba(255, 255, 255, 0.02);
+}
+
+/* ================================
+   Base Styles
+   ================================ */
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  overflow-x: hidden;
+}
+
+/* ================================
+   Performance Optimizations
+   ================================ */
+/* GPU-accelerated elements - apply to animated content */
+.smooth-element,
+.bento-card,
+.blog-card,
+.service-card,
+.team-card,
+.vision-pillar,
+.milestone,
+.core-principle,
+.stat-card,
+.process-step,
+.case-card {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  perspective: 1000px;
+  will-change: transform, opacity;
+}
+
+/* Force hardware acceleration on all animated elements */
+[class*="animate-"],
+[class*="hover:"],
+[class*="transition-"] {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Reduce paint areas */
+.section,
+section {
+  contain: layout style;
+}
+
+/* Optimize images and media */
+img,
+video,
+canvas,
+svg {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Content visibility for off-screen content */
+.lazy-section {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 500px;
+}
+
+/* Selection */
+::selection {
+  background-color: var(--color-gold);
+  color: var(--color-bg);
+}
+
+/* ================================
+   Typography
+   ================================ */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+/* ================================
+   Utility Classes
+   ================================ */
+@layer utilities {
+
+  /* Glass morphism effect */
+  .glass {
+    background: var(--color-glass);
+    backdrop-filter: blur(var(--blur-glass));
+    -webkit-backdrop-filter: blur(var(--blur-glass));
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: var(--shadow-glass);
+  }
+
+  .glass-card {
+    background: rgba(14, 26, 30, 0.8);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: var(--shadow-card);
+  }
+
+  .glass-nav {
+    background: rgba(5, 5, 5, 0.8);
+    backdrop-filter: blur(var(--blur-nav));
+    -webkit-backdrop-filter: blur(var(--blur-nav));
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  /* Glass morphism for services section - optimized */
+  .glass-services {
+    background: var(--color-glass);
+    backdrop-filter: blur(var(--blur-glass-services)) saturate(120%);
+    -webkit-backdrop-filter: blur(var(--blur-glass-services)) saturate(120%);
+    border: 1px solid var(--glass-border);
+    box-shadow:
+      inset 0 1px 0 0 var(--glass-highlight),
+      inset 0 0 80px var(--glass-glow),
+      0 8px 32px rgba(0, 0, 0, 0.4),
+      0 2px 8px rgba(0, 0, 0, 0.3);
+    /* Hardware acceleration */
+    transform: translateZ(0);
+    will-change: backdrop-filter;
+    backface-visibility: hidden;
+  }
+
+  /* Backdrop filter fallback for older browsers */
+  @supports not (backdrop-filter: blur(80px)) {
+    .glass-services {
+      background: rgba(6, 6, 6, 0.85);
+    }
+  }
+
+  /* Text shadow */
+  .text-shadow-hero {
+    text-shadow: var(--shadow-hero);
+  }
+
+  /* Hardware acceleration */
+  .gpu {
+    transform: translateZ(0);
+    will-change: transform;
+    backface-visibility: hidden;
+  }
+
+  /* Hide scrollbar */
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Gold gradient text */
+  .text-gradient-gold {
+    background: linear-gradient(135deg, var(--color-gold) 0%, var(--color-gold-dark) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Gold underline */
+  .gold-underline {
+    position: relative;
+  }
+
+  .gold-underline::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -4px;
+    width: 100%;
+    height: 2px;
+    background: var(--color-gold-dark);
+  }
+
+  /* Focus ring */
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-gold/50 focus:ring-offset-2 focus:ring-offset-bg;
+  }
+}
+
+/* ================================
+   Component Classes
+   ================================ */
+@layer components {
+
+  /* Button base */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 font-medium transition-all duration-300 ease-out-expo;
+  }
+
+  .btn-primary {
+    @apply bg-white text-bg hover:bg-text hover:scale-105 active:scale-95;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .btn-glass {
+    @apply glass text-text hover:bg-white/10 hover:scale-105 active:scale-95;
+  }
+
+  /* Input base */
+  .input {
+    @apply w-full rounded-lg border border-border/50 bg-transparent px-4 py-3 text-text placeholder:text-text-dim transition-all duration-300;
+    @apply focus:border-gold/50 focus:outline-none focus:ring-2 focus:ring-gold/20;
+  }
+
+  /* Card base */
+  .card {
+    @apply rounded-2xl p-6 transition-all duration-500 ease-out-expo;
+  }
+
+  .card-hover {
+    @apply hover:scale-[1.02] hover:shadow-lg;
+  }
+
+  /* Section spacing */
+  .section {
+    @apply relative py-20 md:py-32;
+  }
+
+  .section-heading {
+    @apply text-4xl md:text-5xl lg:text-6xl font-bold;
+  }
+
+  .section-subheading {
+    @apply text-lg md:text-xl text-text-muted mt-4;
+  }
+}
+
+/* ================================
+   Animations (GSAP Enhanced)
+   ================================ */
+@layer utilities {
+
+  /* Initial states for GSAP */
+  .gsap-fade-up {
+    opacity: 0;
+    transform: translateY(60px);
+  }
+
+  .gsap-fade-in {
+    opacity: 0;
+  }
+
+  .gsap-scale-in {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+
+  .gsap-slide-left {
+    opacity: 0;
+    transform: translateX(100px);
+  }
+
+  .gsap-slide-right {
+    opacity: 0;
+    transform: translateX(-100px);
+  }
+}
+
+/* ================================
+   Reduced Motion
+   ================================ */
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .gsap-fade-up,
+  .gsap-fade-in,
+  .gsap-scale-in,
+  .gsap-slide-left,
+  .gsap-slide-right {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ================================
+   Scrollbar Styling
+   ================================ */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg-dark);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-dim);
+}
+
+/* ================================
+   Keyframe Animations
+   ================================ */
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0) translateZ(0);
+  }
+
+  50% {
+    transform: translateY(-15px) translateZ(0);
+  }
+}
+
+@keyframes scale-in {
+  from {
+    transform: scale(0.95) translateZ(0);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1) translateZ(0);
+    opacity: 1;
+  }
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0) translateZ(0);
+  }
+
+  100% {
+    transform: translateX(-50%) translateZ(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-float {
+  animation: float 6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  will-change: transform;
+}
+
+.animate-scale-in {
+  animation: scale-in 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  will-change: transform, opacity;
+}
+
+.animate-marquee {
+  animation: marquee 35s linear infinite;
+  will-change: transform;
+}
+
+/* Pause marquee on hover */
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.05) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* ================================
+   Shadow Card
+   ================================ */
+.shadow-card {
+  box-shadow: 16px 14px 24px rgba(0, 0, 0, 0.44);
+}
+
+/* ================================
+   Background Gradient Section
+   ================================ */
+.bg-gradient-section {
+  background: linear-gradient(180deg, var(--color-bg) 0%, var(--color-bg-dark) 100%);
+}
+
+/* ================================
+   Ultra Smooth Scrolling
+   ================================ */
+.smooth-scroll {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Instant visibility - no flash of unstyled content */
+.instant-visible {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+/* Optimized transitions */
+.transition-smooth {
+  transition-property: transform, opacity;
+  transition-duration: 0.5s;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Prevent layout shift */
+.no-shift {
+  contain: layout;
+}

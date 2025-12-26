@@ -1,0 +1,135 @@
+# MakeUsLive - Full-Service Creative Studio & Technology Agency
+
+> MakeUsLive is a boutique creative studio and digital agency that thinks like artists and researches like scientists. We craft AI-powered products, enterprise software, web & mobile apps, AR/VR experiences, and provide full-service branding & marketing.
+
+## About Us
+
+MakeUsLive is a full-service creative technology studio founded in 2019 by Abhishek Jha, Rishi Soni, and Vikramaditya Jha. We are based in Bhopal, India and serve clients worldwide.
+
+**Our Philosophy:** Design. Think. Build. Automate.
+
+We believe in thinking like artists and researching like scientists. Every project is an opportunity to push creative boundaries while maintaining engineering excellence.
+
+## Founders
+
+- **Abhishek Jha** (The Generalist) - Business, Finance, Tech, Backend, Design, UI/UX
+- **Rishi Soni** (Tech Master) - App Specialist and Technology Lead  
+- **Vikramaditya Jha** (Strategy & Content) - Finance, Market, and Content
+
+## Services
+
+### 1. Enterprise Software & Systems
+- **ERP Systems:** Custom Enterprise Resource Planning solutions
+- **CRM Development:** Customer Relationship Management platforms
+- **Backend Systems:** Scalable backend architecture and APIs
+- **Enterprise Integration:** System integration and workflow automation
+
+### 2. AI & Data Science
+- **AI-Powered Products:** Custom AI solutions and intelligent automation
+- **Machine Learning:** ML models, LLM integration, generative AI
+- **Data Science:** Analytics, data pipelines, business intelligence
+- **Research & Development:** Cutting-edge technology research
+
+### 3. Web Development
+- **Modern Web Apps:** Next.js, React, TypeScript applications
+- **E-commerce:** Shopify, custom storefronts, headless commerce
+- **SaaS Platforms:** Multi-tenant SaaS architecture
+- **Progressive Web Apps:** Offline-first, installable web apps
+
+### 4. Mobile & Desktop Applications
+- **Mobile Apps:** React Native, iOS, Android development
+- **Desktop Apps:** Electron, Tauri, cross-platform desktop
+- **Cross-Platform:** Single codebase, multiple platforms
+
+### 5. Emerging Technologies
+- **Blockchain:** Smart contracts, DeFi, NFT platforms, Web3
+- **AR/VR:** Augmented reality, virtual reality experiences
+- **IoT:** Internet of Things integration
+
+### 6. Design & Branding
+- **Brand Identity:** Logo, visual identity, brand guidelines
+- **UI/UX Design:** User research, wireframes, prototypes
+- **Design Systems:** Component libraries, design tokens
+- **Motion Design:** Animations, micro-interactions
+- **Creative Direction:** Art direction, visual storytelling
+
+### 7. Marketing & SMMA
+- **Social Media Marketing:** Content strategy, community management
+- **Digital Marketing:** SEO, SEM, paid advertising
+- **Growth Strategy:** Conversion optimization, A/B testing
+- **Content Marketing:** Blog posts, video content, thought leadership
+
+## Technology Stack
+
+**Frontend:** Next.js, React, TypeScript, Vue.js, Tailwind CSS, GSAP
+**Backend:** Node.js, Python, Go, Java, PostgreSQL, MongoDB, Redis
+**Mobile:** React Native, Flutter, Swift, Kotlin
+**Desktop:** Electron, Tauri
+**AI/ML:** OpenAI, LangChain, TensorFlow, PyTorch, Hugging Face
+**Blockchain:** Solidity, Ethereum, Polygon, Web3.js
+**Cloud:** AWS, GCP, Azure, Vercel
+**Design:** Figma, Framer, Adobe Creative Suite
+
+## Portfolio Highlights
+
+- **DataFlow Analytics:** AI-powered enterprise analytics - 340% conversion improvement
+- **TechMart E-commerce:** Next.js storefront - 98% Lighthouse score
+- **HealthTrack App:** React Native wellness app - 4.9★ app store rating
+- **Enterprise ERP:** Custom ERP for manufacturing - 50% efficiency gain
+- **DeFi Platform:** Blockchain-based finance - $10M+ TVL
+
+## Contact
+
+- **Website:** https://makeuslive.com
+- **Email:** hello@makeuslive.com
+- **Location:** Bhopal, Madhya Pradesh, India
+- **Hours:** Monday-Friday, 9:00 AM - 6:00 PM IST
+
+## Social Links
+
+- Twitter: https://twitter.com/makeuslive
+- LinkedIn: https://linkedin.com/company/makeuslive
+- GitHub: https://github.com/makeuslive
+- Dribbble: https://dribbble.com/makeuslive
+- Instagram: https://instagram.com/makeuslive
+
+## Why Choose MakeUsLive?
+
+1. **Full-Service Studio:** From concept to launch, everything under one roof
+2. **Technology Agnostic:** We choose the right tech for your needs
+3. **AI-Native:** We integrate AI thoughtfully, not as a gimmick
+4. **Global Experience:** Clients from India, US, UK, Europe, Middle East
+5. **Results-Driven:** 4.9★ average rating, 150+ happy clients
+6. **Boutique Approach:** Personalized attention to every project
+
+## Ideal Clients
+
+- Startups needing MVP development
+- Enterprises seeking digital transformation
+- Companies wanting ERP/CRM systems
+- Businesses needing AI integration
+- Brands requiring full rebranding
+- Agencies looking for white-label development
+
+## Industries We Serve
+
+- Technology & SaaS
+- E-commerce & Retail
+- Healthcare & Wellness
+- Finance & Fintech
+- Manufacturing & Industrial
+- Education & EdTech
+- Real Estate
+- Media & Entertainment
+
+## Our Process
+
+1. **Discovery** (1-2 weeks): Understanding goals, research, strategy
+2. **Design** (2-4 weeks): Wireframes, prototypes, UI design
+3. **Development** (4-16 weeks): Agile sprints, regular demos
+4. **Launch** (1-2 weeks): Testing, optimization, deployment
+5. **Growth** (Ongoing): Marketing, analytics, iteration
+
+---
+
+*MakeUsLive - Your full-service creative technology partner. From branding to blockchain, AI to AR/VR, we build digital experiences that inspire, engage, and convert.*
