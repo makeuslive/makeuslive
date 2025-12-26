@@ -98,10 +98,14 @@ export const Hero = memo<HeroProps>(({ className }) => {
       {/* Background with Video */}
       <div className="hero-bg absolute inset-0 -z-10 bg-bg">
         <video
+          ref={(el) => {
+            if (el) el.play().catch(() => { /* safe to ignore autofocus errors */ })
+          }}
           autoPlay
           loop
           muted
-          playsInline
+          playsInline={true}
+          preload="auto"
           className="object-cover w-full h-full opacity-50"
         >
           <source src="/images/hero-bg.mp4" type="video/mp4" />

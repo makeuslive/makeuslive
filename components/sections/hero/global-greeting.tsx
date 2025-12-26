@@ -51,72 +51,112 @@ export const GlobalGreeting = memo<GlobalGreetingProps>(({ className }) => {
 
     if (!container || !text || !lang || !glow) return
 
-    // Master timeline that repeats infinitely
+    // Initial State: Ensure elements are visible (for LCP)
+    gsap.set([text, lang], { opacity: 1, scale: 1, y: 0 })
+
+    // Master timeline
     const masterTL = gsap.timeline({
       repeat: -1,
-      onRepeat: () => {
-        setCurrentIndex((prev) => (prev + 1) % GLOBAL_GREETINGS.length)
-      },
+      // We don't need onRepeat here because we handle index updates manually in the loop
+      // or we can structure differently. 
+      // Better approach for React state + GSAP:
+      // We rely on the timeline to animate ONE cycle, then update state, then run again?
+      // No, that causes re-renders.
+      // 
+      // Alternative: Standard vanilla JS array loop inside GSAP?
+      // Since we need to update React State (to change text), we must use `call()`.
     })
 
-    // Animation sequence for each greeting
-    masterTL
-      // 1. Fade in with scale
-      .fromTo(
-        text,
-        { opacity: 0, scale: 0.8, y: 20 },
-        { opacity: 1, scale: 1, y: 0, duration: 0.8, ease: 'power3.out' }
-      )
-      // 2. Language label fade in
-      .fromTo(
-        lang,
-        { opacity: 0, y: 10 },
-        { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' },
-        '-=0.4'
-      )
-      // 3. Glow pulse effect
-      .to(
-        glow,
-        {
-          opacity: 0.6,
-          scale: 1.2,
-          duration: 0.8,
-          ease: 'power2.inOut',
-          yoyo: true,
-          repeat: 1,
-        },
-        '-=0.2'
-      )
-      // 4. Hold for viewing
-      .to({}, { duration: 2 })
-      // 5. Fade out with scale
-      .to(text, {
-        opacity: 0,
-        scale: 0.9,
-        y: -20,
-        duration: 0.6,
-        ease: 'power2.in',
+    // However, updating State updates DOM, which breaks GSAP refs if not careful.
+    // Given the current structure uses a single ref `textRef` and swaps text via React state `currentIndex`.
+    // The previous implementation worked because `onRepeat` updated the index, but that only happens after the whole timeline?
+    // No, the previous timeline defined ONE animation cycle.
+
+    // NEW STRATEGY for LCP:
+    // 1. First "Hello" is static visible.
+    // 2. Timeline starts with a delay (viewing time).
+    // 3. Animate OUT current text.
+    // 4. Update State (change text).
+    // 5. Animate IN new text.
+
+    const animateCycle = () => {
+      // 1. Animate Out
+      const tl = gsap.timeline({
+        onComplete: () => {
+          // Update text for next cycle
+          setCurrentIndex((prev) => (prev + 1) % GLOBAL_GREETINGS.length)
+        }
       })
-      .to(
-        lang,
-        { opacity: 0, y: -10, duration: 0.3, ease: 'power2.in' },
-        '-=0.4'
-      )
 
-    // Floating animation (continuous)
-    gsap.to(container, {
-      y: -15,
-      duration: 3,
-      ease: 'power1.inOut',
-      yoyo: true,
-      repeat: -1,
+      tl.to([text, lang], {
+        opacity: 0,
+        y: -20,
+        scale: 0.9,
+        duration: 0.5,
+        ease: 'power2.in'
+      })
+    }
+
+    // We need to coordinate the state update with the animation In.
+    // React `useEffect` fires when `currentIndex` changes.
+    // So we can split logic:
+
+  }, [])
+
+  // Effect to handle Entrance animation whenever index changes
+  useEffect(() => {
+    const text = textRef.current
+    const lang = langRef.current
+    const glow = glowRef.current
+
+    if (!text || !lang || !glow) return
+
+    // If it's the very first render (Hello), do NOT animate IN.
+    // We want it visible immediately for LCP.
+    if (currentIndex === 0) {
+      // Just animate OUT after delay
+      const timer = setTimeout(() => {
+        gsap.to([text, lang], {
+          opacity: 0,
+          y: -20,
+          scale: 0.9,
+          duration: 0.5,
+          ease: 'power2.in',
+          onComplete: () => setCurrentIndex(1)
+        })
+      }, 2000)
+      return () => clearTimeout(timer)
+    }
+
+    // For all other indices: Animate IN -> Hold -> Animate OUT
+    const tl = gsap.timeline({
+      onComplete: () => {
+        setCurrentIndex((prev) => (prev + 1) % GLOBAL_GREETINGS.length)
+      }
     })
 
-    return () => {
-      masterTL.kill()
-      gsap.killTweensOf(container)
-    }
-  }, [])
+    tl.fromTo([text, lang],
+      { opacity: 0, y: 20, scale: 0.8 },
+      { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: 'power3.out' }
+    )
+      .to(glow, {
+        opacity: 0.6,
+        scale: 1.2,
+        duration: 0.8,
+        yoyo: true,
+        repeat: 1
+      }, '-=0.5')
+      .to({}, { duration: 2 }) // Hold
+      .to([text, lang], {
+        opacity: 0,
+        y: -20,
+        scale: 0.9,
+        duration: 0.5,
+        ease: 'power2.in'
+      })
+
+    return () => { tl.kill() }
+  }, [currentIndex])
 
   const current = GLOBAL_GREETINGS[currentIndex]
 
