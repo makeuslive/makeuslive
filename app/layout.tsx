@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import { Inter, Space_Grotesk, Agbalumo } from 'next/font/google'
 import type { ReactNode } from 'react'
+import { Analytics } from '@vercel/analytics/next'
 
 import { Providers } from '@/components/providers'
 import { Navbar } from '@/components/layout/navbar'
@@ -657,6 +658,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
           {/* Footer */}
           <Footer />
         </Providers>
+        <Analytics />
       </body>
     </html>
   )
