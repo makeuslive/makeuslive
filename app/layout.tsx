@@ -658,7 +658,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <Providers>
           <GoogleAnalytics GA_MEASUREMENT_ID={process.env.NEXT_PUBLIC_GA_ID || 'G-EC3FCCNML9'} />
           <MicrosoftClarity projectId={process.env.NEXT_PUBLIC_CLARITY_ID || 'urpwf3kysj'} />
-          {/* Background canvas */}
+          {/* Background canvas - disabled for performance */}
           <StarsCanvas />
 
           {/* Navigation */}
