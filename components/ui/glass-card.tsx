@@ -35,13 +35,11 @@ export const GlassCard = memo(
           ref={ref}
           className={cn(
             'rounded-2xl',
-            // Professional border with stroke
-            'border-[1.5px] border-[#4B4B4B]',
             'transition-all duration-500 ease-out-expo',
             // Variant styles
             variant === 'dark' && [
-              'bg-card/80 backdrop-blur-sm',
-              hover && 'hover:border-gold/40 hover:scale-[1.02]',
+              'glass-card',
+              hover && 'hover:scale-[1.02] hover:shadow-xl',
             ],
             variant === 'light' && [
               'bg-card-light',
@@ -49,8 +47,6 @@ export const GlassCard = memo(
             ],
             // Padding
             paddingClasses[padding],
-            // Shadow
-            'shadow-card',
             className
           )}
           {...props}
