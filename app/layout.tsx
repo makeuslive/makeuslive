@@ -3,16 +3,23 @@ import { Inter, Space_Grotesk, Agbalumo } from 'next/font/google'
 import type { ReactNode } from 'react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Analytics } from '@vercel/analytics/next'
+import dynamic from 'next/dynamic'
 
 import { Providers } from '@/components/providers'
 import { Navbar } from '@/components/layout/navbar'
 import { Footer } from '@/components/layout/footer'
-import { StarsCanvas } from '@/components/canvas/stars-canvas'
 import { GoogleAnalytics } from '@/components/analytics/GoogleAnalytics'
+import { MicrosoftClarity } from '@/components/analytics/MicrosoftClarity'
 import { COPY } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 
 import './globals.css'
+
+// Lazy load heavy canvas component
+const StarsCanvas = dynamic(
+  () => import('@/components/canvas/stars-canvas').then((mod) => mod.StarsCanvas),
+  { ssr: false }
+)
 
 // Fonts - Using Google Fonts for better compatibility
 const inter = Inter({
@@ -651,6 +658,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
       >
         <Providers>
           <GoogleAnalytics GA_MEASUREMENT_ID={process.env.NEXT_PUBLIC_GA_ID || 'G-EC3FCCNML9'} />
+          <MicrosoftClarity projectId={process.env.NEXT_PUBLIC_CLARITY_ID || 'urpwf3kysj'} />
           {/* Background canvas */}
           <StarsCanvas />
 
