@@ -12,7 +12,20 @@ const nextConfig = {
   experimental: {
     optimizePackageImports: ['lucide-react', 'gsap', '@radix-ui/react-icons', 'framer-motion'],
   },
+  async redirects() {
+    return [
+      {
+        source: '/privacy',
+        destination: '/privacy-policy',
+        permanent: true,
+      },
+      {
+        source: '/terms',
+        destination: '/terms-of-service',
+        permanent: true,
+      },
+    ]
+  },
 }
 
 module.exports = nextConfig
-

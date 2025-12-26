@@ -255,7 +255,7 @@ export const Contact = memo<ContactProps>(({ className }) => {
             <div className="absolute inset-0 z-0">
               <Image
                 src="/images/contact us.png"
-                alt=""
+                alt="MakeUsLive Office - Contact Us"
                 fill
                 className="object-cover"
               />
@@ -298,7 +298,7 @@ export const Contact = memo<ContactProps>(({ className }) => {
                     </div>
 
                     {/* Main Heading with gradient accent */}
-                    <h2 className="text-[26px] sm:text-[30px] md:text-[36px] lg:text-[44px] xl:text-[48px] font-bold leading-[1.1] mb-6 sm:mb-8">
+                    <h1 className="text-[26px] sm:text-[30px] md:text-[36px] lg:text-[44px] xl:text-[48px] font-bold leading-[1.1] mb-6 sm:mb-8">
                       <span className="text-text block">Let&apos;s Build Something</span>
                       <span
                         className="block mt-1 sm:mt-2 bg-clip-text text-transparent"
@@ -308,7 +308,7 @@ export const Contact = memo<ContactProps>(({ className }) => {
                       >
                         That Works
                       </span>
-                    </h2>
+                    </h1>
 
                     {/* Description with better styling */}
                     <p className="text-sm sm:text-base md:text-lg text-[#ADA6A6] leading-relaxed max-w-md relative pl-3 sm:pl-4 border-l-2 border-gold/30">

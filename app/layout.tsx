@@ -57,8 +57,8 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   // Basic metadata - Creative Studio focused
   title: {
-    default: `${COPY.brand.name} - Creative Studio & Digital Agency | AI, Design, Web Development`,
-    template: `%s | ${COPY.brand.name} - Creative Studio`,
+    default: `${COPY.brand.name} - Creative Digital Studio`,
+    template: `%s | ${COPY.brand.name}`,
   },
   description:
     'MakeUsLive is a creative studio and digital agency that thinks like artists and researches like scientists. We craft AI-powered products, stunning websites, mobile apps, and design systems. Boutique agency creating digital experiences that inspire, engage, and convert. Based in India, serving clients worldwide.',
