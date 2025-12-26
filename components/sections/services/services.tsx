@@ -19,25 +19,25 @@ const SERVICES_DATA = [
   {
     id: 'design',
     title: 'Product Design & Branding',
-    image: '/images/services-art.png',
+    image: '/images/services-art.webp',
     quote: 'Make people feel the product before they use it.',
   },
   {
     id: 'development',
     title: 'Web & Mobile Development',
-    image: '/images/services-art.png',
+    image: '/images/services-art.webp',
     quote: 'Build experiences that scale and perform beautifully.',
   },
   {
     id: 'ai',
     title: 'AI & Automation',
-    image: '/images/services-art.png',
+    image: '/images/services-art.webp',
     quote: 'Intelligent systems that learn and adapt to your needs.',
   },
   {
     id: 'marketing',
     title: 'Marketing & Content',
-    image: '/images/services-art.png',
+    image: '/images/services-art.webp',
     quote: 'Stories that connect, content that converts.',
   },
 ]
@@ -194,10 +194,11 @@ export const Services = memo<ServicesProps>(({ className }) => {
             style={{ zIndex: 0 }}
           >
             <Image
-              src="/images/services-art.png"
+              src="/images/services-art.webp"
               alt="Services Background"
               fill
               className="object-cover"
+              sizes="100vw"
               priority
             />
           </div>
