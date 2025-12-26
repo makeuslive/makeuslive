@@ -18,6 +18,7 @@ import {
   LocationIcon,
   Confetti,
 } from '@/components/ui'
+import { GlassEffect } from '@/components/effects/glass-effect'
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
@@ -261,26 +262,20 @@ export const Contact = memo<ContactProps>(({ className }) => {
               />
             </div>
 
-            {/* Glass Morphism Overlay - Matching services section */}
-            <div
-              className="absolute inset-0 rounded-[30px] z-[1] glass-services"
-            />
-
-            {/* Subtle gradient overlay for additional depth and light angle simulation */}
-            <div
-              className="absolute inset-0 rounded-[30px] z-[1] pointer-events-none"
-              style={{
-                background: `
-                  linear-gradient(
-                    135deg, 
-                    rgba(255, 255, 255, 0.03) 0%, 
-                    transparent 40%,
-                    transparent 60%, 
-                    rgba(0, 0, 0, 0.15) 100%
-                  )
-                `,
-              }}
-            />
+            {/* WebGL Glass Effect Overlay - Figma Glass settings */}
+            <div className="absolute inset-0 rounded-[30px] z-[1] overflow-hidden">
+              <GlassEffect
+                config={{
+                  frost: 100,
+                  refraction: 100,
+                  depth: 55,
+                  lightAngle: -30,
+                  lightIntensity: 0.4,
+                  dispersion: 100,
+                  backgroundColor: 'rgba(6, 6, 6, 0.5)',
+                }}
+              />
+            </div>
 
             <div className="relative p-8 md:p-12 lg:p-16 z-[2]">
               {/* Content Grid */}
