@@ -317,7 +317,7 @@ export const metadata: Metadata = {
   // Verification for search engines
   verification: {
     google: process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION,
-    yandex: process.env.NEXT_PUBLIC_YANDEX_VERIFICATION,
+    yandex: process.env.NEXT_PUBLIC_YANDEX_VERIFICATION || '8af1e0fd48fa82f2',
     other: {
       'bing-site-verification': process.env.NEXT_PUBLIC_BING_VERIFICATION || '',
     },
