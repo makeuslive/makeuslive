@@ -95,16 +95,17 @@ export const Hero = memo<HeroProps>(({ className }) => {
         className
       )}
     >
-      {/* Background with GIF */}
-      <div className="hero-bg absolute inset-0 -z-10">
-        <Image
-          src="/images/hero-bg.gif"
-          alt=""
-          fill
-          priority
-          className="object-cover opacity-50"
-          unoptimized
-        />
+      {/* Background with Video */}
+      <div className="hero-bg absolute inset-0 -z-10 bg-bg">
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="object-cover w-full h-full opacity-50"
+        >
+          <source src="/images/hero-bg.mp4" type="video/mp4" />
+        </video>
         {/* Gradient overlays */}
         <div className="absolute inset-0 bg-gradient-to-b from-bg/40 via-transparent to-bg" />
         <div className="absolute inset-0 bg-gradient-radial from-transparent via-transparent to-bg/80" />
