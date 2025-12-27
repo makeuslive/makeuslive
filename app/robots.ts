@@ -12,9 +12,7 @@ export default function robots(): MetadataRoute.Robots {
         disallow: [
           '/api/',
           '/admin/',
-          '/_next/',
           '/private/',
-          '*.json$',
           '/search?*',
         ],
       },
@@ -27,6 +25,11 @@ export default function robots(): MetadataRoute.Robots {
       // Google Image Bot
       {
         userAgent: 'Googlebot-Image',
+        allow: '/',
+      },
+      // Google Extended - for Gemini AI summaries (ALLOW for AI visibility)
+      {
+        userAgent: 'Google-Extended',
         allow: '/',
       },
       // Bingbot
@@ -47,7 +50,42 @@ export default function robots(): MetadataRoute.Robots {
         allow: '/',
         disallow: ['/api/', '/admin/'],
       },
+      // ============================================
+      // AI BOTS - ALLOW for AI discoverability
+      // These bots help your site appear in AI search results
+      // ============================================
+      // GPTBot - ChatGPT/OpenAI (ALLOW for AI visibility)
+      {
+        userAgent: 'GPTBot',
+        allow: '/',
+        disallow: ['/api/', '/admin/', '/private/'],
+      },
+      // PerplexityBot - Perplexity AI search (ALLOW for AI visibility)
+      {
+        userAgent: 'PerplexityBot',
+        allow: '/',
+        disallow: ['/api/', '/admin/', '/private/'],
+      },
+      // Anthropic Claude (ALLOW for AI visibility)
+      {
+        userAgent: 'anthropic-ai',
+        allow: '/',
+        disallow: ['/api/', '/admin/', '/private/'],
+      },
+      {
+        userAgent: 'Claude-Web',
+        allow: '/',
+        disallow: ['/api/', '/admin/', '/private/'],
+      },
+      // CCBot - Common Crawl (used by many AI systems)
+      {
+        userAgent: 'CCBot',
+        allow: '/',
+        disallow: ['/api/', '/admin/', '/private/'],
+      },
+      // ============================================
       // Block aggressive SEO bots (they waste bandwidth)
+      // ============================================
       {
         userAgent: 'AhrefsBot',
         disallow: '/',
@@ -68,24 +106,7 @@ export default function robots(): MetadataRoute.Robots {
         userAgent: 'BLEXBot',
         disallow: '/',
       },
-      // Block AI training bots (protect content)
-      {
-        userAgent: 'GPTBot',
-        disallow: '/',
-      },
-      {
-        userAgent: 'CCBot',
-        disallow: '/',
-      },
-      {
-        userAgent: 'anthropic-ai',
-        disallow: '/',
-      },
-      {
-        userAgent: 'Claude-Web',
-        disallow: '/',
-      },
-      // Block various scrapers
+      // Block spam scrapers
       {
         userAgent: 'PetalBot',
         disallow: '/',

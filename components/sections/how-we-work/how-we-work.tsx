@@ -51,19 +51,28 @@ export const HowWeWork = memo<HowWeWorkProps>(({ className }) => {
           },
         })
 
-        // Number counter animation
-        const numberEl = element.querySelector('.step-number')
+        // Number counter animation - read from data-target attribute
+        const numberEl = element.querySelector('.step-number') as HTMLElement
         if (numberEl) {
-          gsap.from(numberEl, {
-            innerText: 0,
-            duration: 1.5,
-            ease: 'power2.out',
-            snap: { innerText: 1 },
-            scrollTrigger: {
-              trigger: element,
-              start: 'top 85%',
-            },
-          })
+          const targetValue = parseInt(numberEl.dataset.target || '0', 10)
+          if (!isNaN(targetValue) && targetValue > 0) {
+            const counter = { value: 0 }
+
+            gsap.to(counter, {
+              value: targetValue,
+              duration: 1.2,
+              ease: 'power2.out',
+              scrollTrigger: {
+                trigger: element,
+                start: 'top 85%',
+                once: true,
+              },
+              onUpdate: () => {
+                const formatted = Math.round(counter.value).toString().padStart(2, '0')
+                numberEl.innerText = formatted
+              },
+            })
+          }
         }
       })
 
@@ -126,8 +135,11 @@ export const HowWeWork = memo<HowWeWorkProps>(({ className }) => {
                   index % 2 === 0 ? 'md:text-right' : 'md:text-left'
                 )}>
                   {/* Step Number */}
-                  <span className="step-number inline-block text-4xl sm:text-5xl md:text-6xl font-bold text-gold/20 mb-3 md:mb-4">
-                    {step.number}
+                  <span
+                    className="step-number inline-block text-4xl sm:text-5xl md:text-6xl font-bold text-gold/20 mb-3 md:mb-4"
+                    data-target={parseInt(step.number, 10)}
+                  >
+                    00
                   </span>
 
                   <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-text mb-2 md:mb-3">

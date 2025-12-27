@@ -95,20 +95,49 @@ export const Hero = memo<HeroProps>(({ className }) => {
         className
       )}
     >
-      {/* Background with Video */}
+      {/* Background with Video - Optimized for all devices */}
       <div className="hero-bg absolute inset-0 -z-10 bg-bg">
         <video
           ref={(el) => {
-            if (el) el.play().catch(() => { /* safe to ignore autofocus errors */ })
+            if (el) {
+              // Check for reduced motion preference
+              const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+              if (prefersReducedMotion) {
+                el.pause()
+                return
+              }
+              // Use Intersection Observer for lazy playback
+              const observer = new IntersectionObserver(
+                (entries) => {
+                  entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                      el.play().catch(() => { /* safe to ignore autoplay errors */ })
+                    } else {
+                      el.pause()
+                    }
+                  })
+                },
+                { threshold: 0.1 }
+              )
+              observer.observe(el)
+            }
           }}
           autoPlay
           loop
           muted
-          playsInline={true}
-          preload="auto"
+          playsInline
+          preload="metadata"
+          poster="/images/hero-bg-poster.jpg"
           className="object-cover w-full h-full opacity-50"
+          style={{
+            // GPU acceleration for smooth playback
+            transform: 'translateZ(0)',
+            backfaceVisibility: 'hidden',
+          }}
         >
-          <source src="/images/hero-bg.mp4" type="video/mp4" />
+          {/* Responsive video sources - smaller file for mobile, full quality for desktop */}
+          <source src="/images/hero-bg.mp4" type="video/mp4" media="(min-width: 768px)" />
+          <source src="/images/hero-bg-mobile.mp4" type="video/mp4" />
         </video>
         {/* Gradient overlays */}
         <div className="absolute inset-0 bg-gradient-to-b from-bg/40 via-transparent to-bg" />
