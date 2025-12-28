@@ -14,8 +14,16 @@ export default function NewsletterPage() {
     const [loading, setLoading] = useState(true)
     const [searchQuery, setSearchQuery] = useState('')
     const [showAddModal, setShowAddModal] = useState(false)
+    const [showBroadcastModal, setShowBroadcastModal] = useState(false)
     const [newEmail, setNewEmail] = useState('')
     const [adding, setAdding] = useState(false)
+    const [broadcasting, setBroadcasting] = useState(false)
+    const [broadcastForm, setBroadcastForm] = useState({
+        subject: '',
+        content: '',
+        ctaText: '',
+        ctaUrl: '',
+    })
 
     useEffect(() => {
         fetchSubscribers()
@@ -32,6 +40,43 @@ export default function NewsletterPage() {
             console.error('Error fetching subscribers:', error)
         } finally {
             setLoading(false)
+        }
+    }
+
+    const sendBroadcast = async () => {
+        if (!broadcastForm.subject.trim() || !broadcastForm.content.trim()) {
+            alert('Subject and content are required')
+            return
+        }
+
+        if (!confirm(`Send newsletter to ${subscribers.filter(s => s.isActive).length} subscribers?`)) {
+            return
+        }
+
+        setBroadcasting(true)
+        try {
+            const res = await fetch('/api/newsletter', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'broadcast',
+                    ...broadcastForm,
+                }),
+            })
+
+            const data = await res.json()
+            if (res.ok) {
+                alert(`Newsletter sent! ${data.stats.sent} delivered, ${data.stats.failed} failed`)
+                setShowBroadcastModal(false)
+                setBroadcastForm({ subject: '', content: '', ctaText: '', ctaUrl: '' })
+            } else {
+                alert(data.error || 'Failed to send newsletter')
+            }
+        } catch (error) {
+            console.error('Error broadcasting:', error)
+            alert('Failed to send newsletter')
+        } finally {
+            setBroadcasting(false)
         }
     }
 
@@ -147,6 +192,16 @@ export default function NewsletterPage() {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                             </svg>
                             Export CSV
+                        </button>
+                        <button
+                            onClick={() => setShowBroadcastModal(true)}
+                            disabled={subscribers.filter(s => s.isActive).length === 0}
+                            className="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                            Send Newsletter
                         </button>
                     </div>
                 </div>
@@ -277,6 +332,80 @@ export default function NewsletterPage() {
                                 onClick={() => {
                                     setShowAddModal(false)
                                     setNewEmail('')
+                                }}
+                                className="px-4 py-2.5 border border-gray-200 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Broadcast Newsletter Modal */}
+            {showBroadcastModal && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-4">Send Newsletter</h3>
+                        <p className="text-sm text-gray-500 mb-6">
+                            This will send an email to {subscribers.filter(s => s.isActive).length} active subscribers.
+                        </p>
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Subject *</label>
+                                <input
+                                    type="text"
+                                    value={broadcastForm.subject}
+                                    onChange={(e) => setBroadcastForm({ ...broadcastForm, subject: e.target.value })}
+                                    placeholder="Your newsletter subject..."
+                                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Content *</label>
+                                <textarea
+                                    value={broadcastForm.content}
+                                    onChange={(e) => setBroadcastForm({ ...broadcastForm, content: e.target.value })}
+                                    placeholder="Write your newsletter content here..."
+                                    rows={6}
+                                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 resize-none"
+                                />
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">CTA Button Text</label>
+                                    <input
+                                        type="text"
+                                        value={broadcastForm.ctaText}
+                                        onChange={(e) => setBroadcastForm({ ...broadcastForm, ctaText: e.target.value })}
+                                        placeholder="Read More"
+                                        className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">CTA Button URL</label>
+                                    <input
+                                        type="url"
+                                        value={broadcastForm.ctaUrl}
+                                        onChange={(e) => setBroadcastForm({ ...broadcastForm, ctaUrl: e.target.value })}
+                                        placeholder="https://..."
+                                        className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        <div className="flex gap-3 mt-6">
+                            <button
+                                onClick={sendBroadcast}
+                                disabled={broadcasting || !broadcastForm.subject.trim() || !broadcastForm.content.trim()}
+                                className="flex-1 px-4 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+                            >
+                                {broadcasting ? 'Sending...' : 'Send Newsletter'}
+                            </button>
+                            <button
+                                onClick={() => {
+                                    setShowBroadcastModal(false)
+                                    setBroadcastForm({ subject: '', content: '', ctaText: '', ctaUrl: '' })
                                 }}
                                 className="px-4 py-2.5 border border-gray-200 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors"
                             >

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getCollection } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
+import { sendWelcomeEmail, sendEmail, emailTemplates } from '@/lib/email'
 
 const COLLECTION_NAME = 'newsletter_subscribers'
 
@@ -24,12 +25,76 @@ export async function GET() {
   }
 }
 
-// POST - Subscribe to newsletter (public)
+// POST - Subscribe to newsletter (public) or broadcast newsletter (admin with action param)
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { email } = body
+    const { action, email, subject, content } = body
 
+    // Handle broadcast action
+    if (action === 'broadcast') {
+      if (!subject || !content) {
+        return NextResponse.json({ error: 'Subject and content are required' }, { status: 400 })
+      }
+
+      // Get all active subscribers
+      const collection = await getCollection(COLLECTION_NAME)
+      const subscribers = await collection.find({ isActive: { $ne: false } }).toArray()
+      const emails = subscribers.map(s => s.email)
+
+      if (emails.length === 0) {
+        return NextResponse.json({ error: 'No active subscribers' }, { status: 400 })
+      }
+
+      // Create email template
+      const template = emailTemplates.newsletter({
+        title: subject,
+        preheader: content.substring(0, 100),
+        body: content.replace(/\n/g, '<br>'),
+        ctaText: body.ctaText,
+        ctaUrl: body.ctaUrl,
+      })
+
+      // Send to all subscribers in batches
+      const batchSize = 10
+      let sent = 0
+      let failed = 0
+
+      for (let i = 0; i < emails.length; i += batchSize) {
+        const batch = emails.slice(i, i + batchSize)
+        const promises = batch.map(to => 
+          sendEmail({ to, subject: template.subject, html: template.html })
+        )
+        const results = await Promise.allSettled(promises)
+        sent += results.filter(r => r.status === 'fulfilled' && (r.value as any).success).length
+        failed += results.filter(r => r.status === 'rejected' || !(r.value as any).success).length
+        
+        // Small delay between batches
+        if (i + batchSize < emails.length) {
+          await new Promise(resolve => setTimeout(resolve, 500))
+        }
+      }
+
+      // Log broadcast in database
+      const broadcastCollection = await getCollection('newsletter_broadcasts')
+      await broadcastCollection.insertOne({
+        subject,
+        content,
+        ctaText: body.ctaText,
+        ctaUrl: body.ctaUrl,
+        sentAt: new Date().toISOString(),
+        totalRecipients: emails.length,
+        sent,
+        failed,
+      })
+
+      return NextResponse.json({ 
+        message: 'Newsletter sent successfully',
+        stats: { total: emails.length, sent, failed }
+      })
+    }
+
+    // Handle regular subscription
     if (!email || !email.includes('@')) {
       return NextResponse.json({ error: 'Invalid email address' }, { status: 400 })
     }
@@ -48,10 +113,13 @@ export async function POST(request: NextRequest) {
       isActive: true,
     })
 
+    // Send welcome email (async, don't wait)
+    sendWelcomeEmail(email.toLowerCase()).catch(err => console.error('Welcome email failed:', err))
+
     return NextResponse.json({ message: 'Subscribed successfully' })
   } catch (error) {
-    console.error('Error subscribing:', error)
-    return NextResponse.json({ error: 'Failed to subscribe' }, { status: 500 })
+    console.error('Error:', error)
+    return NextResponse.json({ error: 'Operation failed' }, { status: 500 })
   }
 }
 
