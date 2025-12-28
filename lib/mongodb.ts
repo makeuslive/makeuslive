@@ -1,19 +1,16 @@
 import { MongoClient, Db, MongoClientOptions } from 'mongodb'
 
+// Connection options for MongoDB Atlas (mongodb+srv handles SSL automatically)
 const options: MongoClientOptions = {
-  // TLS/SSL settings for MongoDB Atlas
-  tls: true,
-  tlsAllowInvalidCertificates: false,
-  tlsAllowInvalidHostnames: false,
   // Connection pool settings
   minPoolSize: 1,
   maxPoolSize: 10,
   // Timeout settings
-  serverSelectionTimeoutMS: 10000,
-  connectTimeoutMS: 10000,
-  // Retry settings
-  retryWrites: true,
-  retryReads: true,
+  serverSelectionTimeoutMS: 15000,
+  connectTimeoutMS: 15000,
+  socketTimeoutMS: 45000,
+  // App identification
+  appName: 'makeuslive',
 }
 
 let client: MongoClient | null = null
@@ -34,32 +31,27 @@ function getClientPromise(): Promise<MongoClient> {
     throw new Error('Please add MONGODB_URI to your environment variables')
   }
 
-  // Parse the connection string to check for options
-  const hasSSLOption = uri.includes('ssl=') || uri.includes('tls=')
-  
-  // Use minimal options if the URI already has SSL params
-  const connectionOptions = hasSSLOption ? {
-    minPoolSize: 1,
-    maxPoolSize: 10,
-    serverSelectionTimeoutMS: 10000,
-    connectTimeoutMS: 10000,
-    retryWrites: true,
-    retryReads: true,
-  } : options
-
   if (process.env.NODE_ENV === 'development') {
     // In development mode, use a global variable to preserve the connection
     // across module reloads caused by HMR (Hot Module Replacement)
     if (!global._mongoClientPromise) {
-      client = new MongoClient(uri, connectionOptions)
-      global._mongoClientPromise = client.connect()
+      client = new MongoClient(uri, options)
+      global._mongoClientPromise = client.connect().catch((err) => {
+        console.error('MongoDB connection error:', err)
+        global._mongoClientPromise = undefined
+        throw err
+      })
     }
     return global._mongoClientPromise
   } else {
     // In production mode, reuse the connection
     if (!clientPromise) {
-      client = new MongoClient(uri, connectionOptions)
-      clientPromise = client.connect()
+      client = new MongoClient(uri, options)
+      clientPromise = client.connect().catch((err) => {
+        console.error('MongoDB connection error:', err)
+        clientPromise = null
+        throw err
+      })
     }
     return clientPromise
   }
@@ -82,3 +74,4 @@ export async function getCollection(collectionName: string) {
   const db = await getDatabase()
   return db.collection(collectionName)
 }
+
