@@ -3,31 +3,38 @@ import nodemailer from 'nodemailer'
 // ============================================
 // EMAIL CONFIGURATION
 // ============================================
-// For Gmail: Use App Password (not regular password)
-// 1. Enable 2FA on your Google Account
-// 2. Go to Google Account > Security > App passwords
-// 3. Generate a new app password for "Mail"
-// 4. Use that 16-character password as SMTP_PASS
+// GoDaddy SMTP: smtpout.secureserver.net:465 (SSL)
+// Gmail SMTP: smtp.gmail.com:587 (TLS) - requires App Password
 
 const createTransporter = () => {
-    // Check if we have SMTP credentials
-    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
-        console.warn('⚠️ Email: SMTP credentials not configured. Emails will not be sent.')
+    const user = process.env.SMTP_USER
+    const pass = process.env.SMTP_PASS
+    
+    if (!user || !pass) {
+        console.warn('⚠️ Email: SMTP credentials not configured. Emails will be mocked.')
         return null
     }
 
+    const host = process.env.SMTP_HOST || 'smtpout.secureserver.net'
+    const port = parseInt(process.env.SMTP_PORT || '465')
+    const secure = process.env.SMTP_SECURE !== 'false' // Default true for port 465
+
+    console.log(`📧 Email: Configuring SMTP - ${host}:${port} (secure: ${secure})`)
+
     return nodemailer.createTransport({
-        host: process.env.SMTP_HOST || 'smtp.gmail.com',
-        port: parseInt(process.env.SMTP_PORT || '587'),
-        secure: process.env.SMTP_SECURE === 'true', // true for 465, false for other ports
-        auth: {
-            user: process.env.SMTP_USER,
-            pass: process.env.SMTP_PASS,
+        host,
+        port,
+        secure, // true for 465 (SSL), false for 587 (TLS)
+        auth: { user, pass },
+        // GoDaddy and other providers may need these
+        tls: {
+            rejectUnauthorized: false, // Accept self-signed certs
+            minVersion: 'TLSv1.2',
         },
-        // Connection pool settings for high volume
-        pool: true,
-        maxConnections: 5,
-        maxMessages: 100,
+        // Connection settings
+        connectionTimeout: 10000,
+        greetingTimeout: 10000,
+        socketTimeout: 15000,
     })
 }
 
