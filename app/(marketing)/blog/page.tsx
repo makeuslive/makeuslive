@@ -64,31 +64,82 @@ const CategoryIcon = ({ category }: { category: string }) => {
   }
 }
 
-// Featured Blog Card - Magazine Style
+// Featured Blog Card - Hero style with proper framing
 const FeaturedCard = memo(({ post }: { post: PostItem }) => (
   <Link
     href={`/blog/${post.slug}`}
     className="group block h-full"
   >
-    <div className="relative h-full bg-bg border border-white/10 overflow-hidden">
-      {/* Browser-style header */}
-      <div className="flex items-center gap-3 px-4 py-3 border-b border-white/10">
-        {/* Three dots */}
-        <div className="flex gap-1.5">
-          <span className="w-2 h-2 rounded-full border border-white/30" />
-          <span className="w-2 h-2 rounded-full border border-white/30" />
-          <span className="w-2 h-2 rounded-full border border-white/30" />
-        </div>
-        {/* Dashed line */}
-        <div className="flex-1 border-t border-dashed border-white/20" />
-        {/* Featured badge */}
-        <span className="text-[10px] uppercase tracking-wider text-white/50 px-2">Featured</span>
-        {/* Dashed line */}
-        <div className="flex-1 border-t border-dashed border-white/20" />
+    <article className="relative h-full min-h-[480px] rounded-2xl border border-white/10 overflow-hidden hover:border-white/20 transition-all duration-300">
+      {/* Image */}
+      <div className="absolute inset-0">
+        {post.featuredImage && (post.featuredImage.startsWith('/') || post.featuredImage.startsWith('http')) ? (
+          <img
+            src={post.featuredImage}
+            alt={post.title}
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+        ) : (
+          <div className={`w-full h-full bg-gradient-to-br ${post.gradient || 'from-gold/30 to-purple-600/20'}`} />
+        )}
+        {/* Overlay gradient */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
       </div>
 
+      {/* Content overlay */}
+      <div className="relative h-full flex flex-col justify-end p-8 md:p-10">
+        {/* Badges */}
+        <div className="flex items-center gap-3 mb-5">
+          <span className="px-3 py-1.5 rounded-full bg-gold text-bg text-xs font-semibold uppercase tracking-wide">
+            {post.category || 'Article'}
+          </span>
+          <span className="text-sm text-white/60">
+            {post.readTime || '5 min read'}
+          </span>
+        </div>
+
+        {/* Title */}
+        <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-4 leading-tight group-hover:text-gold transition-colors">
+          {post.title}
+        </h3>
+
+        {/* Excerpt */}
+        <p className="text-white/60 text-base leading-relaxed line-clamp-2 mb-6 max-w-xl">
+          {post.excerpt}
+        </p>
+
+        {/* Footer: Author & Read More */}
+        <div className="flex items-center justify-between pt-6 border-t border-white/10">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-gold/20 flex items-center justify-center text-gold font-semibold">
+              {post.author?.name?.charAt(0) || 'M'}
+            </div>
+            <div>
+              <div className="text-white text-sm font-medium">{post.author?.name || 'MakeUsLive'}</div>
+              <div className="text-white/40 text-xs">{post.date}</div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 text-gold text-sm font-medium group-hover:gap-3 transition-all">
+            Read Article
+            <ArrowRight size={16} className="transition-transform group-hover:translate-x-0.5" />
+          </div>
+        </div>
+      </div>
+    </article>
+  </Link>
+))
+FeaturedCard.displayName = 'FeaturedCard'
+
+// Standard blog card - Clean card style with proper framing
+const BlogCard = memo(({ post }: { post: PostItem }) => (
+  <Link
+    href={`/blog/${post.slug}`}
+    className="group block h-full"
+  >
+    <article className="h-full rounded-2xl border border-white/10 bg-white/[0.02] overflow-hidden hover:border-white/20 hover:bg-white/[0.04] transition-all duration-300">
       {/* Image */}
-      <div className="relative aspect-[4/3] overflow-hidden">
+      <div className="aspect-[16/10] w-full overflow-hidden bg-white/5">
         {post.featuredImage && (post.featuredImage.startsWith('/') || post.featuredImage.startsWith('http')) ? (
           <img
             src={post.featuredImage}
@@ -98,101 +149,37 @@ const FeaturedCard = memo(({ post }: { post: PostItem }) => (
         ) : (
           <div className={`w-full h-full bg-gradient-to-br ${post.gradient || 'from-gold/20 to-gold/5'}`} />
         )}
+      </div>
 
-        {/* Overlay gradient */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+      {/* Content */}
+      <div className="p-6 md:p-7">
+        {/* Meta: Category & Date */}
+        <div className="flex items-center gap-3 mb-4">
+          <span className="px-2.5 py-1 rounded-full bg-gold/10 text-gold text-xs font-medium">
+            {post.category || 'Article'}
+          </span>
+          <span className="text-xs text-white/40">
+            {post.date}
+          </span>
+        </div>
 
-        {/* Content overlay */}
-        <div className="absolute bottom-0 left-0 right-0 p-6">
-          {/* Badges */}
-          <div className="flex items-center gap-3 mb-4">
-            <span className="px-3 py-1 bg-gold/90 text-bg text-xs font-medium uppercase tracking-wider">
-              {post.category || 'Article'}
-            </span>
-            <span className="text-xs text-white/60 font-mono">
-              {post.readTime || '5 min read'}
-            </span>
-          </div>
+        {/* Title */}
+        <h3 className="text-lg md:text-xl font-semibold text-white mb-3 leading-snug group-hover:text-gold transition-colors line-clamp-2">
+          {post.title}
+        </h3>
 
-          {/* Title */}
-          <h3 className="text-2xl md:text-3xl font-serif font-bold text-white mb-3 leading-tight group-hover:text-gold transition-colors">
-            {post.title}
-          </h3>
+        {/* Excerpt */}
+        <p className="text-white/50 text-sm leading-relaxed line-clamp-2 mb-5">
+          {post.excerpt}
+        </p>
 
-          {/* Excerpt */}
-          <p className="text-white/70 text-sm line-clamp-2 mb-4">
-            {post.excerpt}
-          </p>
-
-          {/* Author */}
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-gold/20 flex items-center justify-center text-gold text-sm font-medium">
-              {post.author?.name?.charAt(0) || 'M'}
-            </div>
-            <div>
-              <div className="text-white text-sm font-medium">{post.author?.name || 'MakeUsLive'}</div>
-              <div className="text-white/50 text-xs">{post.date}</div>
-            </div>
-          </div>
+        {/* Read more */}
+        <div className="flex items-center gap-2 text-gold/80 text-sm font-medium group-hover:text-gold group-hover:gap-3 transition-all">
+          Read Article
+          <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" />
         </div>
       </div>
-    </div>
-  </Link>
-))
-FeaturedCard.displayName = 'FeaturedCard'
-
-// Standard blog card - Magazine grid style
-const BlogCard = memo(({ post }: { post: PostItem }) => (
-  <Link
-    href={`/blog/${post.slug}`}
-    className={cn(
-      'group flex flex-col h-full',
-      'border-r border-b border-white/10',
-      'hover:bg-white/[0.02] transition-colors duration-300'
-    )}
-  >
-    <div className="flex flex-col h-full p-6 md:p-8">
-      {/* Date */}
-      <div className="mb-4 font-mono text-xs font-medium text-white/40 uppercase tracking-widest">
-        {post.date}
-      </div>
-
-      {/* Image */}
-      <div className="aspect-video w-full mb-6 overflow-hidden bg-white/5">
-        {post.featuredImage && (post.featuredImage.startsWith('/') || post.featuredImage.startsWith('http')) ? (
-          <img
-            src={post.featuredImage}
-            alt={post.title}
-            className="w-full h-full object-cover opacity-80 transition-transform duration-700 group-hover:scale-105 group-hover:opacity-100"
-          />
-        ) : (
-          <div className={`w-full h-full bg-gradient-to-br ${post.gradient || 'from-gold/10 to-transparent'} opacity-40`} />
-        )}
-      </div>
-
-      {/* Category */}
-      <div className="mb-3">
-        <span className="text-xs text-gold/80 font-medium uppercase tracking-wider">
-          {post.category || 'Article'}
-        </span>
-      </div>
-
-      {/* Title */}
-      <h3 className="text-xl font-serif font-semibold text-white mb-3 leading-tight group-hover:text-gold transition-colors">
-        {post.title}
-      </h3>
-
-      {/* Excerpt */}
-      <p className="text-white/50 text-sm line-clamp-2 mb-auto">
-        {post.excerpt}
-      </p>
-
-      {/* Read more */}
-      <div className="mt-6 flex items-center gap-2 text-gold text-sm font-medium group-hover:gap-3 transition-all">
-        Read Article
-        <ArrowRight size={14} />
-      </div>
-    </div>
+    </article>
   </Link>
 ))
 BlogCard.displayName = 'BlogCard'
@@ -314,110 +301,162 @@ export default function BlogPage() {
   return (
     <div ref={pageRef} className="min-h-screen bg-bg text-white">
       {/* Hero Section */}
-      <section className="pt-8 pb-12 md:pt-12 md:pb-20">
-        <div className="max-w-[1460px] mx-auto px-6 md:px-8">
+      <section className="pt-32 md:pt-40 pb-16 md:pb-24">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-16">
 
-          {/* Large BLOG Title */}
-          <div className="mb-8 md:mb-12 overflow-hidden">
-            <h1 className="text-[80px] md:text-[140px] lg:text-[180px] font-serif font-bold text-white leading-none tracking-tight">
-              BLOG
+          {/* Page Header */}
+          <header className="mb-16 md:mb-24">
+            {/* Eyebrow */}
+            <p className="text-gold/80 text-sm font-medium uppercase tracking-[0.2em] mb-6">
+              Insights & Stories
+            </p>
+
+            {/* Large Title */}
+            <h1 className="text-6xl md:text-8xl lg:text-9xl font-serif font-bold text-white leading-[0.9] tracking-tight mb-8">
+              Blog
             </h1>
-          </div>
+
+            {/* Subtitle */}
+            <p className="text-white/50 text-lg md:text-xl max-w-2xl leading-relaxed">
+              Dive into well-crafted stories, interviews, and guides designed to inform,
+              inspire, and keep you updated with the latest in tech, design, and creativity.
+            </p>
+          </header>
 
           {/* Category Navigation Bar */}
-          <div className="relative bg-white/5 backdrop-blur-sm mb-12 md:mb-16 overflow-x-auto no-scrollbar">
-            <div className="flex items-center justify-start md:justify-center min-w-max px-4 py-4">
-              {CATEGORIES.map((category, index) => (
-                <div key={category.name} className="flex items-center">
-                  {index > 0 && (
-                    <div className="w-px h-4 bg-white/20 mx-4 md:mx-6" />
+          <nav className="mb-16 md:mb-20">
+            <div className="flex items-center gap-3 overflow-x-auto no-scrollbar pb-2">
+              {CATEGORIES.map((category) => (
+                <button
+                  key={category.name}
+                  onClick={() => setActiveCategory(category.name)}
+                  className={cn(
+                    'flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300',
+                    activeCategory === category.name
+                      ? 'bg-gold text-bg'
+                      : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white border border-white/10'
                   )}
-                  <button
-                    onClick={() => setActiveCategory(category.name)}
-                    className={cn(
-                      'flex items-center gap-2 text-xs md:text-sm uppercase tracking-wider transition-colors whitespace-nowrap',
-                      activeCategory === category.name
-                        ? 'text-gold font-medium'
-                        : 'text-white/60 hover:text-white'
-                    )}
-                  >
-                    {category.name !== 'All' && (
-                      <span className={activeCategory === category.name ? 'text-gold' : 'text-white/40'}>
-                        <CategoryIcon category={category.name} />
-                      </span>
-                    )}
-                    {category.name}
-                  </button>
-                </div>
+                >
+                  {category.name !== 'All' && (
+                    <span className={activeCategory === category.name ? 'text-bg' : 'text-white/40'}>
+                      <CategoryIcon category={category.name} />
+                    </span>
+                  )}
+                  {category.name}
+                </button>
               ))}
             </div>
-          </div>
+          </nav>
 
-          {/* Two Column Layout */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
-            {/* Left Column - Text & Newsletter */}
-            <div className="flex flex-col justify-between">
-              <div className="mb-12">
-                <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white leading-tight mb-6">
+          {/* Featured Section */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
+
+            {/* Left Column - Featured Article */}
+            {featuredPost && (
+              <div className="lg:col-span-7">
+                <div className="mb-6">
+                  <span className="text-xs font-medium uppercase tracking-[0.15em] text-white/40">Featured Article</span>
+                </div>
+                <FeaturedCard post={featuredPost} />
+              </div>
+            )}
+
+            {/* Right Column - Text & Newsletter */}
+            <div className="lg:col-span-5 flex flex-col justify-between">
+              <div className="mb-12 lg:mb-0">
+                <h2 className="text-3xl md:text-4xl font-serif font-bold text-white leading-tight mb-6">
                   A modern magazine<br />for curious minds
                 </h2>
-                <p className="text-white/60 text-lg leading-relaxed max-w-lg">
-                  Dive into well-crafted stories, interviews, and guides designed to inform,
-                  inspire, and keep you updated with the latest in tech, design, and creativity.
+                <p className="text-white/50 text-base leading-relaxed mb-8">
+                  Stories and insights from the intersection of design, technology, and creativity.
+                  Written by practitioners, for practitioners.
                 </p>
+
+                {/* Stats */}
+                <div className="flex gap-8 mb-10 pb-10 border-b border-white/10">
+                  <div>
+                    <div className="text-3xl font-bold text-gold mb-1">50+</div>
+                    <div className="text-xs text-white/40 uppercase tracking-wider">Articles</div>
+                  </div>
+                  <div>
+                    <div className="text-3xl font-bold text-gold mb-1">10K+</div>
+                    <div className="text-xs text-white/40 uppercase tracking-wider">Readers</div>
+                  </div>
+                  <div>
+                    <div className="text-3xl font-bold text-gold mb-1">Weekly</div>
+                    <div className="text-xs text-white/40 uppercase tracking-wider">Updates</div>
+                  </div>
+                </div>
               </div>
 
               <HeroNewsletter />
             </div>
-
-            {/* Right Column - Featured Article */}
-            {featuredPost && (
-              <div className="h-full min-h-[500px]">
-                <FeaturedCard post={featuredPost} />
-              </div>
-            )}
           </div>
         </div>
       </section>
 
       {/* Blog Grid */}
-      <section id="blog-grid" className="bg-bg border-t border-white/10">
-        <div className="max-w-[1920px] mx-auto">
+      <section id="blog-grid" className="py-20 md:py-28">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-16">
+          {/* Section Header */}
+          <div className="flex items-end justify-between mb-12 pb-8 border-b border-white/10">
+            <div>
+              <p className="text-gold/80 text-sm font-medium uppercase tracking-[0.15em] mb-3">
+                Latest Posts
+              </p>
+              <h2 className="text-3xl md:text-4xl font-serif font-bold text-white">
+                All Articles
+              </h2>
+            </div>
+            <p className="hidden md:block text-white/40 text-sm">
+              {gridPosts.length} articles
+            </p>
+          </div>
+
           {loading ? (
-            <div className="flex justify-center py-40">
-              <div className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            <div className="flex justify-center py-32">
+              <div className="flex flex-col items-center gap-4">
+                <div className="w-10 h-10 border-2 border-white/20 border-t-gold rounded-full animate-spin" />
+                <p className="text-white/40 text-sm">Loading articles...</p>
+              </div>
             </div>
           ) : gridPosts.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 border-l border-white/10">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
               {gridPosts.map((post) => (
                 <BlogCard key={post.id} post={post} />
               ))}
             </div>
           ) : (
-            <div className="py-20 text-center text-white/40">
-              <p>No posts found in this category.</p>
+            <div className="py-24 text-center">
+              <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-white/5 flex items-center justify-center">
+                <span className="text-2xl">📝</span>
+              </div>
+              <p className="text-white/50 text-lg mb-2">No posts found</p>
+              <p className="text-white/30 text-sm">Try selecting a different category</p>
             </div>
           )}
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex justify-center items-center gap-4 py-20 border-t border-white/10">
+            <div className="flex justify-center items-center gap-6 pt-16 mt-16 border-t border-white/10">
               <button
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={!hasPreviousPage}
-                className="p-3 rounded-full border border-white/10 hover:bg-white/5 disabled:opacity-20 disabled:hover:bg-transparent transition-colors"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-full border border-white/10 text-white/60 text-sm font-medium hover:bg-white/5 hover:text-white disabled:opacity-30 disabled:hover:bg-transparent disabled:cursor-not-allowed transition-all"
               >
-                <ArrowRight className="rotate-180 text-white" size={20} />
+                <ArrowRight className="rotate-180" size={16} />
+                Previous
               </button>
-              <div className="font-mono text-sm text-white/60">
-                PAGE {currentPage} / {totalPages}
+              <div className="px-4 py-2 rounded-full bg-white/5 font-mono text-sm text-white/60">
+                {currentPage} / {totalPages}
               </div>
               <button
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={!hasNextPage}
-                className="p-3 rounded-full border border-white/10 hover:bg-white/5 disabled:opacity-20 disabled:hover:bg-transparent transition-colors"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-full border border-white/10 text-white/60 text-sm font-medium hover:bg-white/5 hover:text-white disabled:opacity-30 disabled:hover:bg-transparent disabled:cursor-not-allowed transition-all"
               >
-                <ArrowRight className="text-white" size={20} />
+                Next
+                <ArrowRight size={16} />
               </button>
             </div>
           )}
@@ -425,11 +464,25 @@ export default function BlogPage() {
       </section>
 
       {/* Bottom Newsletter */}
-      <section className="border-y border-white/10 bg-bg py-20 px-6">
-        <div className="max-w-xl mx-auto text-center">
-          <h3 className="text-3xl font-serif font-bold mb-4 text-white">Stay in the loop</h3>
-          <p className="text-white/60 mb-8">Get the latest insights on AI and design delivered to your inbox.</p>
+      <section className="py-24 md:py-32 bg-gradient-to-b from-bg to-[#080808]">
+        <div className="max-w-2xl mx-auto px-6 md:px-12 text-center">
+          {/* Icon */}
+          <div className="w-16 h-16 mx-auto mb-8 rounded-2xl bg-gold/10 border border-gold/20 flex items-center justify-center">
+            <span className="text-2xl">✉️</span>
+          </div>
+
+          <h3 className="text-3xl md:text-4xl font-serif font-bold text-white mb-4">
+            Stay in the loop
+          </h3>
+          <p className="text-white/50 text-lg mb-10 max-w-md mx-auto">
+            Get the latest insights on AI and design delivered to your inbox. No spam, ever.
+          </p>
+
           <HeroNewsletter />
+
+          <p className="mt-6 text-xs text-white/30">
+            Join 2,000+ designers and developers
+          </p>
         </div>
       </section>
     </div>
