@@ -209,9 +209,37 @@ export default function BlogPostPage() {
                         <div className="mt-12 pt-8 border-t border-white/5">
                             <p className="text-white/30 text-xs font-medium mb-4 uppercase tracking-widest">Share</p>
                             <div className="flex gap-4">
-                                <button className="text-white/40 hover:text-gold transition-colors"><Twitter size={18} /></button>
-                                <button className="text-white/40 hover:text-gold transition-colors"><Linkedin size={18} /></button>
-                                <button className="text-white/40 hover:text-gold transition-colors"><LinkIcon size={18} /></button>
+                                <button
+                                    onClick={() => window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(window.location.href)}`, '_blank')}
+                                    className="text-white/40 hover:text-gold transition-colors"
+                                    title="Share on Twitter"
+                                >
+                                    <Twitter size={18} />
+                                </button>
+                                <button
+                                    onClick={() => window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`, '_blank')}
+                                    className="text-white/40 hover:text-gold transition-colors"
+                                    title="Share on LinkedIn"
+                                >
+                                    <Linkedin size={18} />
+                                </button>
+                                <button
+                                    onClick={() => window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`, '_blank')}
+                                    className="text-white/40 hover:text-gold transition-colors"
+                                    title="Share on Facebook"
+                                >
+                                    <Facebook size={18} />
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        navigator.clipboard.writeText(window.location.href)
+                                        alert('Link copied to clipboard!')
+                                    }}
+                                    className="text-white/40 hover:text-gold transition-colors"
+                                    title="Copy link"
+                                >
+                                    <LinkIcon size={18} />
+                                </button>
                             </div>
                         </div>
                     </div>
