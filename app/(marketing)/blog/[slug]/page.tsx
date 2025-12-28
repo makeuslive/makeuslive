@@ -303,18 +303,51 @@ export default function BlogPostPage() {
                                 {post.content || post.excerpt}
                             </ReactMarkdown>
                         )}
-
-                        {/* References Section Example (Static for now, could be dynamic) */}
-                        <div className="mt-20 pt-10 border-t border-white/10">
-                            <h3 className="text-xl font-bold text-white mb-6">References & Further Reading</h3>
-                            <ol className="list-decimal list-inside space-y-3 text-sm text-white/40">
-                                <li><a href="#" className="hover:text-gold transition-colors">Documentation and Research</a></li>
-                                <li><a href="#" className="hover:text-gold transition-colors">Case Studies 2024</a></li>
-                                <li><a href="#" className="hover:text-gold transition-colors">Future of Web Design Report</a></li>
-                            </ol>
-                        </div>
                     </article>
                 </main>
+            </div>
+
+            {/* Related Posts Section */}
+            <div className="max-w-[1400px] mx-auto mt-24 pt-16 border-t border-white/10">
+                <div className="flex items-center justify-between mb-10">
+                    <h3 className="text-2xl font-bold text-white">Continue Reading</h3>
+                    <Link href="/blog" className="text-gold hover:text-gold-light transition-colors text-sm flex items-center gap-2">
+                        View all posts <ChevronRight size={16} />
+                    </Link>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {/* Related posts would be fetched from GraphQL in production */}
+                    <div className="group relative rounded-2xl border border-white/10 overflow-hidden bg-white/[0.02] hover:bg-white/[0.04] transition-all">
+                        <div className="p-6">
+                            <span className="text-gold text-xs font-medium uppercase tracking-wider">{post.category}</span>
+                            <h4 className="text-lg font-bold text-white mt-2 mb-3 group-hover:text-gold transition-colors">Explore more in {post.category}</h4>
+                            <p className="text-white/50 text-sm line-clamp-2">Discover more insights and articles in this category.</p>
+                            <Link href={`/blog?category=${post.category}`} className="mt-4 inline-flex items-center gap-2 text-gold text-sm">
+                                Browse {post.category} <ChevronRight size={14} />
+                            </Link>
+                        </div>
+                    </div>
+                    <div className="group relative rounded-2xl border border-white/10 overflow-hidden bg-white/[0.02] hover:bg-white/[0.04] transition-all p-6 flex flex-col justify-center items-center text-center">
+                        <div className="w-12 h-12 rounded-full bg-gold/10 flex items-center justify-center mb-4">
+                            <Share2 size={20} className="text-gold" />
+                        </div>
+                        <h4 className="text-lg font-bold text-white mb-2">Share this article</h4>
+                        <p className="text-white/50 text-sm mb-4">Found this helpful? Share it with others.</p>
+                        <div className="flex gap-3">
+                            <button onClick={() => window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(window.location.href)}`, '_blank')} className="w-10 h-10 rounded-full bg-white/5 hover:bg-gold/20 flex items-center justify-center text-white/60 hover:text-gold transition-all"><Twitter size={16} /></button>
+                            <button onClick={() => window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`, '_blank')} className="w-10 h-10 rounded-full bg-white/5 hover:bg-gold/20 flex items-center justify-center text-white/60 hover:text-gold transition-all"><Linkedin size={16} /></button>
+                            <button onClick={() => { navigator.clipboard.writeText(window.location.href); alert('Copied!') }} className="w-10 h-10 rounded-full bg-white/5 hover:bg-gold/20 flex items-center justify-center text-white/60 hover:text-gold transition-all"><LinkIcon size={16} /></button>
+                        </div>
+                    </div>
+                    <Link href="/contact" className="group relative rounded-2xl border border-gold/30 overflow-hidden bg-gradient-to-br from-gold/10 to-transparent hover:from-gold/20 transition-all p-6 flex flex-col justify-center">
+                        <span className="text-gold text-xs font-medium uppercase tracking-wider mb-2">Let's Work Together</span>
+                        <h4 className="text-lg font-bold text-white mb-2 group-hover:text-gold transition-colors">Start Your Project</h4>
+                        <p className="text-white/50 text-sm mb-4">Ready to build something amazing? Get in touch.</p>
+                        <span className="inline-flex items-center gap-2 text-gold text-sm font-medium">
+                            Contact us <ChevronRight size={14} />
+                        </span>
+                    </Link>
+                </div>
             </div>
 
             {/* Author / Footer CTA */}
@@ -326,7 +359,7 @@ export default function BlogPostPage() {
                 </div>
                 <h3 className="text-3xl font-bold text-white mb-4">MakeUsLive Agency</h3>
                 <p className="text-white/50 max-w-xl mx-auto mb-10">
-                    We help brands build future-ready digital experiences. Looking to simple improvements or a complete overhaul?
+                    We help brands build future-ready digital experiences. Looking for simple improvements or a complete overhaul?
                 </p>
                 <Link
                     href="/contact"
