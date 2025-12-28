@@ -93,6 +93,10 @@ export default function EditBlogPage({ params }: { params: Promise<{ id: string 
     const [lastSaved, setLastSaved] = useState<Date | null>(null)
     const [rightPanel, setRightPanel] = useState<'keywords' | 'seo' | 'workflow' | 'settings'>('keywords')
 
+    // Panel Toggles
+    const [leftPanelOpen, setLeftPanelOpen] = useState(true)
+    const [rightPanelOpen, setRightPanelOpen] = useState(true)
+
     const [form, setForm] = useState<BlogData>({
         id: '',
         title: '',
@@ -258,9 +262,9 @@ export default function EditBlogPage({ params }: { params: Promise<{ id: string 
     const statusConfig = STATUSES.find(s => s.value === form.status) || STATUSES[1]
 
     return (
-        <div className="h-[calc(100vh-3.5rem)] flex flex-col bg-gray-50 -m-6">
+        <div className="h-[calc(100vh-3.5rem)] flex flex-col bg-gray-50 -m-6 relative">
             {/* Top Bar */}
-            <div className="h-16 border-b border-gray-200 flex items-center justify-between px-6 bg-white shrink-0 shadow-sm">
+            <div className="h-16 border-b border-gray-200 flex items-center justify-between px-6 bg-white shrink-0 shadow-sm z-20">
                 <div className="flex items-center gap-4">
                     <Link
                         href="/admin/blog"
@@ -287,9 +291,30 @@ export default function EditBlogPage({ params }: { params: Promise<{ id: string 
                     </div>
                 </div>
 
+                <div className="absolute left-1/2 transform -translate-x-1/2 flex items-center gap-2">
+                    <button
+                        onClick={() => setLeftPanelOpen(!leftPanelOpen)}
+                        className={`p-1.5 rounded-lg transition-colors ${leftPanelOpen ? 'text-blue-600 bg-blue-50' : 'text-gray-400 hover:text-gray-600'}`}
+                        title="Toggle Structure"
+                    >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h7" />
+                        </svg>
+                    </button>
+                    <button
+                        onClick={() => setRightPanelOpen(!rightPanelOpen)}
+                        className={`p-1.5 rounded-lg transition-colors ${rightPanelOpen ? 'text-blue-600 bg-blue-50' : 'text-gray-400 hover:text-gray-600'}`}
+                        title="Toggle Sidebar"
+                    >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </button>
+                </div>
+
                 <div className="flex items-center gap-3">
                     {lastSaved && (
-                        <span className="text-xs text-gray-400">
+                        <span className="text-xs text-gray-400 hidden sm:inline">
                             Saved {lastSaved.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </span>
                     )}
@@ -307,7 +332,7 @@ export default function EditBlogPage({ params }: { params: Promise<{ id: string 
                             rel="noopener noreferrer"
                             className="px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors flex items-center gap-1"
                         >
-                            View Post
+                            View
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                             </svg>
@@ -324,42 +349,28 @@ export default function EditBlogPage({ params }: { params: Promise<{ id: string 
             </div>
 
             {/* Three-Pane Layout */}
-            <div className="flex-1 flex overflow-hidden">
+            <div className="flex-1 flex overflow-hidden relative">
                 {/* Left Panel - Structure */}
-                <div className="w-64 border-r border-gray-200 bg-white overflow-y-auto shrink-0 hidden lg:block">
-                    <div className="p-5">
-                        {/* Document Info */}
-                        <div className="mb-6">
-                            <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Document</h3>
-                            <div className="bg-gray-50 rounded-lg p-3">
-                                <div className="flex items-center justify-between text-sm mb-2">
-                                    <span className="text-gray-500">Words</span>
-                                    <span className="font-semibold text-gray-900">{wordCount.toLocaleString()}</span>
-                                </div>
-                                <div className="flex items-center justify-between text-sm mb-2">
-                                    <span className="text-gray-500">Reading</span>
-                                    <span className="font-semibold text-gray-900">{readTime}</span>
-                                </div>
-                                <div className="flex items-center justify-between text-sm">
-                                    <span className="text-gray-500">Headings</span>
-                                    <span className="font-semibold text-gray-900">{headings.length}</span>
-                                </div>
-                            </div>
-                        </div>
-
+                <div
+                    className={`bg-white border-r border-gray-200 overflow-y-auto shrink-0 transition-all duration-300 ease-in-out ${leftPanelOpen ? 'w-64 opacity-100' : 'w-0 opacity-0 overflow-hidden border-none'
+                        }`}
+                >
+                    <div className="p-5 w-64">
                         {/* SEO Score */}
                         <div className="mb-6">
-                            <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">SEO Score</h3>
-                            <div className="bg-gray-50 rounded-lg p-3">
+                            <div className="flex items-center justify-between mb-2">
+                                <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider">SEO Score</h3>
+                                <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${seoScore >= 80 ? 'bg-green-100 text-green-700' :
+                                        seoScore >= 50 ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'
+                                    }`}>
+                                    {seoScore >= 80 ? 'Good' : seoScore >= 50 ? 'Fair' : 'Needs Work'}
+                                </span>
+                            </div>
+                            <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
                                 <div className="flex items-center justify-between mb-2">
                                     <span className={`text-2xl font-bold ${seoScore >= 80 ? 'text-green-600' :
                                             seoScore >= 50 ? 'text-yellow-600' : 'text-red-500'
                                         }`}>{seoScore}%</span>
-                                    <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${seoScore >= 80 ? 'bg-green-100 text-green-700' :
-                                            seoScore >= 50 ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'
-                                        }`}>
-                                        {seoScore >= 80 ? 'Good' : seoScore >= 50 ? 'Fair' : 'Needs Work'}
-                                    </span>
                                 </div>
                                 <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
                                     <div
@@ -372,31 +383,46 @@ export default function EditBlogPage({ params }: { params: Promise<{ id: string 
                             </div>
                         </div>
 
+                        {/* Document Info */}
+                        <div className="mb-6">
+                            <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Structure</h3>
+                            <div className="grid grid-cols-2 gap-2">
+                                <div className="bg-gray-50 rounded-lg p-2 border border-gray-100 text-center">
+                                    <span className="text-xs text-gray-500 block">Words</span>
+                                    <span className="font-semibold text-gray-900 text-sm">{wordCount.toLocaleString()}</span>
+                                </div>
+                                <div className="bg-gray-50 rounded-lg p-2 border border-gray-100 text-center">
+                                    <span className="text-xs text-gray-500 block">Time</span>
+                                    <span className="font-semibold text-gray-900 text-sm">{readTime}</span>
+                                </div>
+                            </div>
+                        </div>
+
                         {/* Structure Outline */}
-                        <div>
-                            <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Outline</h3>
-                            <div className="space-y-1">
+                        <div className="pb-10">
+                            <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Outline</h3>
+                            <div className="space-y-0.5">
                                 {headings.length === 0 ? (
-                                    <p className="text-sm text-gray-400 italic py-3 text-center bg-gray-50 rounded-lg">
-                                        No headings yet
+                                    <p className="text-xs text-gray-400 italic text-center py-4 bg-gray-50 rounded-lg border border-dashed border-gray-200">
+                                        Use H1-H4 headings
                                     </p>
                                 ) : (
                                     headings.map((h, i) => (
                                         <div
                                             key={i}
-                                            className={`flex items-start gap-2 px-2 py-1.5 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors text-sm ${h.level === 1 ? 'font-semibold text-gray-900' :
-                                                    h.level === 2 ? 'pl-4 text-gray-700' :
-                                                        h.level === 3 ? 'pl-6 text-gray-500 text-xs' :
-                                                            'pl-8 text-gray-400 text-xs'
+                                            className={`flex items-start gap-2 px-2 py-1.5 rounded hover:bg-gray-50 cursor-pointer transition-colors text-xs ${h.level === 1 ? 'font-semibold text-gray-900 bg-gray-50' :
+                                                    h.level === 2 ? 'pl-3 text-gray-700' :
+                                                        h.level === 3 ? 'pl-5 text-gray-600' :
+                                                            'pl-7 text-gray-500'
                                                 }`}
                                         >
-                                            <span className={`shrink-0 w-5 h-5 rounded flex items-center justify-center text-xs font-mono ${h.level === 1 ? 'bg-blue-100 text-blue-700' :
+                                            <span className={`shrink-0 w-4 h-4 rounded flex items-center justify-center font-mono text-[10px] ${h.level === 1 ? 'bg-blue-100 text-blue-700' :
                                                     h.level === 2 ? 'bg-gray-100 text-gray-600' :
                                                         'bg-gray-50 text-gray-400'
                                                 }`}>
                                                 H{h.level}
                                             </span>
-                                            <span className="line-clamp-1">{h.text}</span>
+                                            <span className="line-clamp-1 py-0.5">{h.text}</span>
                                         </div>
                                     ))
                                 )}
@@ -406,25 +432,31 @@ export default function EditBlogPage({ params }: { params: Promise<{ id: string 
                 </div>
 
                 {/* Center Panel - Editor */}
-                <div className="flex-1 overflow-y-auto bg-white">
-                    <div className="max-w-3xl mx-auto px-8 py-8">
+                <div className="flex-1 overflow-y-auto bg-white scroll-smooth relative">
+                    <div className={`max-w-3xl mx-auto px-8 py-8 transition-all duration-300 ${!leftPanelOpen && !rightPanelOpen ? 'max-w-4xl' : ''}`}>
                         {/* Title */}
-                        <input
-                            type="text"
+                        <textarea
                             value={form.title}
                             onChange={(e) => setForm({ ...form, title: e.target.value })}
-                            className="w-full text-4xl font-bold text-gray-900 bg-transparent border-none focus:outline-none focus:ring-0 mb-2 placeholder-gray-300"
+                            className="w-full text-4xl font-bold text-gray-900 bg-transparent border-none focus:outline-none focus:ring-0 mb-4 placeholder-gray-300 resize-none overflow-hidden"
                             placeholder="Post title"
+                            rows={1}
+                            style={{ minHeight: '3rem' }}
+                            onInput={(e) => {
+                                const target = e.target as HTMLTextAreaElement;
+                                target.style.height = 'auto';
+                                target.style.height = target.scrollHeight + 'px';
+                            }}
                         />
 
                         {/* Slug */}
-                        <div className="flex items-center gap-1 text-sm text-gray-400 mb-6 pb-6 border-b border-gray-100">
-                            <span className="text-gray-300">/blog/</span>
+                        <div className="flex items-center gap-1 text-sm text-gray-400 mb-6 pb-6 border-b border-gray-100 group">
+                            <span className="text-gray-300 group-hover:text-blue-400 transition-colors">/blog/</span>
                             <input
                                 type="text"
                                 value={form.slug}
                                 onChange={(e) => setForm({ ...form, slug: e.target.value.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') })}
-                                className="bg-transparent border-none text-gray-500 focus:outline-none focus:ring-0 p-0 min-w-[200px]"
+                                className="bg-transparent border-none text-gray-500 focus:outline-none focus:ring-0 p-0 min-w-[200px] w-full hover:text-blue-600 transition-colors"
                                 placeholder="post-slug"
                             />
                         </div>
@@ -436,13 +468,13 @@ export default function EditBlogPage({ params }: { params: Promise<{ id: string 
                                 value={form.excerpt}
                                 onChange={(e) => setForm({ ...form, excerpt: e.target.value })}
                                 rows={2}
-                                className="w-full text-lg text-gray-600 bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none placeholder-gray-400"
+                                className="w-full text-lg text-gray-600 bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none placeholder-gray-400 transition-shadow hover:bg-white focus:bg-white"
                                 placeholder="Write a brief summary of your post..."
                             />
                         </div>
 
                         {/* Content Editor */}
-                        <div>
+                        <div className="pb-20">
                             <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Content</label>
                             <TiptapEditor
                                 markdown={form.content}
@@ -454,343 +486,335 @@ export default function EditBlogPage({ params }: { params: Promise<{ id: string 
                 </div>
 
                 {/* Right Panel - Context */}
-                <div className="w-80 border-l border-gray-200 bg-white overflow-y-auto shrink-0 hidden xl:block">
-                    {/* Tabs */}
-                    <div className="flex border-b border-gray-200 sticky top-0 bg-white z-10">
-                        {(['keywords', 'seo', 'workflow', 'settings'] as const).map((tab) => (
-                            <button
-                                key={tab}
-                                onClick={() => setRightPanel(tab)}
-                                className={`flex-1 px-2 py-3.5 text-xs font-semibold uppercase tracking-wider transition-colors ${rightPanel === tab
-                                        ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50/50'
-                                        : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
-                                    }`}
-                            >
-                                {tab === 'seo' ? 'SEO' : tab}
-                            </button>
-                        ))}
-                    </div>
+                <div
+                    className={`bg-white border-l border-gray-200 overflow-y-auto shrink-0 transition-all duration-300 ease-in-out ${rightPanelOpen ? 'w-80 opacity-100' : 'w-0 opacity-0 overflow-hidden border-none'
+                        }`}
+                >
+                    <div className="w-80">
+                        {/* Tabs */}
+                        <div className="flex border-b border-gray-200 sticky top-0 bg-white z-10">
+                            {(['keywords', 'seo', 'workflow', 'settings'] as const).map((tab) => (
+                                <button
+                                    key={tab}
+                                    onClick={() => setRightPanel(tab)}
+                                    className={`flex-1 px-2 py-3.5 text-[10px] font-bold uppercase tracking-wider transition-colors ${rightPanel === tab
+                                            ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50/30'
+                                            : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
+                                        }`}
+                                >
+                                    {tab === 'seo' ? 'SEO' : tab}
+                                </button>
+                            ))}
+                        </div>
 
-                    <div className="p-5">
-                        {/* Keywords Tab */}
-                        {rightPanel === 'keywords' && (
-                            <div className="space-y-6">
-                                <div>
-                                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
-                                        Primary Keyword
-                                        <span className="text-red-500 ml-0.5">*</span>
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={form.primaryKeyword}
-                                        onChange={(e) => setForm({ ...form, primaryKeyword: e.target.value })}
-                                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                        placeholder="e.g., AI development"
-                                    />
-                                    {!form.primaryKeyword && (
-                                        <p className="text-xs text-amber-600 mt-2 flex items-center gap-1">
-                                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                                            </svg>
-                                            Required for SEO optimization
-                                        </p>
-                                    )}
-                                </div>
-
-                                <div>
-                                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
-                                        Secondary Keywords
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={secondaryKeywordsInput}
-                                        onChange={(e) => setSecondaryKeywordsInput(e.target.value)}
-                                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                        placeholder="keyword1, keyword2"
-                                    />
-                                    <p className="text-xs text-gray-400 mt-1">Comma separated</p>
-                                </div>
-
-                                <div>
-                                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Category</label>
-                                    <select
-                                        value={form.category}
-                                        onChange={(e) => setForm({ ...form, category: e.target.value })}
-                                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    >
-                                        {CATEGORIES.map((cat) => (
-                                            <option key={cat} value={cat}>{cat}</option>
-                                        ))}
-                                    </select>
-                                </div>
-
-                                <div>
-                                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Tags</label>
-                                    <input
-                                        type="text"
-                                        value={tagsInput}
-                                        onChange={(e) => setTagsInput(e.target.value)}
-                                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                        placeholder="AI, Design, Next.js"
-                                    />
-                                </div>
-
-                                {/* Keyword Usage */}
-                                <div className="pt-4 border-t border-gray-100">
-                                    <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Keyword Optimization</h4>
-                                    {form.primaryKeyword ? (
-                                        <div className="space-y-2">
-                                            <div className={`flex items-center gap-2 p-2 rounded-lg ${seoChecklist.keywordInTitle ? 'bg-green-50' : 'bg-gray-50'}`}>
-                                                <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs ${seoChecklist.keywordInTitle ? 'bg-green-100 text-green-600' : 'bg-gray-200 text-gray-400'}`}>
-                                                    {seoChecklist.keywordInTitle ? '✓' : '○'}
-                                                </span>
-                                                <span className={`text-sm ${seoChecklist.keywordInTitle ? 'text-green-700' : 'text-gray-500'}`}>
-                                                    In title
-                                                </span>
-                                            </div>
-                                            <div className={`flex items-center gap-2 p-2 rounded-lg ${seoChecklist.keywordInContent ? 'bg-green-50' : 'bg-gray-50'}`}>
-                                                <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs ${seoChecklist.keywordInContent ? 'bg-green-100 text-green-600' : 'bg-gray-200 text-gray-400'}`}>
-                                                    {seoChecklist.keywordInContent ? '✓' : '○'}
-                                                </span>
-                                                <span className={`text-sm ${seoChecklist.keywordInContent ? 'text-green-700' : 'text-gray-500'}`}>
-                                                    In content
-                                                </span>
-                                            </div>
-                                        </div>
-                                    ) : (
-                                        <p className="text-sm text-gray-400 italic text-center py-4 bg-gray-50 rounded-lg">
-                                            Set a keyword to track usage
-                                        </p>
-                                    )}
-                                </div>
-                            </div>
-                        )}
-
-                        {/* SEO Tab */}
-                        {rightPanel === 'seo' && (
-                            <div className="space-y-6">
-                                {/* Google Preview */}
-                                <div>
-                                    <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Search Preview</h4>
-                                    <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
-                                        <p className="text-blue-700 text-base font-medium line-clamp-1 hover:underline cursor-pointer">
-                                            {form.seo.metaTitle || form.title || 'Post Title'}
-                                        </p>
-                                        <p className="text-green-700 text-xs mt-0.5">
-                                            makeuslive.com › blog › {form.slug || 'post-slug'}
-                                        </p>
-                                        <p className="text-gray-600 text-sm line-clamp-2 mt-1">
-                                            {form.seo.metaDescription || form.excerpt || 'Add a description to see how it appears in search results...'}
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <label className="flex items-center justify-between text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
-                                        Meta Title
-                                        <span className={`font-normal normal-case ${(form.seo.metaTitle || form.title).length > 60 ? 'text-red-500' : 'text-gray-400'}`}>
-                                            {(form.seo.metaTitle || form.title).length}/60
-                                        </span>
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={form.seo.metaTitle}
-                                        onChange={(e) => setForm({ ...form, seo: { ...form.seo, metaTitle: e.target.value } })}
-                                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        placeholder={form.title || 'SEO Title'}
-                                        maxLength={70}
-                                    />
-                                </div>
-
-                                <div>
-                                    <label className="flex items-center justify-between text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
-                                        Meta Description
-                                        <span className={`font-normal normal-case ${(form.seo.metaDescription || form.excerpt).length > 160 ? 'text-red-500' : 'text-gray-400'}`}>
-                                            {(form.seo.metaDescription || form.excerpt).length}/160
-                                        </span>
-                                    </label>
-                                    <textarea
-                                        value={form.seo.metaDescription}
-                                        onChange={(e) => setForm({ ...form, seo: { ...form.seo, metaDescription: e.target.value } })}
-                                        rows={3}
-                                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                                        placeholder={form.excerpt || 'SEO Description'}
-                                        maxLength={170}
-                                    />
-                                </div>
-
-                                <div>
-                                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Schema Type</label>
-                                    <select
-                                        value={form.seo.schemaType}
-                                        onChange={(e) => setForm({ ...form, seo: { ...form.seo, schemaType: e.target.value as SEOConfig['schemaType'] } })}
-                                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    >
-                                        <option value="Article">Article</option>
-                                        <option value="HowTo">How-To Guide</option>
-                                        <option value="FAQ">FAQ</option>
-                                        <option value="NewsArticle">News Article</option>
-                                    </select>
-                                </div>
-
-                                {/* SEO Checklist */}
-                                <div className="pt-4 border-t border-gray-100">
-                                    <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">SEO Checklist</h4>
-                                    <div className="space-y-2">
-                                        {[
-                                            { key: 'hasKeyword', label: 'Primary keyword set', check: seoChecklist.hasKeyword },
-                                            { key: 'hasTitle', label: 'Title 30+ characters', check: seoChecklist.hasTitle },
-                                            { key: 'hasDescription', label: 'Description 120+ chars', check: seoChecklist.hasDescription },
-                                            { key: 'hasH2', label: 'Has H2 headings', check: seoChecklist.hasH2 },
-                                            { key: 'hasContent', label: '500+ words', check: seoChecklist.hasContent },
-                                            { key: 'hasImage', label: 'Featured image set', check: seoChecklist.hasImage },
-                                        ].map((item) => (
-                                            <div key={item.key} className={`flex items-center gap-2 p-2 rounded-lg ${item.check ? 'bg-green-50' : 'bg-gray-50'}`}>
-                                                <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs ${item.check ? 'bg-green-100 text-green-600' : 'bg-gray-200 text-gray-400'}`}>
-                                                    {item.check ? '✓' : '○'}
-                                                </span>
-                                                <span className={`text-sm ${item.check ? 'text-green-700' : 'text-gray-500'}`}>
-                                                    {item.label}
-                                                </span>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Workflow Tab */}
-                        {rightPanel === 'workflow' && (
-                            <div className="space-y-6">
-                                <div>
-                                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Status</label>
-                                    <select
-                                        value={form.status}
-                                        onChange={(e) => setForm({ ...form, status: e.target.value as BlogData['status'] })}
-                                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    >
-                                        {STATUSES.map((s) => (
-                                            <option key={s.value} value={s.value}>{s.label}</option>
-                                        ))}
-                                    </select>
-                                </div>
-
-                                <div className="flex items-center justify-between p-4 bg-yellow-50 border border-yellow-100 rounded-xl">
-                                    <div className="flex items-center gap-3">
-                                        <span className="text-yellow-500 text-xl">★</span>
-                                        <div>
-                                            <p className="font-medium text-gray-900">Featured Post</p>
-                                            <p className="text-xs text-gray-500">Show on homepage</p>
-                                        </div>
-                                    </div>
-                                    <label className="relative inline-flex items-center cursor-pointer">
+                        <div className="p-5 pb-20">
+                            {/* Keywords Tab */}
+                            {rightPanel === 'keywords' && (
+                                <div className="space-y-6">
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
+                                            Primary Keyword
+                                            <span className="text-red-500 ml-0.5">*</span>
+                                        </label>
                                         <input
-                                            type="checkbox"
-                                            checked={form.featured}
-                                            onChange={(e) => setForm({ ...form, featured: e.target.checked })}
-                                            className="sr-only peer"
+                                            type="text"
+                                            value={form.primaryKeyword}
+                                            onChange={(e) => setForm({ ...form, primaryKeyword: e.target.value })}
+                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                            placeholder="e.g., AI development"
                                         />
-                                        <div className="w-11 h-6 bg-gray-200 peer-focus:ring-4 peer-focus:ring-blue-100 rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
-                                    </label>
-                                </div>
-
-                                <div>
-                                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Priority</label>
-                                    <div className="flex gap-2">
-                                        {(['low', 'medium', 'high'] as const).map((p) => (
-                                            <button
-                                                key={p}
-                                                onClick={() => setForm({ ...form, priority: p })}
-                                                className={`flex-1 py-2 text-sm font-medium rounded-lg capitalize transition-colors ${form.priority === p
-                                                        ? p === 'high' ? 'bg-red-100 text-red-700 border border-red-200' :
-                                                            p === 'medium' ? 'bg-yellow-100 text-yellow-700 border border-yellow-200' :
-                                                                'bg-gray-100 text-gray-700 border border-gray-200'
-                                                        : 'bg-gray-50 text-gray-500 border border-gray-200 hover:bg-gray-100'
-                                                    }`}
-                                            >
-                                                {p}
-                                            </button>
-                                        ))}
+                                        {!form.primaryKeyword && (
+                                            <p className="text-xs text-amber-600 mt-2 flex items-center gap-1 bg-amber-50 p-2 rounded-lg border border-amber-100">
+                                                <svg className="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                                </svg>
+                                                Required for SEO
+                                            </p>
+                                        )}
                                     </div>
-                                </div>
 
-                                <div className="pt-4 space-y-3">
-                                    <button
-                                        onClick={handlePublish}
-                                        disabled={saving}
-                                        className="w-full py-3 bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 transition-colors disabled:opacity-50 shadow-sm"
-                                    >
-                                        Publish Now
-                                    </button>
-                                    <button
-                                        onClick={() => handleSave('draft')}
-                                        disabled={saving}
-                                        className="w-full py-3 text-gray-600 bg-gray-100 font-medium rounded-xl hover:bg-gray-200 transition-colors"
-                                    >
-                                        Save as Draft
-                                    </button>
-                                </div>
-                            </div>
-                        )}
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
+                                            Secondary Keywords
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={secondaryKeywordsInput}
+                                            onChange={(e) => setSecondaryKeywordsInput(e.target.value)}
+                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                            placeholder="keyword1, keyword2"
+                                        />
+                                        <p className="text-xs text-gray-400 mt-1 pl-1">Comma separated</p>
+                                    </div>
 
-                        {/* Settings Tab */}
-                        {rightPanel === 'settings' && (
-                            <div className="space-y-6">
-                                <div>
-                                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Featured Image</label>
-                                    <div className="border-2 border-dashed border-gray-200 rounded-xl overflow-hidden bg-gray-50 hover:bg-gray-100 transition-colors">
-                                        {form.featuredImage ? (
-                                            <div className="relative group">
-                                                <img src={form.featuredImage} alt="Featured" className="w-full h-40 object-cover" />
-                                                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                                    <button
-                                                        onClick={() => setForm({ ...form, featuredImage: '' })}
-                                                        className="px-3 py-1.5 bg-white text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-100 transition-colors"
-                                                    >
-                                                        Remove
-                                                    </button>
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Category</label>
+                                        <select
+                                            value={form.category}
+                                            onChange={(e) => setForm({ ...form, category: e.target.value })}
+                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        >
+                                            {CATEGORIES.map((cat) => (
+                                                <option key={cat} value={cat}>{cat}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Tags</label>
+                                        <input
+                                            type="text"
+                                            value={tagsInput}
+                                            onChange={(e) => setTagsInput(e.target.value)}
+                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                            placeholder="AI, Design, Next.js"
+                                        />
+                                    </div>
+
+                                    {/* Keyword Usage */}
+                                    <div className="pt-4 border-t border-gray-100">
+                                        <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Keyword Optimization</h4>
+                                        {form.primaryKeyword ? (
+                                            <div className="space-y-2">
+                                                <div className={`flex items-center gap-2 p-2 rounded-lg border ${seoChecklist.keywordInTitle ? 'bg-green-50 border-green-100' : 'bg-gray-50 border-gray-100'}`}>
+                                                    <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs shrink-0 ${seoChecklist.keywordInTitle ? 'bg-green-100 text-green-600' : 'bg-gray-200 text-gray-400'}`}>
+                                                        {seoChecklist.keywordInTitle ? '✓' : '○'}
+                                                    </span>
+                                                    <span className={`text-sm ${seoChecklist.keywordInTitle ? 'text-green-700' : 'text-gray-500'}`}>
+                                                        In title
+                                                    </span>
+                                                </div>
+                                                <div className={`flex items-center gap-2 p-2 rounded-lg border ${seoChecklist.keywordInContent ? 'bg-green-50 border-green-100' : 'bg-gray-50 border-gray-100'}`}>
+                                                    <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs shrink-0 ${seoChecklist.keywordInContent ? 'bg-green-100 text-green-600' : 'bg-gray-200 text-gray-400'}`}>
+                                                        {seoChecklist.keywordInContent ? '✓' : '○'}
+                                                    </span>
+                                                    <span className={`text-sm ${seoChecklist.keywordInContent ? 'text-green-700' : 'text-gray-500'}`}>
+                                                        In content
+                                                    </span>
                                                 </div>
                                             </div>
                                         ) : (
-                                            <label className="cursor-pointer block py-10 text-center">
-                                                <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
-                                                <svg className="w-10 h-10 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                                </svg>
-                                                <p className="text-gray-500 text-sm font-medium">
-                                                    {uploading ? 'Uploading...' : 'Click to upload'}
-                                                </p>
-                                                <p className="text-gray-400 text-xs mt-1">PNG, JPG up to 10MB</p>
-                                            </label>
+                                            <p className="text-sm text-gray-400 italic text-center py-4 bg-gray-50 rounded-lg border border-dashed border-gray-200">
+                                                Set primary keyword first
+                                            </p>
                                         )}
                                     </div>
                                 </div>
+                            )}
 
-                                <div className="pt-4 border-t border-gray-100">
-                                    <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Analytics</h4>
-                                    <div className="grid grid-cols-2 gap-3">
-                                        <div className="bg-gray-50 rounded-xl p-4 text-center">
-                                            <p className="text-2xl font-bold text-gray-900">{(form.views || 0).toLocaleString()}</p>
-                                            <p className="text-xs text-gray-500 mt-1">Views</p>
+                            {/* SEO Tab */}
+                            {rightPanel === 'seo' && (
+                                <div className="space-y-6">
+                                    {/* Google Preview */}
+                                    <div>
+                                        <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Search Preview</h4>
+                                        <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow">
+                                            <p className="text-[#1a0dab] text-lg font-normal line-clamp-1 hover:underline cursor-pointer">
+                                                {form.seo.metaTitle || form.title || 'Post Title'}
+                                            </p>
+                                            <div className="flex items-center gap-1 text-sm mt-1">
+                                                <span className="text-[#202124]">makeuslive.com</span>
+                                                <span className="text-[#5f6368]">› blog › {form.slug || 'slug'}</span>
+                                            </div>
+                                            <p className="text-[#4d5156] text-sm line-clamp-2 mt-1">
+                                                {form.seo.metaDescription || form.excerpt || 'Add a description to see how it appears in search results...'}
+                                            </p>
                                         </div>
-                                        <div className="bg-gray-50 rounded-xl p-4 text-center">
-                                            <p className="text-2xl font-bold text-gray-900">{readTime}</p>
-                                            <p className="text-xs text-gray-500 mt-1">Read Time</p>
+                                    </div>
+
+                                    <div>
+                                        <label className="flex items-center justify-between text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
+                                            Meta Title
+                                            <span className={`font-normal normal-case ${(form.seo.metaTitle || form.title).length > 60 ? 'text-red-500' : 'text-gray-400'}`}>
+                                                {(form.seo.metaTitle || form.title).length}/60
+                                            </span>
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={form.seo.metaTitle}
+                                            onChange={(e) => setForm({ ...form, seo: { ...form.seo, metaTitle: e.target.value } })}
+                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                                            placeholder={form.title || 'SEO Title'}
+                                            maxLength={70}
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="flex items-center justify-between text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
+                                            Meta Description
+                                            <span className={`font-normal normal-case ${(form.seo.metaDescription || form.excerpt).length > 160 ? 'text-red-500' : 'text-gray-400'}`}>
+                                                {(form.seo.metaDescription || form.excerpt).length}/160
+                                            </span>
+                                        </label>
+                                        <textarea
+                                            value={form.seo.metaDescription}
+                                            onChange={(e) => setForm({ ...form, seo: { ...form.seo, metaDescription: e.target.value } })}
+                                            rows={3}
+                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none text-sm"
+                                            placeholder={form.excerpt || 'SEO Description'}
+                                            maxLength={170}
+                                        />
+                                    </div>
+
+                                    {/* SEO Checklist */}
+                                    <div className="pt-4 border-t border-gray-100">
+                                        <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">SEO Checklist</h4>
+                                        <div className="space-y-2">
+                                            {[
+                                                { key: 'hasKeyword', label: 'Primary keyword set', check: seoChecklist.hasKeyword },
+                                                { key: 'hasTitle', label: 'Title 30+ characters', check: seoChecklist.hasTitle },
+                                                { key: 'hasDescription', label: 'Description 120+ chars', check: seoChecklist.hasDescription },
+                                                { key: 'hasH2', label: 'Has H2 headings', check: seoChecklist.hasH2 },
+                                                { key: 'hasContent', label: '500+ words', check: seoChecklist.hasContent },
+                                                { key: 'hasImage', label: 'Featured image set', check: seoChecklist.hasImage },
+                                            ].map((item) => (
+                                                <div key={item.key} className={`flex items-center gap-2 p-2 rounded-lg border ${item.check ? 'bg-green-50 border-green-100' : 'bg-gray-50 border-gray-100'}`}>
+                                                    <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs shrink-0 ${item.check ? 'bg-green-100 text-green-600' : 'bg-gray-200 text-gray-400'}`}>
+                                                        {item.check ? '✓' : '○'}
+                                                    </span>
+                                                    <span className={`text-sm ${item.check ? 'text-green-700' : 'text-gray-500'}`}>
+                                                        {item.label}
+                                                    </span>
+                                                </div>
+                                            ))}
                                         </div>
                                     </div>
                                 </div>
+                            )}
 
-                                <div className="pt-4 border-t border-gray-100">
-                                    <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Danger Zone</h4>
-                                    <button
-                                        onClick={() => handleSave('archived')}
-                                        className="w-full py-3 text-red-600 bg-red-50 font-medium rounded-xl hover:bg-red-100 transition-colors border border-red-100"
-                                    >
-                                        Archive Post
-                                    </button>
+                            {/* Workflow Tab */}
+                            {rightPanel === 'workflow' && (
+                                <div className="space-y-6">
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Status</label>
+                                        <select
+                                            value={form.status}
+                                            onChange={(e) => setForm({ ...form, status: e.target.value as BlogData['status'] })}
+                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        >
+                                            {STATUSES.map((s) => (
+                                                <option key={s.value} value={s.value}>{s.label}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+
+                                    <div className="flex items-center justify-between p-4 bg-yellow-50 border border-yellow-100 rounded-xl">
+                                        <div className="flex items-center gap-3">
+                                            <span className="text-yellow-500 text-xl">★</span>
+                                            <div>
+                                                <p className="font-medium text-gray-900">Featured Post</p>
+                                                <p className="text-xs text-gray-500">Show on homepage</p>
+                                            </div>
+                                        </div>
+                                        <label className="relative inline-flex items-center cursor-pointer">
+                                            <input
+                                                type="checkbox"
+                                                checked={form.featured}
+                                                onChange={(e) => setForm({ ...form, featured: e.target.checked })}
+                                                className="sr-only peer"
+                                            />
+                                            <div className="w-11 h-6 bg-gray-200 peer-focus:ring-4 peer-focus:ring-blue-100 rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+                                        </label>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Priority</label>
+                                        <div className="flex gap-2">
+                                            {(['low', 'medium', 'high'] as const).map((p) => (
+                                                <button
+                                                    key={p}
+                                                    onClick={() => setForm({ ...form, priority: p })}
+                                                    className={`flex-1 py-2 text-sm font-medium rounded-lg capitalize transition-colors ${form.priority === p
+                                                            ? p === 'high' ? 'bg-red-100 text-red-700 border border-red-200' :
+                                                                p === 'medium' ? 'bg-yellow-100 text-yellow-700 border border-yellow-200' :
+                                                                    'bg-gray-100 text-gray-700 border border-gray-200'
+                                                            : 'bg-gray-50 text-gray-500 border border-gray-200 hover:bg-gray-100'
+                                                        }`}
+                                                >
+                                                    {p}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <div className="pt-4 space-y-3">
+                                        <button
+                                            onClick={handlePublish}
+                                            disabled={saving}
+                                            className="w-full py-3 bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 transition-colors disabled:opacity-50 shadow-sm shadow-blue-200"
+                                        >
+                                            Publish Now
+                                        </button>
+                                        <button
+                                            onClick={() => handleSave('draft')}
+                                            disabled={saving}
+                                            className="w-full py-3 text-gray-600 bg-gray-100 font-medium rounded-xl hover:bg-gray-200 transition-colors"
+                                        >
+                                            Save as Draft
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
-                        )}
+                            )}
+
+                            {/* Settings Tab */}
+                            {rightPanel === 'settings' && (
+                                <div className="space-y-6">
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Featured Image</label>
+                                        <div className="border-2 border-dashed border-gray-200 rounded-xl overflow-hidden bg-gray-50 hover:bg-gray-100 transition-colors">
+                                            {form.featuredImage ? (
+                                                <div className="relative group">
+                                                    <img src={form.featuredImage} alt="Featured" className="w-full h-40 object-cover" />
+                                                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                        <button
+                                                            onClick={() => setForm({ ...form, featuredImage: '' })}
+                                                            className="px-3 py-1.5 bg-white text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-100 transition-colors"
+                                                        >
+                                                            Remove
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <label className="cursor-pointer block py-10 text-center">
+                                                    <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
+                                                    <svg className="w-10 h-10 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                    </svg>
+                                                    <p className="text-gray-500 text-sm font-medium">
+                                                        {uploading ? 'Uploading...' : 'Click to upload'}
+                                                    </p>
+                                                    <p className="text-gray-400 text-xs mt-1">PNG, JPG up to 10MB</p>
+                                                </label>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div className="pt-4 border-t border-gray-100">
+                                        <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Analytics</h4>
+                                        <div className="grid grid-cols-2 gap-3">
+                                            <div className="bg-gray-50 rounded-xl p-4 text-center border border-gray-100">
+                                                <p className="text-2xl font-bold text-gray-900">{(form.views || 0).toLocaleString()}</p>
+                                                <p className="text-xs text-gray-500 mt-1">Views</p>
+                                            </div>
+                                            <div className="bg-gray-50 rounded-xl p-4 text-center border border-gray-100">
+                                                <p className="text-2xl font-bold text-gray-900">{readTime}</p>
+                                                <p className="text-xs text-gray-500 mt-1">Read Time</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="pt-4 border-t border-gray-100">
+                                        <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Danger Zone</h4>
+                                        <button
+                                            onClick={() => handleSave('archived')}
+                                            className="w-full py-3 text-red-600 bg-red-50 font-medium rounded-xl hover:bg-red-100 transition-colors border border-red-100"
+                                        >
+                                            Archive Post
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>
