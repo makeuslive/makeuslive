@@ -111,24 +111,71 @@ export interface StepItem {
 }
 
 /**
- * Blog post item
+ * SEO Configuration
+ */
+export interface SEOConfig {
+  metaTitle?: string
+  metaDescription?: string
+  canonicalUrl?: string
+  schemaType?: 'Article' | 'HowTo' | 'FAQ' | 'NewsArticle'
+  noIndex?: boolean
+  noFollow?: boolean
+}
+
+/**
+ * Author profile
+ */
+export interface AuthorItem {
+  id: string
+  name: string
+  slug?: string
+  role?: string
+  bio?: string
+  avatar?: string
+  twitter?: string
+  linkedin?: string
+}
+
+/**
+ * Blog post item - Enhanced for CMS
  */
 export interface PostItem {
   id: string
   title: string
   excerpt: string
   date: string
-  author: {
-    name: string
-    avatar: string
-  }
-  image: string
+  author?: AuthorItem
+  authorId?: string
+  image?: string
   featuredImage?: string
   category: string
   slug: string
+  content?: string
+  tags?: string[]
+  
+  // CMS Fields
   featured?: boolean
+  priority?: 'low' | 'medium' | 'high'
+  status?: 'idea' | 'draft' | 'review' | 'seo_review' | 'scheduled' | 'published' | 'archived'
+  
+  // SEO
+  seo?: SEOConfig
+  primaryKeyword?: string
+  secondaryKeywords?: string[]
+  
+  // Computed
   readTime?: string
+  wordCount?: number
   gradient?: string
+  
+  // Timestamps
+  createdAt?: string
+  updatedAt?: string
+  publishedAt?: string
+  scheduledAt?: string
+  
+  // Analytics
+  views?: number
 }
 
 /**

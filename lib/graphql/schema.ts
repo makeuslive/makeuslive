@@ -1,4 +1,4 @@
-// GraphQL Type Definitions
+// GraphQL Type Definitions - Professional CMS Schema
 export const typeDefs = `#graphql
   # Testimonial type
   type Testimonial {
@@ -30,7 +30,29 @@ export const typeDefs = `#graphql
     createdAt: String
   }
 
-  # Blog Post type
+  # SEO Configuration for Blog Posts
+  type BlogSEO {
+    metaTitle: String
+    metaDescription: String
+    canonicalUrl: String
+    schemaType: String
+    noIndex: Boolean
+    noFollow: Boolean
+  }
+
+  # Author type
+  type Author {
+    id: ID!
+    name: String!
+    slug: String
+    role: String
+    bio: String
+    avatar: String
+    twitter: String
+    linkedin: String
+  }
+
+  # Enhanced Blog Post type with CMS features
   type BlogPost {
     id: ID!
     title: String!
@@ -40,12 +62,35 @@ export const typeDefs = `#graphql
     category: String
     tags: [String!]
     featuredImage: String
+    
+    # CMS Fields
+    featured: Boolean
+    priority: String
     status: String
+    
+    # SEO
+    seo: BlogSEO
+    primaryKeyword: String
+    secondaryKeywords: [String!]
+    
+    # Author
+    author: Author
+    authorId: String
+    
+    # Computed
     date: String
     readTime: String
+    wordCount: Int
     gradient: String
+    
+    # Timestamps
     createdAt: String
+    updatedAt: String
     publishedAt: String
+    scheduledAt: String
+    
+    # Analytics
+    views: Int
   }
 
   # Newsletter Subscriber
@@ -87,10 +132,15 @@ export const typeDefs = `#graphql
     works: [Work!]!
     work(id: ID!): Work
     
-    # Blog
-    blogPosts(status: String, category: String, page: Int, limit: Int): PaginatedBlogResponse!
+    # Blog - Enhanced with featured filter
+    blogPosts(status: String, category: String, featured: Boolean, page: Int, limit: Int): PaginatedBlogResponse!
     blogPost(id: Int): BlogPost
     blogPostBySlug(slug: String!): BlogPost
+    featuredPosts(limit: Int): [BlogPost!]!
+    
+    # Authors
+    authors: [Author!]!
+    author(id: ID!): Author
     
     # Newsletter
     subscribers: [Subscriber!]!
@@ -98,6 +148,16 @@ export const typeDefs = `#graphql
     # Contacts
     contacts: [Contact!]!
     contact(id: ID!): Contact
+  }
+
+  # SEO Input
+  input BlogSEOInput {
+    metaTitle: String
+    metaDescription: String
+    canonicalUrl: String
+    schemaType: String
+    noIndex: Boolean
+    noFollow: Boolean
   }
 
   # Input types for mutations
@@ -124,6 +184,7 @@ export const typeDefs = `#graphql
     order: Int
   }
 
+  # Enhanced BlogPost Input
   input BlogPostInput {
     title: String!
     slug: String!
@@ -133,6 +194,31 @@ export const typeDefs = `#graphql
     tags: [String!]
     featuredImage: String
     status: String
+    
+    # CMS Fields
+    featured: Boolean
+    priority: String
+    
+    # SEO
+    seo: BlogSEOInput
+    primaryKeyword: String
+    secondaryKeywords: [String!]
+    
+    # Author
+    authorId: String
+    
+    # Scheduling
+    scheduledAt: String
+  }
+
+  input AuthorInput {
+    name: String!
+    slug: String
+    role: String
+    bio: String
+    avatar: String
+    twitter: String
+    linkedin: String
   }
 
   # Mutation type - all write operations
@@ -147,10 +233,16 @@ export const typeDefs = `#graphql
     updateWork(id: ID!, input: WorkInput!): Work
     deleteWork(id: ID!): Boolean
     
-    # Blog
+    # Blog - Enhanced
     createBlogPost(input: BlogPostInput!): BlogPost
     updateBlogPost(id: ID!, input: BlogPostInput!): BlogPost
     deleteBlogPost(id: ID!): Boolean
+    toggleFeatured(id: ID!): BlogPost
+    
+    # Authors
+    createAuthor(input: AuthorInput!): Author
+    updateAuthor(id: ID!, input: AuthorInput!): Author
+    deleteAuthor(id: ID!): Boolean
     
     # Newsletter
     subscribe(email: String!): Subscriber

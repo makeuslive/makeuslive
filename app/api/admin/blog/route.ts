@@ -4,11 +4,11 @@ import { ObjectId } from 'mongodb'
 
 const COLLECTION_NAME = 'blog_posts'
 
-// GET - Fetch all blog posts
+// GET - Fetch all blog posts with CMS fields
 export async function GET() {
   try {
     const collection = await getCollection(COLLECTION_NAME)
-    const posts = await collection.find({}).sort({ createdAt: -1 }).toArray()
+    const posts = await collection.find({}).sort({ featured: -1, createdAt: -1 }).toArray()
     
     const formatted = posts.map(doc => ({
       id: doc._id.toString(),
@@ -17,10 +17,35 @@ export async function GET() {
       excerpt: doc.excerpt,
       content: doc.content,
       category: doc.category,
-      tags: doc.tags,
+      tags: doc.tags || [],
       featuredImage: doc.featuredImage,
+      
+      // CMS Fields
+      featured: doc.featured || false,
+      priority: doc.priority || 'medium',
       status: doc.status || 'draft',
+      
+      // Keywords
+      primaryKeyword: doc.primaryKeyword || '',
+      secondaryKeywords: doc.secondaryKeywords || [],
+      
+      // SEO
+      seo: doc.seo || {
+        metaTitle: doc.title,
+        metaDescription: doc.excerpt,
+        schemaType: 'Article',
+        noIndex: false,
+        noFollow: false,
+      },
+      
+      // Analytics
+      views: doc.views || 0,
+      readTime: calculateReadTime(doc.content),
+      wordCount: calculateWordCount(doc.content),
+      
+      // Timestamps
       createdAt: doc.createdAt,
+      updatedAt: doc.updatedAt,
       publishedAt: doc.publishedAt,
     }))
     
@@ -31,11 +56,14 @@ export async function GET() {
   }
 }
 
-// POST - Create new blog post
+// POST - Create new blog post with CMS fields
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { title, slug, excerpt, content, category, tags, featuredImage, status } = body
+    const { 
+      title, slug, excerpt, content, category, tags, featuredImage, status,
+      featured, priority, primaryKeyword, secondaryKeywords, seo 
+    } = body
 
     if (!title || !slug) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
@@ -49,6 +77,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Slug already exists' }, { status: 400 })
     }
 
+    const now = new Date().toISOString()
+    
     const result = await collection.insertOne({
       title,
       slug,
@@ -57,9 +87,31 @@ export async function POST(request: NextRequest) {
       category: category || 'General',
       tags: tags || [],
       featuredImage: featuredImage || '',
+      
+      // CMS Fields
+      featured: featured || false,
+      priority: priority || 'medium',
       status: status || 'draft',
-      createdAt: new Date().toISOString(),
-      publishedAt: status === 'published' ? new Date().toISOString() : null,
+      
+      // Keywords
+      primaryKeyword: primaryKeyword || '',
+      secondaryKeywords: secondaryKeywords || [],
+      
+      // SEO
+      seo: seo || {
+        metaTitle: title,
+        metaDescription: excerpt || '',
+        schemaType: 'Article',
+        noIndex: false,
+        noFollow: false,
+      },
+      
+      // Analytics
+      views: 0,
+      
+      // Timestamps
+      createdAt: now,
+      publishedAt: status === 'published' ? now : null,
     })
 
     return NextResponse.json({ 
@@ -72,11 +124,14 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// PUT - Update blog post
+// PUT - Update blog post with CMS fields
 export async function PUT(request: NextRequest) {
   try {
     const body = await request.json()
-    const { id, title, slug, excerpt, content, category, tags, featuredImage, status } = body
+    const { 
+      id, title, slug, excerpt, content, category, tags, featuredImage, status,
+      featured, priority, primaryKeyword, secondaryKeywords, seo 
+    } = body
 
     if (!id) {
       return NextResponse.json({ error: 'Missing post ID' }, { status: 400 })
@@ -93,6 +148,19 @@ export async function PUT(request: NextRequest) {
       tags,
       featuredImage,
       status,
+      
+      // CMS Fields
+      featured: featured ?? false,
+      priority: priority || 'medium',
+      
+      // Keywords
+      primaryKeyword: primaryKeyword || '',
+      secondaryKeywords: secondaryKeywords || [],
+      
+      // SEO
+      seo: seo || {},
+      
+      // Timestamp
       updatedAt: new Date().toISOString(),
     }
 
@@ -135,3 +203,18 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ error: 'Failed to delete post' }, { status: 500 })
   }
 }
+
+// Helper functions
+function calculateReadTime(content: string): string {
+  if (!content) return '1 min'
+  const wordsPerMinute = 200
+  const words = content.split(/\s+/).filter(Boolean).length
+  const minutes = Math.max(1, Math.ceil(words / wordsPerMinute))
+  return `${minutes} min`
+}
+
+function calculateWordCount(content: string): number {
+  if (!content) return 0
+  return content.split(/\s+/).filter(Boolean).length
+}
+

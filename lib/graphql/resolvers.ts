@@ -16,6 +16,11 @@ function calculateReadTime(content: string): string {
   return `${minutes} min`
 }
 
+function calculateWordCount(content: string): number {
+  if (!content) return 0
+  return content.split(/\s+/).filter(Boolean).length
+}
+
 function getCategoryGradient(category: string): string {
   const gradients: Record<string, string> = {
     'AI & Technology': 'from-blue-500/20 to-purple-500/10',
@@ -23,8 +28,59 @@ function getCategoryGradient(category: string): string {
     'Development': 'from-green-500/20 to-emerald-500/10',
     'UX Research': 'from-amber-500/20 to-yellow-500/10',
     'Animation': 'from-cyan-500/20 to-teal-500/10',
+    'Business': 'from-indigo-500/20 to-blue-500/10',
+    'Tutorial': 'from-orange-500/20 to-red-500/10',
   }
   return gradients[category] || 'from-gold/20 to-amber-500/10'
+}
+
+// Transform blog post document to GraphQL response
+function transformBlogPost(doc: any) {
+  return {
+    id: doc._id.toString(),
+    title: doc.title,
+    slug: doc.slug,
+    excerpt: doc.excerpt,
+    content: doc.content,
+    category: doc.category,
+    tags: doc.tags || [],
+    featuredImage: doc.featuredImage,
+    
+    // CMS Fields
+    featured: doc.featured || false,
+    priority: doc.priority || 'medium',
+    status: doc.status || 'draft',
+    
+    // SEO
+    seo: doc.seo || {
+      metaTitle: doc.title,
+      metaDescription: doc.excerpt,
+      schemaType: 'Article',
+      noIndex: false,
+      noFollow: false,
+    },
+    primaryKeyword: doc.primaryKeyword || '',
+    secondaryKeywords: doc.secondaryKeywords || [],
+    
+    // Author
+    authorId: doc.authorId,
+    author: doc.author || null,
+    
+    // Computed
+    date: formatDate(doc.publishedAt || doc.createdAt),
+    readTime: calculateReadTime(doc.content),
+    wordCount: calculateWordCount(doc.content),
+    gradient: getCategoryGradient(doc.category),
+    
+    // Timestamps
+    createdAt: doc.createdAt,
+    updatedAt: doc.updatedAt,
+    publishedAt: doc.publishedAt,
+    scheduledAt: doc.scheduledAt,
+    
+    // Analytics
+    views: doc.views || 0,
+  }
 }
 
 // Define types for resolver context and args
@@ -46,6 +102,15 @@ interface WorkInput {
   order?: number
 }
 
+interface BlogSEOInput {
+  metaTitle?: string
+  metaDescription?: string
+  canonicalUrl?: string
+  schemaType?: string
+  noIndex?: boolean
+  noFollow?: boolean
+}
+
 interface BlogPostInput {
   title: string
   slug: string
@@ -55,6 +120,23 @@ interface BlogPostInput {
   tags?: string[]
   featuredImage?: string
   status?: string
+  featured?: boolean
+  priority?: string
+  seo?: BlogSEOInput
+  primaryKeyword?: string
+  secondaryKeywords?: string[]
+  authorId?: string
+  scheduledAt?: string
+}
+
+interface AuthorInput {
+  name: string
+  slug?: string
+  role?: string
+  bio?: string
+  avatar?: string
+  twitter?: string
+  linkedin?: string
 }
 
 // GraphQL Resolvers
@@ -126,36 +208,33 @@ export const resolvers = {
       }
     },
 
-    // Blog Posts
-    blogPosts: async (_: unknown, { status, category, page = 1, limit = 9 }: { status?: string; category?: string; page?: number; limit?: number }) => {
+    // Blog Posts - Enhanced with featured filter
+    blogPosts: async (_: unknown, { status, category, featured, page = 1, limit = 9 }: { 
+      status?: string; 
+      category?: string; 
+      featured?: boolean;
+      page?: number; 
+      limit?: number 
+    }) => {
       const collection = await getCollection('blog_posts')
-      const query: any = {}
+      const query: Record<string, unknown> = {}
+      
       if (status) query.status = status
       if (category && category !== 'All') query.category = category
+      if (featured !== undefined) query.featured = featured
       
       const skip = (page - 1) * limit
       const totalCount = await collection.countDocuments(query)
       const totalPages = Math.ceil(totalCount / limit)
       
-      const cursor = collection.find(query).sort({ publishedAt: -1 }).skip(skip).limit(limit)
+      // Sort by featured first (if published), then by publishedAt
+      const cursor = collection.find(query)
+        .sort({ featured: -1, publishedAt: -1 })
+        .skip(skip)
+        .limit(limit)
       const docs = await cursor.toArray()
       
-      const posts = docs.map(doc => ({
-        id: doc._id.toString(),
-        title: doc.title,
-        slug: doc.slug,
-        excerpt: doc.excerpt,
-        content: doc.content,
-        category: doc.category,
-        tags: doc.tags || [],
-        featuredImage: doc.featuredImage,
-        status: doc.status,
-        date: formatDate(doc.publishedAt || doc.createdAt),
-        readTime: calculateReadTime(doc.content),
-        gradient: getCategoryGradient(doc.category),
-        createdAt: doc.createdAt,
-        publishedAt: doc.publishedAt,
-      }))
+      const posts = docs.map(transformBlogPost)
 
       return {
         posts,
@@ -167,48 +246,71 @@ export const resolvers = {
       }
     },
     
+    // Featured posts query
+    featuredPosts: async (_: unknown, { limit = 5 }: { limit?: number }) => {
+      const collection = await getCollection('blog_posts')
+      const docs = await collection.find({ 
+        featured: true, 
+        status: 'published' 
+      })
+        .sort({ publishedAt: -1 })
+        .limit(limit)
+        .toArray()
+      
+      return docs.map(transformBlogPost)
+    },
+    
     blogPost: async (_: unknown, { id }: { id?: string }) => {
       if (!id) return null
       const collection = await getCollection('blog_posts')
       const doc = await collection.findOne({ _id: new ObjectId(id) })
       if (!doc) return null
-      return {
-        id: doc._id.toString(),
-        title: doc.title,
-        slug: doc.slug,
-        excerpt: doc.excerpt,
-        content: doc.content,
-        category: doc.category,
-        tags: doc.tags || [],
-        featuredImage: doc.featuredImage,
-        status: doc.status,
-        date: formatDate(doc.publishedAt || doc.createdAt),
-        readTime: calculateReadTime(doc.content),
-        gradient: getCategoryGradient(doc.category),
-        createdAt: doc.createdAt,
-        publishedAt: doc.publishedAt,
-      }
+      return transformBlogPost(doc)
     },
     
     blogPostBySlug: async (_: unknown, { slug }: { slug: string }) => {
       const collection = await getCollection('blog_posts')
       const doc = await collection.findOne({ slug })
       if (!doc) return null
+      
+      // Increment view count
+      await collection.updateOne(
+        { slug },
+        { $inc: { views: 1 } }
+      )
+      
+      return transformBlogPost(doc)
+    },
+
+    // Authors
+    authors: async () => {
+      const collection = await getCollection('authors')
+      const docs = await collection.find({}).sort({ name: 1 }).toArray()
+      return docs.map(doc => ({
+        id: doc._id.toString(),
+        name: doc.name,
+        slug: doc.slug,
+        role: doc.role,
+        bio: doc.bio,
+        avatar: doc.avatar,
+        twitter: doc.twitter,
+        linkedin: doc.linkedin,
+      }))
+    },
+    
+    author: async (_: unknown, { id }: { id: string }) => {
+      const collection = await getCollection('authors')
+      const doc = await collection.findOne({ _id: new ObjectId(id) })
+      if (!doc) return null
       return {
         id: doc._id.toString(),
-        title: doc.title,
+        name: doc.name,
         slug: doc.slug,
-        excerpt: doc.excerpt,
-        content: doc.content,
-        category: doc.category,
-        tags: doc.tags || [],
-        featuredImage: doc.featuredImage,
-        status: doc.status,
-        date: formatDate(doc.publishedAt || doc.createdAt),
-        readTime: calculateReadTime(doc.content),
-        gradient: getCategoryGradient(doc.category),
-        createdAt: doc.createdAt,
-        publishedAt: doc.publishedAt,
+        role: doc.role,
+        bio: doc.bio,
+        avatar: doc.avatar,
+        twitter: doc.twitter,
+        linkedin: doc.linkedin,
       }
     },
 
@@ -313,35 +415,97 @@ export const resolvers = {
       return true
     },
 
-    // Blog Posts
+    // Blog Posts - Enhanced
     createBlogPost: async (_: unknown, { input }: { input: BlogPostInput }) => {
       const collection = await getCollection('blog_posts')
       const now = new Date().toISOString()
-      const result = await collection.insertOne({
+      
+      const postData = {
         ...input,
+        featured: input.featured || false,
+        priority: input.priority || 'medium',
         status: input.status || 'draft',
+        seo: input.seo || {
+          metaTitle: input.title,
+          metaDescription: input.excerpt,
+          schemaType: 'Article',
+          noIndex: false,
+          noFollow: false,
+        },
+        views: 0,
         createdAt: now,
         publishedAt: input.status === 'published' ? now : null,
-      })
-      return { id: result.insertedId.toString(), ...input }
+      }
+      
+      const result = await collection.insertOne(postData)
+      return transformBlogPost({ _id: result.insertedId, ...postData })
     },
     
     updateBlogPost: async (_: unknown, { id, input }: { id: string; input: BlogPostInput }) => {
       const collection = await getCollection('blog_posts')
       const existing = await collection.findOne({ _id: new ObjectId(id) })
+      
       const updateData: Record<string, unknown> = {
         ...input,
         updatedAt: new Date().toISOString(),
       }
+      
+      // Set publishedAt when first published
       if (input.status === 'published' && !existing?.publishedAt) {
         updateData.publishedAt = new Date().toISOString()
       }
+      
       await collection.updateOne({ _id: new ObjectId(id) }, { $set: updateData })
-      return { id, ...input }
+      
+      const updated = await collection.findOne({ _id: new ObjectId(id) })
+      return updated ? transformBlogPost(updated) : null
     },
     
     deleteBlogPost: async (_: unknown, { id }: { id: string }) => {
       const collection = await getCollection('blog_posts')
+      await collection.deleteOne({ _id: new ObjectId(id) })
+      return true
+    },
+    
+    // Toggle featured status
+    toggleFeatured: async (_: unknown, { id }: { id: string }) => {
+      const collection = await getCollection('blog_posts')
+      const doc = await collection.findOne({ _id: new ObjectId(id) })
+      if (!doc) return null
+      
+      const newFeatured = !doc.featured
+      await collection.updateOne(
+        { _id: new ObjectId(id) },
+        { $set: { featured: newFeatured, updatedAt: new Date().toISOString() } }
+      )
+      
+      const updated = await collection.findOne({ _id: new ObjectId(id) })
+      return updated ? transformBlogPost(updated) : null
+    },
+
+    // Authors
+    createAuthor: async (_: unknown, { input }: { input: AuthorInput }) => {
+      const collection = await getCollection('authors')
+      const slug = input.slug || input.name.toLowerCase().replace(/\s+/g, '-')
+      const result = await collection.insertOne({
+        ...input,
+        slug,
+        createdAt: new Date().toISOString(),
+      })
+      return { id: result.insertedId.toString(), ...input, slug }
+    },
+    
+    updateAuthor: async (_: unknown, { id, input }: { id: string; input: AuthorInput }) => {
+      const collection = await getCollection('authors')
+      await collection.updateOne(
+        { _id: new ObjectId(id) },
+        { $set: { ...input, updatedAt: new Date().toISOString() } }
+      )
+      return { id, ...input }
+    },
+    
+    deleteAuthor: async (_: unknown, { id }: { id: string }) => {
+      const collection = await getCollection('authors')
       await collection.deleteOne({ _id: new ObjectId(id) })
       return true
     },
