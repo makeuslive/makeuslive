@@ -58,11 +58,12 @@ export const COPY = {
   },
   nav: {
     links: [
-      { label: 'Home', href: '/' },
+      { label: 'Work', href: '/works' },
+      { label: 'Services', href: '/services' },
       { label: 'Blog', href: '/blog' },
-      { label: 'Podcast', href: '/podcast', badge: '5' },
+      { label: 'About', href: '/about' },
     ],
-    cta: 'Subscribe',
+    cta: 'Get in Touch',
   },
   hero: {
     greeting: 'नमस्ते',
