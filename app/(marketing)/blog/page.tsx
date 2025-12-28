@@ -127,10 +127,10 @@ const FeaturedCard = memo(({ post }: { post: PostItem }) => (
           {/* Author */}
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-gold/20 flex items-center justify-center text-gold text-sm font-medium">
-              {post.author?.charAt(0) || 'M'}
+              {post.author?.name?.charAt(0) || 'M'}
             </div>
             <div>
-              <div className="text-white text-sm font-medium">{post.author || 'MakeUsLive'}</div>
+              <div className="text-white text-sm font-medium">{post.author?.name || 'MakeUsLive'}</div>
               <div className="text-white/50 text-xs">{post.date}</div>
             </div>
           </div>

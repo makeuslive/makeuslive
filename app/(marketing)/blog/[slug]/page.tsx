@@ -16,6 +16,25 @@ if (typeof window !== 'undefined') {
     gsap.registerPlugin(ScrollTrigger)
 }
 
+// Type definitions for GraphQL response
+interface BlogPost {
+    id: string
+    title: string
+    slug: string
+    excerpt: string
+    content: string
+    category: string
+    tags: string[]
+    featuredImage: string
+    date: string
+    readTime: string
+    gradient?: string
+}
+
+interface BlogPostBySlugData {
+    blogPostBySlug: BlogPost | null
+}
+
 // Helper to extract headings from markdown content
 function extractHeadings(content: string) {
     const regex = /^(#{2,3})\s+(.*)$/gm
@@ -38,7 +57,7 @@ export default function BlogPostPage() {
     const { slug } = params
     const [activeId, setActiveId] = useState<string>('')
 
-    const { data, loading, error } = useQuery(GET_BLOG_POST_BY_SLUG, {
+    const { data, loading, error } = useQuery<BlogPostBySlugData>(GET_BLOG_POST_BY_SLUG, {
         variables: { slug: slug },
         skip: !slug,
     })

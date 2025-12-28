@@ -5,7 +5,7 @@ import { ApolloProvider as ApolloClientProvider } from '@apollo/client/react'
 import { ReactNode, useMemo } from 'react'
 
 // Create Apollo Client instance
-function createApolloClient(): ApolloClient<unknown> {
+function createApolloClient() {
     return new ApolloClient({
         ssrMode: typeof window === 'undefined',
         link: new HttpLink({
@@ -39,10 +39,10 @@ function createApolloClient(): ApolloClient<unknown> {
 }
 
 // Singleton for client
-let apolloClient: ApolloClient<unknown> | undefined
+let apolloClient: ApolloClient | undefined
 
 // Get or create Apollo Client
-export function getApolloClient(): ApolloClient<unknown> {
+export function getApolloClient(): ApolloClient {
     const _apolloClient = apolloClient ?? createApolloClient()
 
     // Create new client for server-side
@@ -59,3 +59,5 @@ export function ApolloProvider({ children }: { children: ReactNode }) {
     const client = useMemo(() => getApolloClient(), [])
     return <ApolloClientProvider client={client}>{children}</ApolloClientProvider>
 }
+
+
