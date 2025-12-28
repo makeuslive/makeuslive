@@ -14,20 +14,21 @@ interface BlogPost {
     primaryKeyword?: string
     views?: number
     readTime?: string
+    wordCount?: number
     createdAt: string
     publishedAt?: string
 }
 
 type FilterStatus = 'all' | 'published' | 'draft' | 'review' | 'scheduled' | 'archived'
 
-const STATUS_COLORS: Record<string, string> = {
-    idea: 'bg-gray-500/10 text-gray-400 border-gray-500/20',
-    draft: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20',
-    review: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
-    seo_review: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
-    scheduled: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20',
-    published: 'bg-green-500/10 text-green-400 border-green-500/20',
-    archived: 'bg-orange-500/10 text-orange-400 border-orange-500/20',
+const STATUS_CONFIG: Record<string, { bg: string; text: string; label: string }> = {
+    idea: { bg: 'bg-gray-100', text: 'text-gray-600', label: 'Idea' },
+    draft: { bg: 'bg-yellow-50', text: 'text-yellow-700', label: 'Draft' },
+    review: { bg: 'bg-blue-50', text: 'text-blue-700', label: 'Review' },
+    seo_review: { bg: 'bg-purple-50', text: 'text-purple-700', label: 'SEO Review' },
+    scheduled: { bg: 'bg-cyan-50', text: 'text-cyan-700', label: 'Scheduled' },
+    published: { bg: 'bg-green-50', text: 'text-green-700', label: 'Published' },
+    archived: { bg: 'bg-orange-50', text: 'text-orange-700', label: 'Archived' },
 }
 
 export default function BlogPage() {
@@ -61,7 +62,7 @@ export default function BlogPage() {
     }
 
     const deletePost = async (id: string) => {
-        if (!confirm('Delete this post?')) return
+        if (!confirm('Delete this post? This cannot be undone.')) return
 
         setDeleting(id)
         try {
@@ -90,9 +91,7 @@ export default function BlogPage() {
     }
 
     const filteredPosts = posts.filter((post) => {
-        // Status filter
         if (filter !== 'all' && post.status !== filter) return false
-        // Search filter
         if (searchQuery) {
             const query = searchQuery.toLowerCase()
             return (
@@ -105,14 +104,12 @@ export default function BlogPage() {
         return true
     })
 
-    // Sort: featured first, then by date
     const sortedPosts = [...filteredPosts].sort((a, b) => {
         if (a.featured && !b.featured) return -1
         if (!a.featured && b.featured) return 1
         return new Date(b.publishedAt || b.createdAt).getTime() - new Date(a.publishedAt || a.createdAt).getTime()
     })
 
-    // Stats
     const stats = {
         total: posts.length,
         published: posts.filter(p => p.status === 'published').length,
@@ -123,24 +120,24 @@ export default function BlogPage() {
     if (loading) {
         return (
             <div className="flex items-center justify-center h-64">
-                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gold"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-2 border-gray-200 border-t-blue-600"></div>
             </div>
         )
     }
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 max-w-7xl mx-auto">
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h2 className="text-2xl font-bold text-white">Blog Management</h2>
-                    <p className="text-gray-400 text-sm mt-1">
+                    <h2 className="text-2xl font-bold text-gray-900">Blog Management</h2>
+                    <p className="text-gray-500 text-sm mt-1">
                         {stats.total} posts • {stats.published} published • {stats.featured} featured
                     </p>
                 </div>
                 <Link
                     href="/admin/blog/new"
-                    className="px-5 py-2.5 bg-gradient-to-r from-gold to-amber-500 text-black font-medium rounded-lg hover:opacity-90 transition-opacity flex items-center gap-2"
+                    className="px-4 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 shadow-sm"
                 >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -151,30 +148,29 @@ export default function BlogPage() {
 
             {/* Stats Cards */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="bg-white/5 border border-white/10 rounded-xl p-4">
-                    <p className="text-gray-400 text-sm">Total Posts</p>
-                    <p className="text-2xl font-bold text-white mt-1">{stats.total}</p>
+                <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
+                    <p className="text-gray-500 text-sm">Total Posts</p>
+                    <p className="text-2xl font-bold text-gray-900 mt-1">{stats.total}</p>
                 </div>
-                <div className="bg-green-500/5 border border-green-500/20 rounded-xl p-4">
-                    <p className="text-green-400 text-sm">Published</p>
-                    <p className="text-2xl font-bold text-green-400 mt-1">{stats.published}</p>
+                <div className="bg-white border border-green-100 rounded-xl p-4 shadow-sm">
+                    <p className="text-green-600 text-sm">Published</p>
+                    <p className="text-2xl font-bold text-green-600 mt-1">{stats.published}</p>
                 </div>
-                <div className="bg-yellow-500/5 border border-yellow-500/20 rounded-xl p-4">
-                    <p className="text-yellow-400 text-sm">Drafts</p>
-                    <p className="text-2xl font-bold text-yellow-400 mt-1">{stats.drafts}</p>
+                <div className="bg-white border border-yellow-100 rounded-xl p-4 shadow-sm">
+                    <p className="text-yellow-600 text-sm">Drafts</p>
+                    <p className="text-2xl font-bold text-yellow-600 mt-1">{stats.drafts}</p>
                 </div>
-                <div className="bg-gold/5 border border-gold/20 rounded-xl p-4">
-                    <p className="text-gold text-sm">Featured</p>
-                    <p className="text-2xl font-bold text-gold mt-1">{stats.featured}</p>
+                <div className="bg-white border border-blue-100 rounded-xl p-4 shadow-sm">
+                    <p className="text-blue-600 text-sm">Featured</p>
+                    <p className="text-2xl font-bold text-blue-600 mt-1">{stats.featured}</p>
                 </div>
             </div>
 
             {/* Search & Filters */}
             <div className="flex flex-col md:flex-row gap-4">
-                {/* Search */}
                 <div className="relative flex-1">
                     <svg
-                        className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500"
+                        className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -186,19 +182,18 @@ export default function BlogPage() {
                         placeholder="Search posts, keywords, categories..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold/50"
+                        className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                 </div>
 
-                {/* Status Filters */}
-                <div className="flex gap-2 overflow-x-auto pb-2 md:pb-0">
-                    {(['all', 'published', 'draft', 'review', 'scheduled', 'archived'] as FilterStatus[]).map((f) => (
+                <div className="flex gap-1 bg-white border border-gray-200 rounded-lg p-1">
+                    {(['all', 'published', 'draft', 'review', 'scheduled'] as FilterStatus[]).map((f) => (
                         <button
                             key={f}
                             onClick={() => setFilter(f)}
-                            className={`px-4 py-2 text-sm rounded-lg capitalize whitespace-nowrap transition-all ${filter === f
-                                    ? 'bg-gold/20 text-gold border border-gold/30'
-                                    : 'text-gray-400 hover:bg-white/5 border border-transparent'
+                            className={`px-3 py-1.5 text-sm rounded-md capitalize transition-all ${filter === f
+                                    ? 'bg-blue-50 text-blue-700 font-medium'
+                                    : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
                                 }`}
                         >
                             {f}
@@ -209,57 +204,70 @@ export default function BlogPage() {
 
             {/* Posts Table */}
             {sortedPosts.length === 0 ? (
-                <div className="bg-white/5 border border-white/10 rounded-2xl p-12 text-center">
-                    <svg className="w-12 h-12 text-gray-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                    <p className="text-gray-400 mb-4">
-                        {searchQuery ? 'No posts match your search' : 'No posts found'}
+                <div className="bg-white border border-gray-200 rounded-xl p-12 text-center shadow-sm">
+                    <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                    </div>
+                    <p className="text-gray-500 mb-4">
+                        {searchQuery ? 'No posts match your search' : 'No posts yet'}
                     </p>
-                    <Link href="/admin/blog/new" className="text-gold hover:underline">
-                        Create your first post
+                    <Link
+                        href="/admin/blog/new"
+                        className="text-blue-600 hover:text-blue-700 font-medium"
+                    >
+                        Create your first post →
                     </Link>
                 </div>
             ) : (
-                <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
+                <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
                     <table className="w-full">
                         <thead>
-                            <tr className="border-b border-white/10">
-                                <th className="text-left px-6 py-4 text-sm font-medium text-gray-400">
-                                    <div className="flex items-center gap-2">
-                                        <span className="w-6">★</span>
-                                        Title
-                                    </div>
+                            <tr className="border-b border-gray-100 bg-gray-50/50">
+                                <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                    Post
                                 </th>
-                                <th className="text-left px-6 py-4 text-sm font-medium text-gray-400 hidden lg:table-cell">Keyword</th>
-                                <th className="text-left px-6 py-4 text-sm font-medium text-gray-400">Status</th>
-                                <th className="text-left px-6 py-4 text-sm font-medium text-gray-400 hidden md:table-cell">Views</th>
-                                <th className="text-left px-6 py-4 text-sm font-medium text-gray-400 hidden md:table-cell">Date</th>
-                                <th className="text-right px-6 py-4 text-sm font-medium text-gray-400">Actions</th>
+                                <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider hidden lg:table-cell">
+                                    Keyword
+                                </th>
+                                <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                    Status
+                                </th>
+                                <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider hidden md:table-cell">
+                                    Stats
+                                </th>
+                                <th className="text-right px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                    Actions
+                                </th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody className="divide-y divide-gray-100">
                             {sortedPosts.map((post) => (
-                                <tr key={post.id} className="border-b border-white/5 hover:bg-white/[0.02]">
+                                <tr key={post.id} className="hover:bg-gray-50/50 transition-colors">
                                     <td className="px-6 py-4">
                                         <div className="flex items-start gap-3">
-                                            {/* Featured Toggle */}
                                             <button
                                                 onClick={() => toggleFeatured(post.id)}
                                                 disabled={togglingFeatured === post.id}
-                                                className={`mt-1 text-xl transition-colors ${post.featured
-                                                        ? 'text-gold hover:text-gold/70'
-                                                        : 'text-gray-600 hover:text-gray-400'
+                                                className={`mt-0.5 text-lg transition-all ${post.featured
+                                                        ? 'text-yellow-500 hover:text-yellow-400'
+                                                        : 'text-gray-300 hover:text-gray-400'
                                                     } ${togglingFeatured === post.id ? 'animate-pulse' : ''}`}
                                                 title={post.featured ? 'Remove from featured' : 'Add to featured'}
                                             >
-                                                {post.featured ? '★' : '☆'}
+                                                ★
                                             </button>
                                             <div>
-                                                <p className="text-white font-medium line-clamp-1">{post.title}</p>
-                                                <p className="text-gray-500 text-sm">/blog/{post.slug}</p>
+                                                <Link
+                                                    href={`/admin/blog/${post.id}`}
+                                                    className="text-gray-900 font-medium hover:text-blue-600 transition-colors line-clamp-1"
+                                                >
+                                                    {post.title}
+                                                </Link>
+                                                <p className="text-gray-400 text-sm">/blog/{post.slug}</p>
                                                 {post.category && (
-                                                    <span className="text-xs text-gray-500 mt-1 inline-block">
+                                                    <span className="text-xs text-gray-400 mt-1 inline-block">
                                                         {post.category}
                                                     </span>
                                                 )}
@@ -268,49 +276,60 @@ export default function BlogPage() {
                                     </td>
                                     <td className="px-6 py-4 hidden lg:table-cell">
                                         {post.primaryKeyword ? (
-                                            <span className="text-sm text-blue-400 bg-blue-500/10 px-2 py-1 rounded">
+                                            <span className="text-sm text-blue-600 bg-blue-50 px-2 py-1 rounded font-medium">
                                                 {post.primaryKeyword}
                                             </span>
                                         ) : (
-                                            <span className="text-gray-600 text-sm">—</span>
+                                            <span className="text-gray-300 text-sm">—</span>
                                         )}
                                     </td>
                                     <td className="px-6 py-4">
-                                        <span className={`px-2 py-1 text-xs rounded-full border ${STATUS_COLORS[post.status] || STATUS_COLORS.draft}`}>
-                                            {post.status}
+                                        <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${STATUS_CONFIG[post.status]?.bg || 'bg-gray-100'
+                                            } ${STATUS_CONFIG[post.status]?.text || 'text-gray-600'}`}>
+                                            {STATUS_CONFIG[post.status]?.label || post.status}
                                         </span>
                                     </td>
-                                    <td className="px-6 py-4 text-gray-400 text-sm hidden md:table-cell">
-                                        {post.views?.toLocaleString() || '0'}
-                                    </td>
-                                    <td className="px-6 py-4 text-gray-400 text-sm hidden md:table-cell">
-                                        {new Date(post.publishedAt || post.createdAt).toLocaleDateString()}
+                                    <td className="px-6 py-4 hidden md:table-cell">
+                                        <div className="text-sm text-gray-500">
+                                            <span>{post.views?.toLocaleString() || 0} views</span>
+                                            <span className="text-gray-300 mx-2">•</span>
+                                            <span>{post.wordCount || 0} words</span>
+                                        </div>
                                     </td>
                                     <td className="px-6 py-4 text-right">
-                                        <div className="flex items-center justify-end gap-2">
+                                        <div className="flex items-center justify-end gap-1">
                                             {post.status === 'published' && (
                                                 <a
                                                     href={`/blog/${post.slug}`}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    className="px-3 py-1.5 text-sm text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-all"
+                                                    className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-all"
                                                     title="View post"
                                                 >
-                                                    👁
+                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                    </svg>
                                                 </a>
                                             )}
                                             <Link
                                                 href={`/admin/blog/${post.id}`}
-                                                className="px-3 py-1.5 text-sm text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-all"
+                                                className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                                                title="Edit"
                                             >
-                                                Edit
+                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                </svg>
                                             </Link>
                                             <button
                                                 onClick={() => deletePost(post.id)}
                                                 disabled={deleting === post.id}
-                                                className="px-3 py-1.5 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-all disabled:opacity-50"
+                                                className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all disabled:opacity-50"
+                                                title="Delete"
                                             >
-                                                Delete
+                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
                                             </button>
                                         </div>
                                     </td>
@@ -321,13 +340,18 @@ export default function BlogPage() {
                 </div>
             )}
 
-            {/* Quick Tips */}
-            <div className="bg-blue-500/5 border border-blue-500/20 rounded-xl p-4">
-                <h3 className="text-blue-400 font-medium mb-2">💡 CMS Tips</h3>
-                <ul className="text-sm text-blue-300/80 space-y-1">
-                    <li>• Click ★ to feature a post — featured posts appear first on the blog</li>
+            {/* Tips */}
+            <div className="bg-blue-50 border border-blue-100 rounded-xl p-4">
+                <h3 className="text-blue-800 font-medium mb-2 flex items-center gap-2">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Pro Tips
+                </h3>
+                <ul className="text-sm text-blue-700 space-y-1">
+                    <li>• Click ★ to feature posts — they appear first on your blog</li>
                     <li>• Add a <strong>Primary Keyword</strong> to each post for SEO tracking</li>
-                    <li>• Use workflow statuses to manage your content pipeline</li>
+                    <li>• Use the SEO tab in the editor to optimize meta tags</li>
                 </ul>
             </div>
         </div>

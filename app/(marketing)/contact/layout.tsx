@@ -17,7 +17,7 @@ export const metadata: Metadata = {
         'startup consultation',
     ],
     openGraph: {
-        title: 'Contact MakeUsLive - Get a Free Consultation',
+        title: 'Contact Make Us Live - Get a Free Consultation',
         description:
             'Tell us about your project. Free consultation for AI, web development, mobile apps, and design systems. We respond within 24 hours.',
         url: 'https://makeuslive.com/contact',
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     },
     twitter: {
         card: 'summary_large_image',
-        title: 'Contact MakeUsLive - Get a Free Consultation',
+        title: 'Contact Make Us Live - Get a Free Consultation',
         description:
             'Tell us about your project. Free consultation with response within 24 hours.',
         images: ['/twitter-contact.png'],

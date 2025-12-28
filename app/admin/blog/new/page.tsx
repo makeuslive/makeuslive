@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, FormEvent } from 'react'
+import { useState, useEffect, useCallback, useMemo, FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import MarkdownEditor from '@/components/admin/editor-loader'
@@ -15,23 +15,29 @@ interface SEOConfig {
 }
 
 const CATEGORIES = [
-    'General',
-    'AI & Technology',
-    'Design',
-    'Development',
-    'UX Research',
-    'Animation',
-    'Business',
-    'Tutorial',
-    'Case Study',
+    'General', 'AI & Technology', 'Design', 'Development',
+    'UX Research', 'Animation', 'Business', 'Tutorial', 'Case Study',
 ]
+
+// Extract headings from markdown
+function extractHeadings(content: string) {
+    const headings: { level: number; text: string }[] = []
+    const lines = content.split('\n')
+    lines.forEach((line) => {
+        const match = line.match(/^(#{1,4})\s+(.+)$/)
+        if (match) {
+            headings.push({ level: match[1].length, text: match[2] })
+        }
+    })
+    return headings
+}
 
 export default function NewBlogPostPage() {
     const router = useRouter()
     const [loading, setLoading] = useState(false)
-    const [activeTab, setActiveTab] = useState<'content' | 'seo'>('content')
+    const [rightPanel, setRightPanel] = useState<'keywords' | 'seo' | 'settings'>('keywords')
 
-    const [formData, setFormData] = useState({
+    const [form, setForm] = useState({
         title: '',
         slug: '',
         excerpt: '',
@@ -54,284 +60,283 @@ export default function NewBlogPostPage() {
         },
     })
 
-    const [wordCount, setWordCount] = useState(0)
-    const [readTime, setReadTime] = useState('1 min')
+    // Computed values
+    const headings = useMemo(() => extractHeadings(form.content), [form.content])
+    const wordCount = useMemo(() => {
+        if (!form.content) return 0
+        return form.content.split(/\s+/).filter(Boolean).length
+    }, [form.content])
+    const readTime = useMemo(() => `${Math.max(1, Math.ceil(wordCount / 200))} min`, [wordCount])
 
-    // Auto-generate slug from title
+    // SEO Checklist
+    const seoChecklist = useMemo(() => {
+        const title = form.seo.metaTitle || form.title
+        const desc = form.seo.metaDescription || form.excerpt
+        return {
+            hasKeyword: !!form.primaryKeyword,
+            hasTitle: title.length >= 30,
+            hasDescription: desc.length >= 120,
+            hasContent: wordCount >= 500,
+            hasImage: !!form.image,
+            hasH2: headings.some(h => h.level === 2),
+        }
+    }, [form, wordCount, headings])
+
+    const seoScore = useMemo(() => {
+        const checks = Object.values(seoChecklist)
+        return Math.round((checks.filter(Boolean).length / checks.length) * 100)
+    }, [seoChecklist])
+
+    // Auto-generate slug
     const generateSlug = (title: string) => {
-        return title
-            .toLowerCase()
-            .replace(/[^a-z0-9]+/g, '-')
-            .replace(/(^-|-$)/g, '')
+        return title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
     }
 
     const handleTitleChange = (title: string) => {
-        setFormData({
-            ...formData,
+        setForm({
+            ...form,
             title,
-            slug: formData.slug || generateSlug(title),
+            slug: form.slug || generateSlug(title),
         })
     }
 
-    // Calculate word count and reading time
-    useEffect(() => {
-        if (formData.content) {
-            const words = formData.content.split(/\s+/).filter(Boolean).length
-            const time = Math.max(1, Math.ceil(words / 200))
-            setWordCount(words)
-            setReadTime(`${time} min`)
-        }
-    }, [formData.content])
-
-    const handleSubmit = async (e: FormEvent, publishNow = false) => {
-        e.preventDefault()
+    const handleSubmit = async (publishNow = false) => {
         setLoading(true)
-
         try {
             const payload = {
-                ...formData,
-                tags: formData.tags.split(',').map(t => t.trim()).filter(Boolean),
-                secondaryKeywords: formData.secondaryKeywords.split(',').map(k => k.trim()).filter(Boolean),
-                status: publishNow ? 'published' : formData.status,
-                featuredImage: formData.image,
+                ...form,
+                tags: form.tags.split(',').map(t => t.trim()).filter(Boolean),
+                secondaryKeywords: form.secondaryKeywords.split(',').map(k => k.trim()).filter(Boolean),
+                status: publishNow ? 'published' : form.status,
+                featuredImage: form.image,
                 seo: {
-                    ...formData.seo,
-                    metaTitle: formData.seo.metaTitle || formData.title,
-                    metaDescription: formData.seo.metaDescription || formData.excerpt,
+                    ...form.seo,
+                    metaTitle: form.seo.metaTitle || form.title,
+                    metaDescription: form.seo.metaDescription || form.excerpt,
                 },
             }
-
             const res = await fetch('/api/admin/blog', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload),
             })
-
             if (res.ok) {
                 router.push('/admin/blog')
             } else {
                 alert('Failed to create post')
             }
         } catch (error) {
-            console.error('Error creating post:', error)
+            console.error('Error:', error)
             alert('Failed to create post')
         } finally {
             setLoading(false)
         }
     }
 
+    const handlePublish = () => {
+        if (seoScore < 50) {
+            if (!confirm('SEO score is below 50%. Publish anyway?')) return
+        }
+        if (!form.primaryKeyword) {
+            if (!confirm('No primary keyword set. Publish anyway?')) return
+        }
+        handleSubmit(true)
+    }
+
     return (
-        <div className="max-w-6xl mx-auto">
-            {/* Header */}
-            <div className="mb-8 flex items-center justify-between">
+        <div className="h-[calc(100vh-3.5rem)] flex flex-col bg-white -m-6">
+            {/* Top Bar */}
+            <div className="h-14 border-b border-gray-200 flex items-center justify-between px-4 bg-white shrink-0">
                 <div className="flex items-center gap-4">
-                    <Link
-                        href="/admin/blog"
-                        className="text-gray-400 hover:text-white transition-colors"
-                    >
-                        ← Back
+                    <Link href="/admin/blog" className="text-gray-400 hover:text-gray-600 transition-colors">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                        </svg>
                     </Link>
-                    <div>
-                        <h2 className="text-xl font-bold text-white">New Post</h2>
-                        <p className="text-gray-500 text-sm mt-1">
-                            {wordCount} words • {readTime} read
-                        </p>
-                    </div>
+                    <input
+                        type="text"
+                        value={form.title}
+                        onChange={(e) => handleTitleChange(e.target.value)}
+                        className="text-lg font-semibold text-gray-900 bg-transparent border-none focus:outline-none focus:ring-0 w-64 lg:w-96"
+                        placeholder="Untitled Post"
+                    />
+                    <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-yellow-50 text-yellow-700">
+                        New Draft
+                    </span>
                 </div>
-                <div className="flex items-center gap-3">
-                    <span className={`w-2 h-2 rounded-full ${formData.status === 'published' ? 'bg-green-500' : 'bg-yellow-500'}`} />
-                    <span className="text-sm text-gray-400 uppercase">{formData.status}</span>
-                </div>
-            </div>
-
-            {/* Tabs */}
-            <div className="flex gap-1 mb-6 bg-white/5 p-1 rounded-lg w-fit">
-                {(['content', 'seo'] as const).map((tab) => (
+                <div className="flex items-center gap-2">
                     <button
-                        key={tab}
-                        onClick={() => setActiveTab(tab)}
-                        className={`px-4 py-2 text-sm rounded-md capitalize transition-all ${activeTab === tab
-                                ? 'bg-white/10 text-white'
-                                : 'text-gray-400 hover:text-white'
-                            }`}
+                        onClick={() => handleSubmit(false)}
+                        disabled={loading}
+                        className="px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50"
                     >
-                        {tab === 'seo' ? 'SEO' : tab}
+                        {loading ? 'Saving...' : 'Save Draft'}
                     </button>
-                ))}
+                    <button
+                        onClick={handlePublish}
+                        disabled={loading}
+                        className="px-4 py-1.5 text-sm bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+                    >
+                        Publish
+                    </button>
+                </div>
             </div>
 
-            <form onSubmit={(e) => handleSubmit(e)} className="space-y-8">
-                {activeTab === 'content' && (
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                        {/* Main Content Area */}
-                        <div className="lg:col-span-8 space-y-6">
-                            <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-4">
-                                {/* Title & Slug */}
-                                <div>
-                                    <input
-                                        id="title"
-                                        type="text"
-                                        required
-                                        value={formData.title}
-                                        onChange={(e) => handleTitleChange(e.target.value)}
-                                        className="w-full bg-transparent border-0 text-4xl font-bold text-white placeholder-white/40 focus:ring-0 p-0"
-                                        placeholder="Post Title"
-                                    />
-                                </div>
+            {/* Three-Pane Layout */}
+            <div className="flex-1 flex overflow-hidden">
+                {/* Left Panel - Structure */}
+                <div className="w-56 border-r border-gray-200 bg-gray-50/50 overflow-y-auto shrink-0 hidden lg:block">
+                    <div className="p-3">
+                        <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Structure</h3>
 
-                                <div className="flex items-center gap-2 text-gray-500 text-sm">
-                                    <span>/blog/</span>
-                                    <input
-                                        id="slug"
-                                        type="text"
-                                        required
-                                        value={formData.slug}
-                                        onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-                                        className="bg-transparent border-0 text-white/80 focus:text-white focus:ring-0 p-0 w-full"
-                                        placeholder="post-slug"
-                                    />
-                                </div>
+                        <div className="space-y-1">
+                            {headings.length === 0 ? (
+                                <p className="text-xs text-gray-400 italic">No headings yet</p>
+                            ) : (
+                                headings.map((h, i) => (
+                                    <div
+                                        key={i}
+                                        className={`px-2 py-1 text-sm rounded ${h.level === 1 ? 'text-gray-900 font-medium' :
+                                                h.level === 2 ? 'text-gray-700 pl-4' :
+                                                    h.level === 3 ? 'text-gray-500 pl-6 text-xs' :
+                                                        'text-gray-400 pl-8 text-xs'
+                                            }`}
+                                    >
+                                        {h.text}
+                                    </div>
+                                ))
+                            )}
+                        </div>
 
-                                {/* Excerpt */}
-                                <div className="pt-4">
-                                    <label className="block text-sm font-medium text-gray-400 mb-2">
-                                        Excerpt
-                                    </label>
-                                    <textarea
-                                        id="excerpt"
-                                        required
-                                        rows={2}
-                                        value={formData.excerpt}
-                                        onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
-                                        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-gold/50 resize-none"
-                                        placeholder="Write a brief summary..."
-                                    />
+                        <div className="mt-6 pt-4 border-t border-gray-200">
+                            <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Stats</h3>
+                            <div className="space-y-2 text-sm">
+                                <div className="flex justify-between">
+                                    <span className="text-gray-500">Words</span>
+                                    <span className="text-gray-900 font-medium">{wordCount}</span>
                                 </div>
-
-                                {/* Content Editor */}
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-400 mb-2">
-                                        Content
-                                    </label>
-                                    <MarkdownEditor
-                                        markdown={formData.content}
-                                        onChange={(content) => setFormData({ ...formData, content })}
-                                        placeholder="Start writing your story..."
-                                    />
+                                <div className="flex justify-between">
+                                    <span className="text-gray-500">Read time</span>
+                                    <span className="text-gray-900 font-medium">{readTime}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="text-gray-500">Headings</span>
+                                    <span className="text-gray-900 font-medium">{headings.length}</span>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Sidebar */}
-                        <div className="lg:col-span-4 space-y-6">
-                            {/* Publish Actions */}
-                            <div className="bg-white/5 border border-white/10 rounded-2xl p-5 space-y-4">
-                                <h3 className="font-medium text-white">Publish</h3>
-
-                                <div className="space-y-2">
-                                    <label className="flex items-center gap-3 cursor-pointer">
-                                        <input
-                                            type="radio"
-                                            name="status"
-                                            value="draft"
-                                            checked={formData.status === 'draft'}
-                                            onChange={(e) => setFormData({ ...formData, status: e.target.value as 'draft' })}
-                                            className="text-gold focus:ring-gold/50"
-                                        />
-                                        <span className="text-white/80">Save as Draft</span>
-                                    </label>
-
-                                    <label className="flex items-center gap-3 cursor-pointer">
-                                        <input
-                                            type="radio"
-                                            name="status"
-                                            value="published"
-                                            checked={formData.status === 'published'}
-                                            onChange={(e) => setFormData({ ...formData, status: e.target.value as 'published' })}
-                                            className="text-gold focus:ring-gold/50"
-                                        />
-                                        <span className="text-white/80">Publish Now</span>
-                                    </label>
-                                </div>
-
-                                <div className="flex gap-3 pt-2">
-                                    <button
-                                        type="submit"
-                                        disabled={loading}
-                                        className="flex-1 py-3 bg-gradient-to-r from-gold to-amber-500 text-black font-medium rounded-lg hover:opacity-90 disabled:opacity-50 transition-all"
-                                    >
-                                        {loading ? 'Saving...' : formData.status === 'published' ? 'Publish' : 'Save Draft'}
-                                    </button>
-                                </div>
+                        <div className="mt-6 pt-4 border-t border-gray-200">
+                            <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">SEO Score</h3>
+                            <div className="relative h-2 bg-gray-200 rounded-full overflow-hidden">
+                                <div
+                                    className={`absolute left-0 top-0 h-full rounded-full transition-all ${seoScore >= 80 ? 'bg-green-500' :
+                                            seoScore >= 50 ? 'bg-yellow-500' : 'bg-red-500'
+                                        }`}
+                                    style={{ width: `${seoScore}%` }}
+                                />
                             </div>
+                            <p className="text-xs text-gray-500 mt-1">{seoScore}% complete</p>
+                        </div>
+                    </div>
+                </div>
 
-                            {/* Featured & Priority */}
-                            <div className="bg-white/5 border border-white/10 rounded-2xl p-5 space-y-4">
-                                <h3 className="font-medium text-white">Post Settings</h3>
+                {/* Center Panel - Editor */}
+                <div className="flex-1 overflow-y-auto bg-white">
+                    <div className="max-w-3xl mx-auto px-8 py-8">
+                        {/* Slug */}
+                        <div className="flex items-center gap-1 text-sm text-gray-400 mb-4">
+                            <span>/blog/</span>
+                            <input
+                                type="text"
+                                value={form.slug}
+                                onChange={(e) => setForm({ ...form, slug: e.target.value.toLowerCase().replace(/\s+/g, '-') })}
+                                className="bg-transparent border-none text-gray-600 focus:outline-none focus:ring-0 p-0"
+                                placeholder="post-slug"
+                            />
+                        </div>
 
-                                <label className="flex items-center gap-3 cursor-pointer">
-                                    <input
-                                        type="checkbox"
-                                        checked={formData.featured}
-                                        onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
-                                        className="w-4 h-4 rounded border-gray-600 text-gold focus:ring-gold/50"
-                                    />
-                                    <span className="text-white">★ Featured Post</span>
-                                </label>
+                        {/* Excerpt */}
+                        <div className="mb-6">
+                            <textarea
+                                value={form.excerpt}
+                                onChange={(e) => setForm({ ...form, excerpt: e.target.value })}
+                                rows={2}
+                                className="w-full text-gray-500 bg-transparent border-none focus:outline-none focus:ring-0 resize-none text-lg"
+                                placeholder="Write a brief excerpt..."
+                            />
+                        </div>
 
+                        {/* Content Editor */}
+                        <div className="prose prose-gray max-w-none">
+                            <MarkdownEditor
+                                markdown={form.content}
+                                onChange={(content) => setForm({ ...form, content })}
+                                placeholder="Start writing... Use / for blocks"
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                {/* Right Panel - Context */}
+                <div className="w-80 border-l border-gray-200 bg-gray-50/50 overflow-y-auto shrink-0 hidden xl:block">
+                    {/* Tabs */}
+                    <div className="flex border-b border-gray-200 bg-white sticky top-0">
+                        {(['keywords', 'seo', 'settings'] as const).map((tab) => (
+                            <button
+                                key={tab}
+                                onClick={() => setRightPanel(tab)}
+                                className={`flex-1 px-3 py-3 text-xs font-medium capitalize transition-colors ${rightPanel === tab
+                                        ? 'text-blue-600 border-b-2 border-blue-600'
+                                        : 'text-gray-500 hover:text-gray-700'
+                                    }`}
+                            >
+                                {tab}
+                            </button>
+                        ))}
+                    </div>
+
+                    <div className="p-4">
+                        {/* Keywords Tab */}
+                        {rightPanel === 'keywords' && (
+                            <div className="space-y-5">
                                 <div>
-                                    <label className="block text-sm text-gray-400 mb-2">Priority</label>
-                                    <select
-                                        value={formData.priority}
-                                        onChange={(e) => setFormData({ ...formData, priority: e.target.value as 'low' | 'medium' | 'high' })}
-                                        className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-gold/50"
-                                    >
-                                        <option value="low">Low</option>
-                                        <option value="medium">Medium</option>
-                                        <option value="high">High</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            {/* Keywords */}
-                            <div className="bg-blue-500/5 border border-blue-500/20 rounded-2xl p-5 space-y-4">
-                                <h3 className="font-medium text-blue-400">🔑 Keywords</h3>
-
-                                <div>
-                                    <label className="block text-sm text-gray-400 mb-2">Primary Keyword</label>
+                                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                                        Primary Keyword *
+                                    </label>
                                     <input
                                         type="text"
-                                        value={formData.primaryKeyword}
-                                        onChange={(e) => setFormData({ ...formData, primaryKeyword: e.target.value })}
-                                        className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50"
-                                        placeholder="e.g., AI development agency"
+                                        value={form.primaryKeyword}
+                                        onChange={(e) => setForm({ ...form, primaryKeyword: e.target.value })}
+                                        className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        placeholder="e.g., AI development"
                                     />
+                                    {!form.primaryKeyword && (
+                                        <p className="text-xs text-orange-500 mt-1">Recommended for SEO</p>
+                                    )}
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm text-gray-400 mb-2">Secondary Keywords</label>
+                                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                                        Secondary Keywords
+                                    </label>
                                     <input
                                         type="text"
-                                        value={formData.secondaryKeywords}
-                                        onChange={(e) => setFormData({ ...formData, secondaryKeywords: e.target.value })}
-                                        className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50"
-                                        placeholder="keyword1, keyword2, ..."
+                                        value={form.secondaryKeywords}
+                                        onChange={(e) => setForm({ ...form, secondaryKeywords: e.target.value })}
+                                        className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        placeholder="comma, separated"
                                     />
-                                    <p className="text-xs text-gray-500 mt-1">Comma separated</p>
                                 </div>
-                            </div>
 
-                            {/* Category & Tags */}
-                            <div className="bg-white/5 border border-white/10 rounded-2xl p-5 space-y-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-400 mb-2">
+                                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
                                         Category
                                     </label>
                                     <select
-                                        id="category"
-                                        value={formData.category}
-                                        onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                                        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-gold/50"
+                                        value={form.category}
+                                        onChange={(e) => setForm({ ...form, category: e.target.value })}
+                                        className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     >
                                         {CATEGORIES.map((cat) => (
                                             <option key={cat} value={cat}>{cat}</option>
@@ -340,151 +345,175 @@ export default function NewBlogPostPage() {
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-400 mb-2">
+                                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
                                         Tags
                                     </label>
                                     <input
-                                        id="tags"
                                         type="text"
-                                        value={formData.tags}
-                                        onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
-                                        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-gold/50"
-                                        placeholder="design, ai, nextjs..."
+                                        value={form.tags}
+                                        onChange={(e) => setForm({ ...form, tags: e.target.value })}
+                                        className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        placeholder="AI, Design, Next.js"
                                     />
-                                    <p className="text-xs text-gray-500 mt-1">Separate with commas</p>
+                                </div>
+
+                                <div className="pt-4 border-t border-gray-200">
+                                    <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Keyword Usage</h4>
+                                    {form.primaryKeyword ? (
+                                        <ul className="space-y-2 text-sm">
+                                            <li className={form.title.toLowerCase().includes(form.primaryKeyword.toLowerCase()) ? 'text-green-600' : 'text-gray-400'}>
+                                                {form.title.toLowerCase().includes(form.primaryKeyword.toLowerCase()) ? '✓' : '○'} In title
+                                            </li>
+                                            <li className={form.excerpt.toLowerCase().includes(form.primaryKeyword.toLowerCase()) ? 'text-green-600' : 'text-gray-400'}>
+                                                {form.excerpt.toLowerCase().includes(form.primaryKeyword.toLowerCase()) ? '✓' : '○'} In excerpt
+                                            </li>
+                                            <li className={headings.some(h => h.level === 2 && h.text.toLowerCase().includes(form.primaryKeyword.toLowerCase())) ? 'text-green-600' : 'text-gray-400'}>
+                                                {headings.some(h => h.level === 2 && h.text.toLowerCase().includes(form.primaryKeyword.toLowerCase())) ? '✓' : '○'} In H2
+                                            </li>
+                                        </ul>
+                                    ) : (
+                                        <p className="text-xs text-gray-400 italic">Set a keyword to see usage</p>
+                                    )}
                                 </div>
                             </div>
+                        )}
 
-                            {/* Featured Image */}
-                            <div className="bg-white/5 border border-white/10 rounded-2xl p-5 space-y-4">
-                                <label className="block text-sm font-medium text-gray-400">
-                                    Featured Image URL
-                                </label>
-                                <input
-                                    id="image"
-                                    type="url"
-                                    value={formData.image}
-                                    onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white text-sm placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-gold/50"
-                                    placeholder="https://..."
-                                />
-                                {formData.image && (
-                                    <div className="relative aspect-video w-full overflow-hidden rounded-lg border border-white/10 bg-white/5">
-                                        <img src={formData.image} alt="Preview" className="w-full h-full object-cover opacity-70" />
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                )}
+                        {/* SEO Tab */}
+                        {rightPanel === 'seo' && (
+                            <div className="space-y-5">
+                                {/* Google Preview */}
+                                <div className="bg-white rounded-lg border border-gray-200 p-3">
+                                    <p className="text-blue-600 text-sm font-medium line-clamp-1">
+                                        {form.seo.metaTitle || form.title || 'Post Title'}
+                                    </p>
+                                    <p className="text-green-700 text-xs">makeuslive.com/blog/{form.slug || 'post-slug'}</p>
+                                    <p className="text-gray-500 text-xs line-clamp-2 mt-0.5">
+                                        {form.seo.metaDescription || form.excerpt || 'Description...'}
+                                    </p>
+                                </div>
 
-                {/* SEO Tab */}
-                {activeTab === 'seo' && (
-                    <div className="max-w-3xl space-y-6">
-                        <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-6">
-                            <div className="flex items-center gap-3 pb-4 border-b border-white/10">
-                                <span className="text-2xl">🔍</span>
                                 <div>
-                                    <h3 className="font-medium text-white">Search Engine Optimization</h3>
-                                    <p className="text-sm text-gray-500">How your post appears in search results</p>
+                                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                                        Meta Title ({(form.seo.metaTitle || form.title).length}/60)
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={form.seo.metaTitle}
+                                        onChange={(e) => setForm({ ...form, seo: { ...form.seo, metaTitle: e.target.value } })}
+                                        className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        placeholder={form.title}
+                                        maxLength={60}
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                                        Meta Description ({(form.seo.metaDescription || form.excerpt).length}/160)
+                                    </label>
+                                    <textarea
+                                        value={form.seo.metaDescription}
+                                        onChange={(e) => setForm({ ...form, seo: { ...form.seo, metaDescription: e.target.value } })}
+                                        rows={3}
+                                        className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                                        placeholder={form.excerpt}
+                                        maxLength={160}
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                                        Schema Type
+                                    </label>
+                                    <select
+                                        value={form.seo.schemaType}
+                                        onChange={(e) => setForm({ ...form, seo: { ...form.seo, schemaType: e.target.value as SEOConfig['schemaType'] } })}
+                                        className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    >
+                                        <option value="Article">Article</option>
+                                        <option value="HowTo">How-To</option>
+                                        <option value="FAQ">FAQ</option>
+                                        <option value="NewsArticle">News</option>
+                                    </select>
+                                </div>
+
+                                <div className="pt-4 border-t border-gray-200">
+                                    <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Checklist</h4>
+                                    <ul className="space-y-2 text-sm">
+                                        <li className={seoChecklist.hasKeyword ? 'text-green-600' : 'text-gray-400'}>
+                                            {seoChecklist.hasKeyword ? '✓' : '○'} Primary keyword
+                                        </li>
+                                        <li className={seoChecklist.hasTitle ? 'text-green-600' : 'text-gray-400'}>
+                                            {seoChecklist.hasTitle ? '✓' : '○'} Title 30+ chars
+                                        </li>
+                                        <li className={seoChecklist.hasDescription ? 'text-green-600' : 'text-gray-400'}>
+                                            {seoChecklist.hasDescription ? '✓' : '○'} Description 120+ chars
+                                        </li>
+                                        <li className={seoChecklist.hasH2 ? 'text-green-600' : 'text-gray-400'}>
+                                            {seoChecklist.hasH2 ? '✓' : '○'} Has H2 headings
+                                        </li>
+                                        <li className={seoChecklist.hasContent ? 'text-green-600' : 'text-gray-400'}>
+                                            {seoChecklist.hasContent ? '✓' : '○'} 500+ words
+                                        </li>
+                                        <li className={seoChecklist.hasImage ? 'text-green-600' : 'text-gray-400'}>
+                                            {seoChecklist.hasImage ? '✓' : '○'} Featured image
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
+                        )}
 
-                            {/* Google Preview */}
-                            <div className="bg-white rounded-lg p-4">
-                                <p className="text-blue-600 text-lg font-medium line-clamp-1">
-                                    {formData.seo.metaTitle || formData.title || 'Post Title'}
-                                </p>
-                                <p className="text-green-700 text-sm">
-                                    makeuslive.com/blog/{formData.slug || 'post-slug'}
-                                </p>
-                                <p className="text-gray-600 text-sm line-clamp-2 mt-1">
-                                    {formData.seo.metaDescription || formData.excerpt || 'Post description will appear here...'}
-                                </p>
+                        {/* Settings Tab */}
+                        {rightPanel === 'settings' && (
+                            <div className="space-y-5">
+                                <div>
+                                    <label className="flex items-center gap-3 cursor-pointer">
+                                        <input
+                                            type="checkbox"
+                                            checked={form.featured}
+                                            onChange={(e) => setForm({ ...form, featured: e.target.checked })}
+                                            className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                        />
+                                        <span className="text-sm text-gray-700">★ Featured Post</span>
+                                    </label>
+                                </div>
+
+                                <div>
+                                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                                        Priority
+                                    </label>
+                                    <select
+                                        value={form.priority}
+                                        onChange={(e) => setForm({ ...form, priority: e.target.value as 'low' | 'medium' | 'high' })}
+                                        className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    >
+                                        <option value="low">Low</option>
+                                        <option value="medium">Medium</option>
+                                        <option value="high">High</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                                        Featured Image
+                                    </label>
+                                    <input
+                                        type="url"
+                                        value={form.image}
+                                        onChange={(e) => setForm({ ...form, image: e.target.value })}
+                                        className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        placeholder="https://..."
+                                    />
+                                    {form.image && (
+                                        <div className="mt-2 rounded-lg overflow-hidden border border-gray-200">
+                                            <img src={form.image} alt="Preview" className="w-full h-24 object-cover" />
+                                        </div>
+                                    )}
+                                </div>
                             </div>
-
-                            <div>
-                                <label className="block text-sm font-medium text-gray-300 mb-2">
-                                    Meta Title
-                                    <span className="text-gray-500 font-normal ml-2">
-                                        ({(formData.seo.metaTitle || formData.title || '').length}/60)
-                                    </span>
-                                </label>
-                                <input
-                                    type="text"
-                                    value={formData.seo.metaTitle}
-                                    onChange={(e) => setFormData({
-                                        ...formData,
-                                        seo: { ...formData.seo, metaTitle: e.target.value }
-                                    })}
-                                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-gold/50"
-                                    placeholder={formData.title || 'SEO Title'}
-                                    maxLength={60}
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium text-gray-300 mb-2">
-                                    Meta Description
-                                    <span className="text-gray-500 font-normal ml-2">
-                                        ({(formData.seo.metaDescription || formData.excerpt || '').length}/160)
-                                    </span>
-                                </label>
-                                <textarea
-                                    value={formData.seo.metaDescription}
-                                    onChange={(e) => setFormData({
-                                        ...formData,
-                                        seo: { ...formData.seo, metaDescription: e.target.value }
-                                    })}
-                                    rows={3}
-                                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-gold/50 resize-none"
-                                    placeholder={formData.excerpt || 'SEO Description'}
-                                    maxLength={160}
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium text-gray-300 mb-2">Schema Type</label>
-                                <select
-                                    value={formData.seo.schemaType}
-                                    onChange={(e) => setFormData({
-                                        ...formData,
-                                        seo: { ...formData.seo, schemaType: e.target.value as SEOConfig['schemaType'] }
-                                    })}
-                                    className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-gold/50"
-                                >
-                                    <option value="Article">Article</option>
-                                    <option value="HowTo">How-To Guide</option>
-                                    <option value="FAQ">FAQ</option>
-                                    <option value="NewsArticle">News Article</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        {/* SEO Checklist */}
-                        <div className="bg-green-500/5 border border-green-500/20 rounded-2xl p-6">
-                            <h3 className="font-medium text-green-400 mb-4">✓ SEO Checklist</h3>
-                            <ul className="space-y-2 text-sm">
-                                <li className={formData.primaryKeyword ? 'text-green-400' : 'text-gray-500'}>
-                                    {formData.primaryKeyword ? '✓' : '○'} Primary keyword is set
-                                </li>
-                                <li className={(formData.seo.metaTitle || formData.title)?.length >= 30 ? 'text-green-400' : 'text-gray-500'}>
-                                    {(formData.seo.metaTitle || formData.title)?.length >= 30 ? '✓' : '○'} Meta title is at least 30 characters
-                                </li>
-                                <li className={(formData.seo.metaDescription || formData.excerpt)?.length >= 120 ? 'text-green-400' : 'text-gray-500'}>
-                                    {(formData.seo.metaDescription || formData.excerpt)?.length >= 120 ? '✓' : '○'} Meta description is at least 120 characters
-                                </li>
-                                <li className={wordCount >= 500 ? 'text-green-400' : 'text-gray-500'}>
-                                    {wordCount >= 500 ? '✓' : '○'} Content has 500+ words ({wordCount} words)
-                                </li>
-                                <li className={formData.image ? 'text-green-400' : 'text-gray-500'}>
-                                    {formData.image ? '✓' : '○'} Featured image is set
-                                </li>
-                            </ul>
-                        </div>
+                        )}
                     </div>
-                )}
-            </form>
+                </div>
+            </div>
         </div>
     )
 }

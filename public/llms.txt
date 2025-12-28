@@ -1,10 +1,10 @@
-# MakeUsLive - Full-Service Creative Studio & Technology Agency
+# Make Us Live - Full-Service Creative Studio & Technology Agency
 
-> MakeUsLive is a boutique creative studio and digital agency that thinks like artists and researches like scientists. We craft AI-powered products, enterprise software, web & mobile apps, AR/VR experiences, and provide full-service branding & marketing.
+> Make Us Live is a boutique creative studio and digital agency that thinks like artists and researches like scientists. We craft AI-powered products, enterprise software, web & mobile apps, AR/VR experiences, and provide full-service branding & marketing.
 
 ## About Us
 
-MakeUsLive is a full-service creative technology studio founded in 2019 by Abhishek Jha, Rishi Soni, and Vikramaditya Jha. We are based in Bhopal, India and serve clients worldwide.
+Make Us Live is a full-service creative technology studio founded in 2019 by Abhishek Jha, Rishi Soni, and Vikramaditya Jha. We are based in Bhopal, India and serve clients worldwide.
 
 **Our Philosophy:** Design. Think. Build. Automate.
 
@@ -132,4 +132,4 @@ We believe in thinking like artists and researching like scientists. Every proje
 
 ---
 
-*MakeUsLive - Your full-service creative technology partner. From branding to blockchain, AI to AR/VR, we build digital experiences that inspire, engage, and convert.*
+*Make Us Live - Your full-service creative technology partner. From branding to blockchain, AI to AR/VR, we build digital experiences that inspire, engage, and convert.*

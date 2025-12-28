@@ -50,7 +50,7 @@ export const TOKENS = {
  */
 export const COPY = {
   brand: {
-    name: 'MakeUsLive',
+    name: 'Make Us Live',
     tagline: 'Where Ideas Come Alive',
     email: 'hello@makeuslive.com',
     phone: '+91 98765 43210',

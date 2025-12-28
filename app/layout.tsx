@@ -272,13 +272,13 @@ export const metadata: Metadata = {
 
   // Authors and creator
   authors: [
-    { name: 'MakeUsLive', url: 'https://makeuslive.com' },
+    { name: 'Make Us Live', url: 'https://makeuslive.com' },
     { name: 'Abhishek Jha' },
     { name: 'Rishi Soni' },
     { name: 'Vikramaditya Jha' },
   ],
-  creator: 'MakeUsLive',
-  publisher: 'MakeUsLive',
+  creator: 'Make Us Live',
+  publisher: 'Make Us Live',
 
   // Base URL for all relative URLs
   metadataBase: new URL('https://makeuslive.com'),
@@ -297,7 +297,7 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_US',
     url: 'https://makeuslive.com',
-    siteName: 'MakeUsLive',
+    siteName: 'Make Us Live',
     title: 'Make Us Live (MakeUsLive) - Premium Digital Agency | AI, Web Development, Design',
     description:
       'Transform your business with Make Us Live (MakeUsLive Agency). We specialize in AI-powered products, web development, mobile apps, and design systems. Make Us Live helps you build products that scale.',
@@ -306,7 +306,7 @@ export const metadata: Metadata = {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'MakeUsLive - Premium Digital Agency',
+        alt: 'Make Us Live - Premium Digital Agency',
         type: 'image/png',
       },
       {
@@ -499,7 +499,7 @@ const jsonLd = {
       '@type': 'WebSite',
       '@id': 'https://makeuslive.com/#website',
       url: 'https://makeuslive.com',
-      name: 'MakeUsLive',
+      name: 'Make Us Live',
       alternateName: ['Make Us Live', 'make us live', 'Make Us Live Agency', 'MakeUsLive Agency'],
       description: 'Make Us Live (MakeUsLive) - Premium Digital Agency - AI, Web Development, Design Systems',
       publisher: { '@id': 'https://makeuslive.com/#organization' },
@@ -517,7 +517,7 @@ const jsonLd = {
     {
       '@type': 'LocalBusiness',
       '@id': 'https://makeuslive.com/#localbusiness',
-      name: 'MakeUsLive - Digital Agency Bhopal',
+      name: 'Make Us Live - Digital Agency Bhopal',
       alternateName: ['Make Us Live Bhopal', 'Make Us Live Agency Bhopal', 'make us live bhopal'],
       image: 'https://makeuslive.com/og-image.png',
       url: 'https://makeuslive.com',
