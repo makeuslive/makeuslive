@@ -2,14 +2,8 @@
 
 import { memo, useEffect, useRef } from 'react'
 import Link from 'next/link'
-import { gsap } from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { cn } from '@/lib/utils'
 import { ArrowRight } from '@/components/ui'
-
-if (typeof window !== 'undefined') {
-  gsap.registerPlugin(ScrollTrigger)
-}
 
 // Case studies data with varied visual styles
 const CASE_STUDIES = [
@@ -119,6 +113,7 @@ const BentoCaseCard = memo(({
         sizeClasses[study.size as keyof typeof sizeClasses],
         className
       )}
+      style={{ contain: 'layout style' }}
     >
       {/* Animated gradient background */}
       <div className={cn(
@@ -126,15 +121,13 @@ const BentoCaseCard = memo(({
         study.gradient
       )} />
 
-      {/* Noise texture overlay */}
-      <div className="absolute inset-0 opacity-[0.03] mix-blend-overlay"
-        style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.8\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\'/%3E%3C/svg%3E")' }}
-      />
+      {/* Noise texture overlay - simplified */}
+      <div className="absolute inset-0 opacity-[0.02] bg-noise" />
 
       {/* Glow effect on hover */}
       <div className="absolute -inset-px opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-3xl"
         style={{
-          background: 'radial-gradient(800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(212, 175, 55, 0.06), transparent 40%)',
+          background: 'radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(212, 175, 55, 0.06), transparent 40%)',
         }}
       />
 
@@ -215,7 +208,7 @@ const BentoCaseCard = memo(({
       </div>
 
       {/* Corner Accent */}
-      <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-radial from-gold/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 blur-2xl" />
+      <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-radial from-gold/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 blur-xl" />
     </div>
   )
 })
@@ -245,76 +238,79 @@ export default function WorksPage() {
     const page = pageRef.current
     if (!page) return
 
-    const ctx = gsap.context(() => {
-      // Hero animations
-      gsap.from('.works-hero-badge', { y: 30, opacity: 0, duration: 0.8, ease: 'power3.out' })
-      gsap.from('.works-hero-title', { y: 60, opacity: 0, duration: 1, delay: 0.1, ease: 'power3.out' })
-      gsap.from('.works-hero-subtitle', { y: 40, opacity: 0, duration: 0.8, delay: 0.2, ease: 'power3.out' })
+    // Dynamically import GSAP for better initial load
+    const initAnimations = async () => {
+      const { gsap } = await import('gsap')
+      const { ScrollTrigger } = await import('gsap/ScrollTrigger')
+      gsap.registerPlugin(ScrollTrigger)
 
-      // Floating badges
-      gsap.from('.floating-badge', {
-        scale: 0,
-        opacity: 0,
-        duration: 0.6,
-        stagger: 0.1,
-        delay: 0.5,
-        ease: 'back.out(1.7)'
-      })
-
-      // Bento cards - animate each individually
-      document.querySelectorAll('.bento-card').forEach((el, i) => {
-        gsap.fromTo(el,
-          { y: 60, opacity: 0 },
-          {
-            y: 0,
-            opacity: 1,
-            duration: 0.8,
-            delay: i * 0.1,
-            ease: 'power3.out',
-            scrollTrigger: {
-              trigger: el,
-              start: 'top 90%',
-              toggleActions: 'play none none none',
+      const ctx = gsap.context(() => {
+        // Bento cards - animate on scroll only
+        document.querySelectorAll('.bento-card').forEach((el, i) => {
+          gsap.fromTo(el,
+            { y: 30, opacity: 0.7 },
+            {
+              y: 0,
+              opacity: 1,
+              duration: 0.6,
+              delay: i * 0.05,
+              ease: 'power2.out',
+              scrollTrigger: {
+                trigger: el,
+                start: 'top 92%',
+                toggleActions: 'play none none none',
+              }
             }
-          }
-        )
-      })
+          )
+        })
 
-      // Stats
-      document.querySelectorAll('.stat-card').forEach((el, i) => {
-        gsap.fromTo(el,
-          { y: 40, opacity: 0 },
-          {
-            y: 0,
-            opacity: 1,
-            duration: 0.6,
-            delay: i * 0.1,
-            ease: 'power3.out',
-            scrollTrigger: {
-              trigger: el,
-              start: 'top 95%',
-              toggleActions: 'play none none none',
+        // Stats - lighter animation
+        document.querySelectorAll('.stat-card').forEach((el, i) => {
+          gsap.fromTo(el,
+            { y: 20, opacity: 0.8 },
+            {
+              y: 0,
+              opacity: 1,
+              duration: 0.5,
+              delay: i * 0.08,
+              ease: 'power2.out',
+              scrollTrigger: {
+                trigger: el,
+                start: 'top 95%',
+                toggleActions: 'play none none none',
+              }
             }
-          }
-        )
-      })
-    }, page)
+          )
+        })
+      }, page)
 
-    // Mouse tracking for glow effect
+      return () => ctx.revert()
+    }
+
+    // Start animations after a small delay to prioritize content paint
+    const timer = setTimeout(initAnimations, 100)
+
+    // Mouse tracking for glow effect - throttled
+    let ticking = false
     const handleMouseMove = (e: MouseEvent) => {
-      const cards = page.querySelectorAll('.bento-card')
-      cards.forEach((card) => {
-        const rect = (card as HTMLElement).getBoundingClientRect()
-        const x = ((e.clientX - rect.left) / rect.width) * 100
-        const y = ((e.clientY - rect.top) / rect.height) * 100
-          ; (card as HTMLElement).style.setProperty('--mouse-x', `${x}%`)
-          ; (card as HTMLElement).style.setProperty('--mouse-y', `${y}%`)
+      if (ticking) return
+      ticking = true
+      requestAnimationFrame(() => {
+        const cards = page.querySelectorAll('.bento-card')
+        cards.forEach((card) => {
+          const rect = (card as HTMLElement).getBoundingClientRect()
+          const x = ((e.clientX - rect.left) / rect.width) * 100
+          const y = ((e.clientY - rect.top) / rect.height) * 100
+            ; (card as HTMLElement).style.setProperty('--mouse-x', `${x}%`)
+            ; (card as HTMLElement).style.setProperty('--mouse-y', `${y}%`)
+        })
+        ticking = false
       })
     }
-    page.addEventListener('mousemove', handleMouseMove)
+    page.addEventListener('mousemove', handleMouseMove, { passive: true })
 
     return () => {
-      ctx.revert()
+      clearTimeout(timer)
       page.removeEventListener('mousemove', handleMouseMove)
     }
   }, [])
@@ -323,10 +319,10 @@ export default function WorksPage() {
     <div ref={pageRef} className="min-h-screen">
       {/* Hero Section - Immersive */}
       <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden pt-24 pb-16">
-        {/* Background Effects */}
+        {/* Background Effects - Optimized blur values */}
         <div className="absolute inset-0 -z-10">
-          <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-gold/5 rounded-full blur-[150px]" />
-          <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-purple-500/5 rounded-full blur-[120px]" />
+          <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-gold/5 rounded-full blur-[80px]" />
+          <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-purple-500/5 rounded-full blur-[60px]" />
           {/* Grid pattern */}
           <div className="absolute inset-0 opacity-[0.02]"
             style={{
