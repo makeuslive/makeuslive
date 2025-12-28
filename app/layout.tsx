@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Inter, Space_Grotesk } from 'next/font/google'
+import { Inter, Space_Grotesk, Agbalumo, Nanum_Myeongjo, IBM_Plex_Mono } from 'next/font/google'
 import type { ReactNode } from 'react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Analytics } from '@vercel/analytics/next'
@@ -19,20 +19,54 @@ const StarsCanvas = dynamic(
   () => import('@/components/canvas/stars-canvas').then((mod) => mod.StarsCanvas)
 )
 
-// Fonts - Optimized for minimal HTTP requests
-// Only load essential fonts with specific weights
+// =====================================================
+// FONTS - Optimized for minimal HTTP requests
+// Key optimizations:
+// 1. Explicit weights - only load what we actually use
+// 2. Latin subset only - prevents loading Korean/Cyrillic chars
+// 3. display: 'swap' - prevents FOIT (Flash of Invisible Text)
+// =====================================================
+
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
   display: 'swap',
-  weight: ['400', '500', '600', '700'], // Only weights we use
+  weight: ['400', '500', '600', '700'],
+  preload: true,
 })
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
   variable: '--font-general-sans',
   display: 'swap',
-  weight: ['400', '500', '600', '700'], // Only weights we use
+  weight: ['400', '500', '600', '700'],
+  preload: true,
+})
+
+const agbalumo = Agbalumo({
+  subsets: ['latin'],
+  variable: '--font-agbalumo',
+  display: 'swap',
+  weight: '400',
+  preload: false, // Not critical for initial render
+})
+
+const ibmPlexMono = IBM_Plex_Mono({
+  subsets: ['latin'],
+  variable: '--font-ibm-plex-mono',
+  display: 'swap',
+  weight: ['400', '500'],
+  preload: false, // Not critical for initial render
+})
+
+// Nanum Myeongjo - Korean font, but we only need latin chars
+// This prevents 100+ Korean character subset files from loading
+const nanumMyeongjo = Nanum_Myeongjo({
+  subsets: ['latin'],
+  variable: '--font-nanum-myeongjo',
+  display: 'swap',
+  weight: ['400', '700'],
+  preload: false, // Not critical for initial render
 })
 
 // Viewport configuration
@@ -748,6 +782,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
       className={cn(
         inter.variable,
         spaceGrotesk.variable,
+        agbalumo.variable,
+        ibmPlexMono.variable,
+        nanumMyeongjo.variable,
         'antialiased'
       )}
       suppressHydrationWarning
