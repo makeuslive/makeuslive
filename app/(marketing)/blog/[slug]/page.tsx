@@ -230,40 +230,51 @@ export default function BlogPostPage() {
             prose-code:text-gold prose-code:bg-white/5 prose-code:rounded prose-code:px-1.5 prose-code:py-0.5 prose-code:before:content-[''] prose-code:after:content-['']
             prose-hr:border-white/10 prose-hr:my-16
             md:prose-h2:text-4xl md:prose-h3:text-2xl
+            [&_h1]:text-4xl [&_h1]:md:text-5xl [&_h1]:font-bold [&_h1]:text-white [&_h1]:mb-8
+            [&_h2]:text-3xl [&_h2]:md:text-4xl [&_h2]:font-bold [&_h2]:text-white [&_h2]:scroll-mt-32
+            [&_h3]:text-2xl [&_h3]:md:text-3xl [&_h3]:font-bold [&_h3]:text-white [&_h3]:scroll-mt-32
+            [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-6
+            [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-6
+            [&_li]:my-2 [&_li]:text-white/70
           ">
-                        <ReactMarkdown
-                            remarkPlugins={[remarkGfm]}
-                            components={{
-                                h2: ({ node, ...props }) => {
-                                    const id = props.children?.toString().toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')
-                                    return <h2 id={id} className="scroll-mt-32" {...props} />
-                                },
-                                h3: ({ node, ...props }) => {
-                                    const id = props.children?.toString().toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')
-                                    return <h3 id={id} className="scroll-mt-32" {...props} />
-                                },
-                                img: ({ node, ...props }) => (
-                                    <div className="my-12">
-                                        <div className="relative rounded-2xl overflow-hidden border border-white/10 bg-[#0a0a0a]">
-                                            <img {...props} className="w-full h-auto m-0" />
+                        {/* Check if content is HTML (starts with < and has tags) or Markdown */}
+                        {post.content && post.content.trim().startsWith('<') ? (
+                            <div dangerouslySetInnerHTML={{ __html: post.content }} />
+                        ) : (
+                            <ReactMarkdown
+                                remarkPlugins={[remarkGfm]}
+                                components={{
+                                    h2: ({ node, ...props }) => {
+                                        const id = props.children?.toString().toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')
+                                        return <h2 id={id} className="scroll-mt-32" {...props} />
+                                    },
+                                    h3: ({ node, ...props }) => {
+                                        const id = props.children?.toString().toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')
+                                        return <h3 id={id} className="scroll-mt-32" {...props} />
+                                    },
+                                    img: ({ node, ...props }) => (
+                                        <div className="my-12">
+                                            <div className="relative rounded-2xl overflow-hidden border border-white/10 bg-[#0a0a0a]">
+                                                <img {...props} className="w-full h-auto m-0" />
+                                            </div>
+                                            {props.alt && (
+                                                <p className="text-center text-sm text-white/30 mt-3 italic">{props.alt}</p>
+                                            )}
                                         </div>
-                                        {props.alt && (
-                                            <p className="text-center text-sm text-white/30 mt-3 italic">{props.alt}</p>
-                                        )}
-                                    </div>
-                                ),
-                                table: ({ node, ...props }) => (
-                                    <div className="overflow-x-auto my-12 border border-white/10 rounded-xl">
-                                        <table className="w-full text-left text-sm" {...props} />
-                                    </div>
-                                ),
-                                thead: ({ node, ...props }) => <thead className="bg-white/5 text-white font-medium border-b border-white/10" {...props} />,
-                                th: ({ node, ...props }) => <th className="px-6 py-4" {...props} />,
-                                td: ({ node, ...props }) => <td className="px-6 py-4 border-b border-white/5 text-white/60" {...props} />,
-                            }}
-                        >
-                            {post.content || post.excerpt}
-                        </ReactMarkdown>
+                                    ),
+                                    table: ({ node, ...props }) => (
+                                        <div className="overflow-x-auto my-12 border border-white/10 rounded-xl">
+                                            <table className="w-full text-left text-sm" {...props} />
+                                        </div>
+                                    ),
+                                    thead: ({ node, ...props }) => <thead className="bg-white/5 text-white font-medium border-b border-white/10" {...props} />,
+                                    th: ({ node, ...props }) => <th className="px-6 py-4" {...props} />,
+                                    td: ({ node, ...props }) => <td className="px-6 py-4 border-b border-white/5 text-white/60" {...props} />,
+                                }}
+                            >
+                                {post.content || post.excerpt}
+                            </ReactMarkdown>
+                        )}
 
                         {/* References Section Example (Static for now, could be dynamic) */}
                         <div className="mt-20 pt-10 border-t border-white/10">
