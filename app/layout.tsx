@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Inter, Space_Grotesk, Agbalumo, Nanum_Myeongjo, IBM_Plex_Mono } from 'next/font/google'
+import { Inter, Space_Grotesk } from 'next/font/google'
 import type { ReactNode } from 'react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Analytics } from '@vercel/analytics/next'
@@ -19,38 +19,20 @@ const StarsCanvas = dynamic(
   () => import('@/components/canvas/stars-canvas').then((mod) => mod.StarsCanvas)
 )
 
-// Fonts - Using Google Fonts for better compatibility
+// Fonts - Optimized for minimal HTTP requests
+// Only load essential fonts with specific weights
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
   display: 'swap',
+  weight: ['400', '500', '600', '700'], // Only weights we use
 })
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
   variable: '--font-general-sans',
   display: 'swap',
-})
-
-const agbalumo = Agbalumo({
-  weight: '400',
-  subsets: ['latin'],
-  variable: '--font-agbalumo',
-  display: 'swap',
-})
-
-const ibmPlexMono = IBM_Plex_Mono({
-  weight: ['400', '500', '600'],
-  subsets: ['latin'],
-  variable: '--font-ibm-plex-mono',
-  display: 'swap',
-})
-
-const nanumMyeongjo = Nanum_Myeongjo({
-  weight: ['400', '700', '800'],
-  subsets: ['latin'],
-  variable: '--font-nanum-myeongjo',
-  display: 'swap',
+  weight: ['400', '500', '600', '700'], // Only weights we use
 })
 
 // Viewport configuration
@@ -766,9 +748,6 @@ export default function RootLayout({ children }: RootLayoutProps) {
       className={cn(
         inter.variable,
         spaceGrotesk.variable,
-        agbalumo.variable,
-        ibmPlexMono.variable,
-        nanumMyeongjo.variable,
         'antialiased'
       )}
       suppressHydrationWarning
