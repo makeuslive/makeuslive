@@ -721,7 +721,7 @@ const jsonLd = {
       description: 'Make Us Live (MakeUsLive) is a creative digital agency offering AI development, web development, mobile apps, and design services.',
       slogan: 'Design. Think. Build. Automate.',
     },
-    // FAQPage Schema - Helps with brand-related searches
+    // FAQPage Schema - Comprehensive for maximum search visibility
     {
       '@type': 'FAQPage',
       '@id': 'https://makeuslive.com/#faq',
@@ -747,7 +747,7 @@ const jsonLd = {
           name: 'What services does Make Us Live offer?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'Make Us Live (MakeUsLive) offers a comprehensive range of services including: AI & Data Science, Enterprise Software (ERP/CRM), Web Development, Mobile & Desktop Apps, Blockchain & Web3, AR/VR Development, UI/UX Design & Branding, and Digital Marketing (SMMA).',
+            text: 'Make Us Live (MakeUsLive) offers: AI & Data Science, Enterprise Software (ERP/CRM), Web Development (Next.js, React), Mobile Apps (React Native), Blockchain & Web3, AR/VR Development, UI/UX Design & Branding, and Digital Marketing (SMMA).',
           },
         },
         {
@@ -763,7 +763,87 @@ const jsonLd = {
           name: 'How can I contact Make Us Live?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'You can contact Make Us Live (MakeUsLive Agency) via email at hello@makeuslive.com or visit our website at makeuslive.com to schedule a consultation.',
+            text: 'Contact Make Us Live (MakeUsLive Agency) via email at hello@makeuslive.com or team@makeuslive.com. Visit makeuslive.com/contact to schedule a free consultation.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Does MakeUsLive build AI products?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Yes! Make Us Live specializes in AI development including custom AI solutions, LLM integration (GPT-4, Claude), machine learning models, generative AI applications, AI chatbots, and AI-powered automation systems.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'What technologies does Make Us Live use?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'MakeUsLive uses cutting-edge tech: Next.js 15, React 19, TypeScript, Tailwind CSS, Node.js, Python, MongoDB, PostgreSQL, React Native, OpenAI, LangChain, Solidity for Web3, and GSAP for animations.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'How much does it cost to hire MakeUsLive?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Make Us Live offers competitive pricing with projects starting from $2,000 for small websites to $50,000+ for enterprise AI solutions. We provide custom quotes based on project scope. Contact us for a free estimate.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Does Make Us Live work with startups?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Absolutely! MakeUsLive loves working with startups. We offer MVP development, rapid prototyping, and scalable solutions. Many of our projects are with early-stage startups building their first product.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Can MakeUsLive build mobile apps?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Yes! Make Us Live builds cross-platform mobile apps using React Native and Expo for iOS and Android. We also develop native iOS (Swift) and Android (Kotlin) apps, plus desktop apps with Electron.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Does Make Us Live offer web development?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Yes! MakeUsLive specializes in modern web development using Next.js, React, and TypeScript. We build e-commerce sites, SaaS platforms, corporate websites, web apps, and progressive web apps (PWAs).',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Can MakeUsLive build ERP or CRM systems?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Yes! Make Us Live develops custom ERP and CRM solutions tailored to your business. We build inventory management, HR systems, customer portals, workflow automation, and enterprise integrations.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Does Make Us Live offer blockchain development?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Yes! MakeUsLive offers Web3 and blockchain development including smart contracts (Solidity), DeFi platforms, NFT marketplaces, token development, and decentralized applications (dApps) on Ethereum and other chains.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Who are the founders of MakeUsLive?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Make Us Live was founded by Abhishek Jha (The Generalist - Business, Tech, Design), Rishi Soni (Tech Master - App Specialist), and Vikramaditya Jha (Strategy & Content - Finance, Marketing).',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'What is the process to work with Make Us Live?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Working with MakeUsLive: 1) Free discovery call to understand your needs, 2) Custom proposal and timeline, 3) Design phase with your feedback, 4) Development with weekly updates, 5) Testing and launch, 6) Post-launch support.',
           },
         },
       ],

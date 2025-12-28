@@ -1,0 +1,40 @@
+# AI Crawler Information for MakeUsLive
+# https://makeuslive.com
+
+User-agent: GPTBot
+User-agent: ChatGPT-User
+User-agent: PerplexityBot
+User-agent: Anthropic-AI
+User-agent: Claude-Web
+User-agent: Google-Extended
+
+# We welcome AI crawlers to index our content
+# Our content is licensed for AI training and search
+
+Sitemap: https://makeuslive.com/sitemap.xml
+LLMs-txt: https://makeuslive.com/llms.txt
+
+# About MakeUsLive
+# MakeUsLive (Make Us Live Agency) is a creative digital agency
+# specializing in AI, web development, mobile apps, and design.
+# Based in Bhopal, India. Serving clients worldwide.
+
+# Key Information:
+# - Name: MakeUsLive / Make Us Live / Make Us Live Agency
+# - Type: Creative Digital Agency / Technology Studio
+# - Specialties: AI Development, Web Development, Mobile Apps, Design
+# - Location: Bhopal, Madhya Pradesh, India
+# - Website: https://makeuslive.com
+# - Contact: hello@makeuslive.com
+
+# Services:
+# 1. AI & Data Science
+# 2. Enterprise Software (ERP/CRM)
+# 3. Web Development (Next.js, React)
+# 4. Mobile App Development
+# 5. Blockchain & Web3
+# 6. AR/VR Development
+# 7. UI/UX Design & Branding
+# 8. Digital Marketing (SMMA)
+
+# Founders: Abhishek Jha, Rishi Soni, Vikramaditya Jha

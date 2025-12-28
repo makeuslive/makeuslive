@@ -5,7 +5,9 @@ export default function robots(): MetadataRoute.Robots {
 
   return {
     rules: [
-      // Allow all legitimate crawlers
+      // ============================================
+      // DEFAULT - Allow all legitimate crawlers
+      // ============================================
       {
         userAgent: '*',
         allow: '/',
@@ -14,59 +16,119 @@ export default function robots(): MetadataRoute.Robots {
           '/admin/',
           '/private/',
           '/search?*',
+          '/_next/',
+          '/static/',
         ],
       },
-      // Googlebot - full access
+
+      // ============================================
+      // MAJOR SEARCH ENGINES - Full access
+      // ============================================
       {
         userAgent: 'Googlebot',
         allow: '/',
         disallow: ['/api/', '/admin/', '/private/'],
       },
-      // Google Image Bot
       {
         userAgent: 'Googlebot-Image',
         allow: '/',
       },
-      // Google Extended - for Gemini AI summaries (ALLOW for AI visibility)
+      {
+        userAgent: 'Googlebot-News',
+        allow: '/',
+      },
+      {
+        userAgent: 'Googlebot-Video',
+        allow: '/',
+      },
+      {
+        userAgent: 'Storebot-Google',
+        allow: '/',
+      },
       {
         userAgent: 'Google-Extended',
         allow: '/',
       },
-      // Bingbot
       {
         userAgent: 'Bingbot',
         allow: '/',
         disallow: ['/api/', '/admin/', '/private/'],
       },
-      // DuckDuckBot
+      {
+        userAgent: 'msnbot',
+        allow: '/',
+      },
       {
         userAgent: 'DuckDuckBot',
         allow: '/',
         disallow: ['/api/', '/admin/'],
       },
-      // Yandex
       {
-        userAgent: 'Yandex',
+        userAgent: 'Baiduspider',
         allow: '/',
         disallow: ['/api/', '/admin/'],
       },
+      {
+        userAgent: 'YandexBot',
+        allow: '/',
+        disallow: ['/api/', '/admin/'],
+      },
+      {
+        userAgent: 'Sogou',
+        allow: '/',
+      },
+      {
+        userAgent: '360Spider',
+        allow: '/',
+      },
+      {
+        userAgent: 'facebot',
+        allow: '/',
+      },
+      {
+        userAgent: 'facebookexternalhit',
+        allow: '/',
+      },
+      {
+        userAgent: 'Twitterbot',
+        allow: '/',
+      },
+      {
+        userAgent: 'LinkedInBot',
+        allow: '/',
+      },
+      {
+        userAgent: 'Slackbot',
+        allow: '/',
+      },
+      {
+        userAgent: 'WhatsApp',
+        allow: '/',
+      },
+      {
+        userAgent: 'TelegramBot',
+        allow: '/',
+      },
+
       // ============================================
-      // AI BOTS - ALLOW for AI discoverability
-      // These bots help your site appear in AI search results
+      // AI BOTS - CRITICAL for AI search visibility
+      // Allow these to index for ChatGPT, Perplexity, Claude
       // ============================================
-      // GPTBot - ChatGPT/OpenAI (ALLOW for AI visibility)
       {
         userAgent: 'GPTBot',
         allow: '/',
         disallow: ['/api/', '/admin/', '/private/'],
       },
-      // PerplexityBot - Perplexity AI search (ALLOW for AI visibility)
+      {
+        userAgent: 'ChatGPT-User',
+        allow: '/',
+        disallow: ['/api/', '/admin/', '/private/'],
+      },
       {
         userAgent: 'PerplexityBot',
         allow: '/',
         disallow: ['/api/', '/admin/', '/private/'],
       },
-      // Anthropic Claude (ALLOW for AI visibility)
       {
         userAgent: 'anthropic-ai',
         allow: '/',
@@ -77,14 +139,53 @@ export default function robots(): MetadataRoute.Robots {
         allow: '/',
         disallow: ['/api/', '/admin/', '/private/'],
       },
-      // CCBot - Common Crawl (used by many AI systems)
+      {
+        userAgent: 'Claudebot',
+        allow: '/',
+        disallow: ['/api/', '/admin/', '/private/'],
+      },
       {
         userAgent: 'CCBot',
         allow: '/',
         disallow: ['/api/', '/admin/', '/private/'],
       },
+      {
+        userAgent: 'cohere-ai',
+        allow: '/',
+        disallow: ['/api/', '/admin/', '/private/'],
+      },
+      {
+        userAgent: 'YouBot',
+        allow: '/',
+        disallow: ['/api/', '/admin/', '/private/'],
+      },
+      {
+        userAgent: 'AppleBot',
+        allow: '/',
+      },
+      {
+        userAgent: 'Applebot-Extended',
+        allow: '/',
+      },
+
       // ============================================
-      // Block aggressive SEO bots (they waste bandwidth)
+      // GOOD BOTS - Analytics and tools we use
+      // ============================================
+      {
+        userAgent: 'Slurp',
+        allow: '/',
+      },
+      {
+        userAgent: 'ia_archiver',
+        allow: '/',
+      },
+      {
+        userAgent: 'archive.org_bot',
+        allow: '/',
+      },
+
+      // ============================================
+      // BLOCK - Aggressive SEO bots (waste bandwidth)
       // ============================================
       {
         userAgent: 'AhrefsBot',
@@ -106,7 +207,6 @@ export default function robots(): MetadataRoute.Robots {
         userAgent: 'BLEXBot',
         disallow: '/',
       },
-      // Block spam scrapers
       {
         userAgent: 'PetalBot',
         disallow: '/',
@@ -115,7 +215,24 @@ export default function robots(): MetadataRoute.Robots {
         userAgent: 'Bytespider',
         disallow: '/',
       },
+      {
+        userAgent: 'DataForSeoBot',
+        disallow: '/',
+      },
+      {
+        userAgent: 'SEOkicks',
+        disallow: '/',
+      },
+      {
+        userAgent: 'SeznamBot',
+        disallow: '/',
+      },
+      {
+        userAgent: 'rogerbot',
+        disallow: '/',
+      },
     ],
     sitemap: `${baseUrl}/sitemap.xml`,
+    host: baseUrl,
   }
 }
