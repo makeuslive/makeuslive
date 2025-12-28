@@ -5,11 +5,11 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
 
-// Dynamically import the editor
-const TiptapEditor = dynamic(() => import('@/components/admin/tiptap-editor'), {
+// Dynamically import the Novel editor
+const NovelEditor = dynamic(() => import('@/components/admin/novel-editor'), {
     ssr: false,
     loading: () => (
-        <div className="flex items-center justify-center h-[400px] bg-gray-50 border border-gray-200 rounded-xl">
+        <div className="flex items-center justify-center h-full bg-gray-50/50 rounded-xl">
             <div className="flex flex-col items-center gap-3">
                 <div className="w-6 h-6 border-2 border-gray-200 border-t-blue-600 rounded-full animate-spin" />
                 <p className="text-gray-400 text-sm">Loading Editor...</p>
@@ -55,7 +55,7 @@ function countWords(content: string) {
 export default function NewBlogPostPage() {
     const router = useRouter()
     const [loading, setLoading] = useState(false)
-    const [rightPanel, setRightPanel] = useState<'keywords' | 'seo' | 'settings'>('keywords')
+    const [rightPanel, setRightPanel] = useState<'details' | 'seo' | 'settings'>('details')
 
     const [form, setForm] = useState({
         title: '',
@@ -79,6 +79,8 @@ export default function NewBlogPostPage() {
             noFollow: false,
         },
     })
+
+    const [tagsInput, setTagsInput] = useState('')
 
     // Computed values
     const headings = useMemo(() => extractHeadings(form.content), [form.content])
@@ -122,12 +124,29 @@ export default function NewBlogPostPage() {
         })
     }
 
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0]
+        if (!file) return
+
+        const formData = new FormData()
+        formData.append('file', file)
+        formData.append('folder', 'blog')
+        try {
+            const res = await fetch('/api/upload', { method: 'POST', body: formData })
+            const data = await res.json()
+            if (data.url) setForm({ ...form, image: data.url })
+        } catch (error) {
+            console.error('Upload error:', error)
+            alert('Failed to upload image')
+        }
+    }
+
     const handleSubmit = async (publishNow = false) => {
         setLoading(true)
         try {
             const payload = {
                 ...form,
-                tags: form.tags.split(',').map(t => t.trim()).filter(Boolean),
+                tags: tagsInput.split(',').map(t => t.trim()).filter(Boolean),
                 secondaryKeywords: form.secondaryKeywords.split(',').map(k => k.trim()).filter(Boolean),
                 status: publishNow ? 'published' : form.status,
                 featuredImage: form.image,
@@ -166,25 +185,24 @@ export default function NewBlogPostPage() {
     }
 
     return (
-        <div className="h-[calc(100vh-3.5rem)] flex flex-col bg-gray-50 -m-6">
-            {/* Top Bar */}
-            <div className="h-16 border-b border-gray-200 flex items-center justify-between px-6 bg-white shrink-0 shadow-sm">
+        <div className="absolute inset-0 flex flex-col bg-white">
+            {/* Top Navigation Bar */}
+            <div className="h-14 border-b border-gray-200 flex items-center justify-between px-4 lg:px-6 bg-white shrink-0 z-20">
                 <div className="flex items-center gap-4">
                     <Link
                         href="/admin/blog"
-                        className="flex items-center gap-2 text-gray-500 hover:text-gray-700 transition-colors"
+                        className="p-2 -ml-2 text-gray-400 hover:text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
+                        title="Back to Blog"
                     >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                         </svg>
-                        <span className="text-sm font-medium">Back</span>
                     </Link>
 
-                    <div className="h-6 w-px bg-gray-200" />
+                    <div className="h-4 w-px bg-gray-200" />
 
-                    <span className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-full bg-amber-50 text-amber-700">
-                        <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-                        New Draft
+                    <span className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-md bg-green-50 text-green-700">
+                        New Post
                     </span>
                 </div>
 
@@ -192,94 +210,76 @@ export default function NewBlogPostPage() {
                     <button
                         onClick={() => handleSubmit(false)}
                         disabled={loading}
-                        className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+                        className="px-3 py-1.5 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors disabled:opacity-50"
                     >
-                        {loading ? 'Saving...' : 'Save Draft'}
+                        Save Draft
                     </button>
                     <button
                         onClick={handlePublish}
                         disabled={loading}
-                        className="px-4 py-2 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm disabled:opacity-50"
+                        className="px-4 py-1.5 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm disabled:opacity-50"
                     >
                         Publish
                     </button>
                 </div>
             </div>
 
-            {/* Three-Pane Layout */}
+            {/* Main Content Area */}
             <div className="flex-1 flex overflow-hidden">
-                {/* Left Panel - Structure */}
-                <div className="w-64 border-r border-gray-200 bg-white overflow-y-auto shrink-0 hidden lg:block">
-                    <div className="p-5">
-                        {/* Document Info */}
-                        <div className="mb-6">
-                            <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Document</h3>
-                            <div className="bg-gray-50 rounded-lg p-3">
-                                <div className="flex items-center justify-between text-sm mb-2">
-                                    <span className="text-gray-500">Words</span>
-                                    <span className="font-semibold text-gray-900">{wordCount.toLocaleString()}</span>
-                                </div>
-                                <div className="flex items-center justify-between text-sm mb-2">
-                                    <span className="text-gray-500">Reading</span>
-                                    <span className="font-semibold text-gray-900">{readTime}</span>
-                                </div>
-                                <div className="flex items-center justify-between text-sm">
-                                    <span className="text-gray-500">Headings</span>
-                                    <span className="font-semibold text-gray-900">{headings.length}</span>
-                                </div>
+
+                {/* LEFT PANEL: Structure & Stats */}
+                <div className="w-[260px] border-r border-gray-200 bg-gray-50/50 flex flex-col shrink-0 hidden xl:flex">
+                    <div className="p-4 overflow-y-auto">
+                        {/* Stats Grid */}
+                        <div className="grid grid-cols-2 gap-2 mb-6">
+                            <div className="bg-white p-2.5 rounded-lg border border-gray-100 shadow-sm">
+                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Words</p>
+                                <p className="text-lg font-semibold text-gray-900 mt-0.5">{wordCount}</p>
+                            </div>
+                            <div className="bg-white p-2.5 rounded-lg border border-gray-100 shadow-sm">
+                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Time</p>
+                                <p className="text-lg font-semibold text-gray-900 mt-0.5">{readTime}</p>
                             </div>
                         </div>
 
-                        {/* SEO Score */}
-                        <div className="mb-6">
-                            <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">SEO Score</h3>
-                            <div className="bg-gray-50 rounded-lg p-3">
-                                <div className="flex items-center justify-between mb-2">
-                                    <span className={`text-2xl font-bold ${seoScore >= 80 ? 'text-green-600' :
-                                            seoScore >= 50 ? 'text-yellow-600' : 'text-red-500'
-                                        }`}>{seoScore}%</span>
-                                    <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${seoScore >= 80 ? 'bg-green-100 text-green-700' :
-                                            seoScore >= 50 ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'
-                                        }`}>
-                                        {seoScore >= 80 ? 'Good' : seoScore >= 50 ? 'Fair' : 'Needs Work'}
-                                    </span>
-                                </div>
-                                <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                                    <div
-                                        className={`h-full rounded-full transition-all ${seoScore >= 80 ? 'bg-green-500' :
-                                                seoScore >= 50 ? 'bg-yellow-500' : 'bg-red-500'
-                                            }`}
-                                        style={{ width: `${seoScore}%` }}
-                                    />
-                                </div>
+                        {/* SEO Preview Card */}
+                        <div className="bg-white rounded-xl border border-gray-200 p-3 shadow-sm mb-6">
+                            <div className="flex items-center justify-between mb-2">
+                                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">SEO Score</span>
+                                <span className={`text-xs font-bold ${seoScore >= 80 ? 'text-green-600' :
+                                    seoScore >= 50 ? 'text-yellow-600' : 'text-red-500'
+                                    }`}>{seoScore}%</span>
+                            </div>
+                            <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                                <div
+                                    className={`h-full rounded-full transition-all duration-500 ${seoScore >= 80 ? 'bg-green-500' :
+                                        seoScore >= 50 ? 'bg-yellow-500' : 'bg-red-500'
+                                        }`}
+                                    style={{ width: `${seoScore}%` }}
+                                />
                             </div>
                         </div>
 
-                        {/* Structure Outline */}
+                        {/* Interactive Outline */}
                         <div>
-                            <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Outline</h3>
-                            <div className="space-y-1">
+                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-3 px-1">Table of Contents</p>
+                            <div className="space-y-px">
                                 {headings.length === 0 ? (
-                                    <p className="text-sm text-gray-400 italic py-3 text-center bg-gray-50 rounded-lg">
-                                        No headings yet
+                                    <p className="text-xs text-gray-400 text-center py-8 opacity-60">
+                                        Headings will appear here
                                     </p>
                                 ) : (
                                     headings.map((h, i) => (
                                         <div
                                             key={i}
-                                            className={`flex items-start gap-2 px-2 py-1.5 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors text-sm ${h.level === 1 ? 'font-semibold text-gray-900' :
-                                                    h.level === 2 ? 'pl-4 text-gray-700' :
-                                                        h.level === 3 ? 'pl-6 text-gray-500 text-xs' :
-                                                            'pl-8 text-gray-400 text-xs'
+                                            className={`group flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-gray-100 cursor-pointer transition-colors ${h.level === 1 ? 'text-gray-900 font-medium' :
+                                                h.level === 2 ? 'pl-4 text-gray-600' :
+                                                    'pl-6 text-gray-500'
                                                 }`}
                                         >
-                                            <span className={`shrink-0 w-5 h-5 rounded flex items-center justify-center text-xs font-mono ${h.level === 1 ? 'bg-blue-100 text-blue-700' :
-                                                    h.level === 2 ? 'bg-gray-100 text-gray-600' :
-                                                        'bg-gray-50 text-gray-400'
-                                                }`}>
-                                                H{h.level}
-                                            </span>
-                                            <span className="line-clamp-1">{h.text}</span>
+                                            <div className={`w-1 h-1 rounded-full shrink-0 ${h.level === 1 ? 'bg-blue-400' : 'bg-gray-300 group-hover:bg-gray-400'
+                                                }`} />
+                                            <span className="text-xs truncate">{h.text}</span>
                                         </div>
                                     ))
                                 )}
@@ -288,314 +288,237 @@ export default function NewBlogPostPage() {
                     </div>
                 </div>
 
-                {/* Center Panel - Editor */}
-                <div className="flex-1 overflow-y-auto bg-white">
-                    <div className="max-w-3xl mx-auto px-8 py-8">
-                        {/* Title */}
-                        <input
-                            type="text"
-                            value={form.title}
-                            onChange={(e) => handleTitleChange(e.target.value)}
-                            className="w-full text-4xl font-bold text-gray-900 bg-transparent border-none focus:outline-none focus:ring-0 mb-2 placeholder-gray-300"
-                            placeholder="Post title"
-                        />
-
-                        {/* Slug */}
-                        <div className="flex items-center gap-1 text-sm text-gray-400 mb-6 pb-6 border-b border-gray-100">
-                            <span className="text-gray-300">/blog/</span>
+                {/* CENTER PANEL: Writing Canvas */}
+                <div className="flex-1 overflow-y-auto bg-gray-50 flex justify-center scroll-smooth">
+                    <div className="w-full max-w-[850px] bg-white min-h-screen shadow-sm my-6 mx-4 lg:mx-8 px-8 lg:px-12 py-12 rounded-xl">
+                        {/* Title Input */}
+                        <div className="mb-6">
                             <input
                                 type="text"
-                                value={form.slug}
-                                onChange={(e) => setForm({ ...form, slug: e.target.value.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') })}
-                                className="bg-transparent border-none text-gray-500 focus:outline-none focus:ring-0 p-0 min-w-[200px]"
-                                placeholder="post-slug"
+                                value={form.title}
+                                onChange={(e) => handleTitleChange(e.target.value)}
+                                className="w-full text-4xl lg:text-5xl font-bold text-gray-900 placeholder-gray-200 border-none focus:outline-none focus:ring-0 p-0 bg-transparent leading-tight tracking-tight"
+                                placeholder="Post Title"
                             />
+                        </div>
+
+                        {/* Meta Ribbon */}
+                        <div className="flex items-center gap-4 text-sm text-gray-400 mb-8 pb-6 border-b border-gray-100 font-mono">
+                            <div className="flex items-center gap-1">
+                                <span className="opacity-50">/blog/</span>
+                                <input
+                                    type="text"
+                                    value={form.slug}
+                                    onChange={(e) => setForm({ ...form, slug: e.target.value.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') })}
+                                    className="bg-transparent border-none text-gray-600 focus:outline-none focus:ring-0 p-0 min-w-[20px] w-auto max-w-[200px]"
+                                    placeholder="slug"
+                                />
+                            </div>
+                            <span className="text-gray-200">|</span>
+                            <span className="opacity-70">{new Date().toLocaleDateString()}</span>
                         </div>
 
                         {/* Excerpt */}
-                        <div className="mb-8">
-                            <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Excerpt</label>
+                        <div className="mb-8 relative group">
                             <textarea
                                 value={form.excerpt}
                                 onChange={(e) => setForm({ ...form, excerpt: e.target.value })}
-                                rows={2}
-                                className="w-full text-lg text-gray-600 bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none placeholder-gray-400"
-                                placeholder="Write a brief summary of your post..."
+                                rows={1}
+                                className="w-full text-xl text-gray-500 italic bg-transparent border-none focus:outline-none focus:ring-0 resize-none placeholder-gray-200 overflow-hidden"
+                                placeholder="Add a short excerpt or summary..."
+                                style={{ height: 'auto', minHeight: '40px' }}
+                                onInput={(e) => {
+                                    e.currentTarget.style.height = 'auto'
+                                    e.currentTarget.style.height = e.currentTarget.scrollHeight + 'px'
+                                }}
                             />
+                            <div className="absolute left-0 -bottom-2 w-8 h-0.5 bg-gray-100 group-hover:bg-blue-100 transition-colors" />
                         </div>
 
-                        {/* Content Editor */}
-                        <div>
-                            <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Content</label>
-                            <TiptapEditor
-                                markdown={form.content}
-                                onChange={(content) => setForm({ ...form, content })}
-                                placeholder="Start writing your post..."
+                        {/* Novel Editor */}
+                        <div className="prose prose-lg prose-gray max-w-none">
+                            <NovelEditor
+                                content={form.content}
+                                onChange={(content: string) => setForm({ ...form, content })}
                             />
                         </div>
                     </div>
                 </div>
 
-                {/* Right Panel - Context */}
-                <div className="w-80 border-l border-gray-200 bg-white overflow-y-auto shrink-0 hidden xl:block">
-                    {/* Tabs */}
-                    <div className="flex border-b border-gray-200 sticky top-0 bg-white z-10">
-                        {(['keywords', 'seo', 'settings'] as const).map((tab) => (
-                            <button
-                                key={tab}
-                                onClick={() => setRightPanel(tab)}
-                                className={`flex-1 px-3 py-3.5 text-xs font-semibold uppercase tracking-wider transition-colors ${rightPanel === tab
-                                        ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50/50'
-                                        : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
-                                    }`}
-                            >
-                                {tab === 'seo' ? 'SEO' : tab}
-                            </button>
-                        ))}
+                {/* RIGHT PANEL: Context & Settings */}
+                <div className="w-[320px] border-l border-gray-200 bg-white flex flex-col shrink-0">
+                    {/* Segmented Control Tabs */}
+                    <div className="p-3 border-b border-gray-100">
+                        <div className="flex p-1 bg-gray-100 rounded-lg">
+                            {(['details', 'seo', 'settings'] as const).map((tab) => (
+                                <button
+                                    key={tab}
+                                    onClick={() => setRightPanel(tab)}
+                                    className={`flex-1 py-1.5 text-xs font-semibold rounded-md capitalize transition-all ${rightPanel === tab
+                                        ? 'bg-white text-gray-900 shadow-sm'
+                                        : 'text-gray-500 hover:text-gray-700'
+                                        }`}
+                                >
+                                    {tab}
+                                </button>
+                            ))}
+                        </div>
                     </div>
 
-                    <div className="p-5">
-                        {/* Keywords Tab */}
-                        {rightPanel === 'keywords' && (
-                            <div className="space-y-6">
-                                <div>
-                                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
-                                        Primary Keyword
-                                        <span className="text-red-500 ml-0.5">*</span>
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={form.primaryKeyword}
-                                        onChange={(e) => setForm({ ...form, primaryKeyword: e.target.value })}
-                                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                        placeholder="e.g., AI development"
-                                    />
-                                    {!form.primaryKeyword && (
-                                        <p className="text-xs text-amber-600 mt-2 flex items-center gap-1">
-                                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                                            </svg>
-                                            Recommended for SEO
-                                        </p>
-                                    )}
-                                </div>
-
-                                <div>
-                                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Secondary Keywords</label>
-                                    <input
-                                        type="text"
-                                        value={form.secondaryKeywords}
-                                        onChange={(e) => setForm({ ...form, secondaryKeywords: e.target.value })}
-                                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                        placeholder="keyword1, keyword2"
-                                    />
-                                    <p className="text-xs text-gray-400 mt-1">Comma separated</p>
-                                </div>
-
-                                <div>
-                                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Category</label>
-                                    <select
-                                        value={form.category}
-                                        onChange={(e) => setForm({ ...form, category: e.target.value })}
-                                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    >
-                                        {CATEGORIES.map((cat) => (
-                                            <option key={cat} value={cat}>{cat}</option>
-                                        ))}
-                                    </select>
-                                </div>
-
-                                <div>
-                                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Tags</label>
-                                    <input
-                                        type="text"
-                                        value={form.tags}
-                                        onChange={(e) => setForm({ ...form, tags: e.target.value })}
-                                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                        placeholder="AI, Design, Next.js"
-                                    />
-                                </div>
-
-                                {/* Keyword Optimization */}
-                                <div className="pt-4 border-t border-gray-100">
-                                    <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Keyword Optimization</h4>
-                                    {form.primaryKeyword ? (
-                                        <div className="space-y-2">
-                                            <div className={`flex items-center gap-2 p-2 rounded-lg ${seoChecklist.keywordInTitle ? 'bg-green-50' : 'bg-gray-50'}`}>
-                                                <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs ${seoChecklist.keywordInTitle ? 'bg-green-100 text-green-600' : 'bg-gray-200 text-gray-400'}`}>
-                                                    {seoChecklist.keywordInTitle ? '✓' : '○'}
-                                                </span>
-                                                <span className={`text-sm ${seoChecklist.keywordInTitle ? 'text-green-700' : 'text-gray-500'}`}>
-                                                    In title
-                                                </span>
-                                            </div>
-                                            <div className={`flex items-center gap-2 p-2 rounded-lg ${seoChecklist.keywordInContent ? 'bg-green-50' : 'bg-gray-50'}`}>
-                                                <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs ${seoChecklist.keywordInContent ? 'bg-green-100 text-green-600' : 'bg-gray-200 text-gray-400'}`}>
-                                                    {seoChecklist.keywordInContent ? '✓' : '○'}
-                                                </span>
-                                                <span className={`text-sm ${seoChecklist.keywordInContent ? 'text-green-700' : 'text-gray-500'}`}>
-                                                    In content
-                                                </span>
-                                            </div>
+                    <div className="flex-1 overflow-y-auto p-4 space-y-6">
+                        {/* DETAILS TAB */}
+                        {rightPanel === 'details' && (
+                            <>
+                                {/* Publish Card */}
+                                <div className="p-4 rounded-xl border border-gray-200 bg-gray-50/50 space-y-4">
+                                    <div className="flex items-center justify-between">
+                                        <label className="text-xs font-bold text-gray-500 uppercase">Status</label>
+                                        <div className="text-sm font-medium text-gray-600 bg-white px-3 py-1.5 rounded border border-gray-200">
+                                            New Draft
                                         </div>
-                                    ) : (
-                                        <p className="text-sm text-gray-400 italic text-center py-4 bg-gray-50 rounded-lg">
-                                            Set a keyword to track usage
-                                        </p>
-                                    )}
-                                </div>
-                            </div>
-                        )}
-
-                        {/* SEO Tab */}
-                        {rightPanel === 'seo' && (
-                            <div className="space-y-6">
-                                {/* Google Preview */}
-                                <div>
-                                    <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Search Preview</h4>
-                                    <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
-                                        <p className="text-blue-700 text-base font-medium line-clamp-1 hover:underline cursor-pointer">
-                                            {form.seo.metaTitle || form.title || 'Post Title'}
-                                        </p>
-                                        <p className="text-green-700 text-xs mt-0.5">
-                                            makeuslive.com › blog › {form.slug || 'post-slug'}
-                                        </p>
-                                        <p className="text-gray-600 text-sm line-clamp-2 mt-1">
-                                            {form.seo.metaDescription || form.excerpt || 'Add a description...'}
-                                        </p>
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <label className="text-xs font-bold text-gray-500 uppercase">Featured</label>
+                                        <label className="relative inline-flex items-center cursor-pointer">
+                                            <input
+                                                type="checkbox"
+                                                checked={form.featured}
+                                                onChange={(e) => setForm({ ...form, featured: e.target.checked })}
+                                                className="sr-only peer"
+                                            />
+                                            <div className="w-9 h-5 bg-gray-200 peer-focus:ring-2 peer-focus:ring-blue-100 rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
+                                        </label>
                                     </div>
                                 </div>
 
-                                <div>
-                                    <label className="flex items-center justify-between text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
-                                        Meta Title
-                                        <span className="font-normal normal-case text-gray-400">
-                                            {(form.seo.metaTitle || form.title).length}/60
-                                        </span>
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={form.seo.metaTitle}
-                                        onChange={(e) => setForm({ ...form, seo: { ...form.seo, metaTitle: e.target.value } })}
-                                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        placeholder={form.title || 'SEO Title'}
-                                        maxLength={70}
-                                    />
-                                </div>
+                                <div className="space-y-4">
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Category</label>
+                                        <select
+                                            value={form.category}
+                                            onChange={(e) => setForm({ ...form, category: e.target.value })}
+                                            className="w-full text-sm bg-white border border-gray-200 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all outline-none"
+                                        >
+                                            {CATEGORIES.map((cat) => (
+                                                <option key={cat} value={cat}>{cat}</option>
+                                            ))}
+                                        </select>
+                                    </div>
 
-                                <div>
-                                    <label className="flex items-center justify-between text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
-                                        Meta Description
-                                        <span className="font-normal normal-case text-gray-400">
-                                            {(form.seo.metaDescription || form.excerpt).length}/160
-                                        </span>
-                                    </label>
-                                    <textarea
-                                        value={form.seo.metaDescription}
-                                        onChange={(e) => setForm({ ...form, seo: { ...form.seo, metaDescription: e.target.value } })}
-                                        rows={3}
-                                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                                        placeholder={form.excerpt || 'SEO Description'}
-                                        maxLength={170}
-                                    />
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Tags</label>
+                                        <div className="bg-white border border-gray-200 rounded-lg p-1.5 focus-within:ring-2 focus-within:ring-blue-100 focus-within:border-blue-400 transition-all">
+                                            <input
+                                                type="text"
+                                                value={tagsInput}
+                                                onChange={(e) => setTagsInput(e.target.value)}
+                                                className="w-full text-sm outline-none px-1.5 pb-1"
+                                                placeholder="Add tags..."
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
+                            </>
+                        )}
 
-                                <div>
-                                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Schema Type</label>
-                                    <select
-                                        value={form.seo.schemaType}
-                                        onChange={(e) => setForm({ ...form, seo: { ...form.seo, schemaType: e.target.value as SEOConfig['schemaType'] } })}
-                                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    >
-                                        <option value="Article">Article</option>
-                                        <option value="HowTo">How-To Guide</option>
-                                        <option value="FAQ">FAQ</option>
-                                        <option value="NewsArticle">News Article</option>
-                                    </select>
-                                </div>
+                        {/* SEO TAB */}
+                        {rightPanel === 'seo' && (
+                            <>
+                                <div className="space-y-4">
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Primary Keyword</label>
+                                        <input
+                                            type="text"
+                                            value={form.primaryKeyword}
+                                            onChange={(e) => setForm({ ...form, primaryKeyword: e.target.value })}
+                                            className="w-full text-sm bg-white border border-gray-200 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all outline-none"
+                                            placeholder="Focus keyword"
+                                        />
+                                    </div>
 
-                                {/* SEO Checklist */}
-                                <div className="pt-4 border-t border-gray-100">
-                                    <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Checklist</h4>
-                                    <div className="space-y-2">
-                                        {[
-                                            { label: 'Primary keyword', check: seoChecklist.hasKeyword },
-                                            { label: 'Title 30+ chars', check: seoChecklist.hasTitle },
-                                            { label: 'Description 120+ chars', check: seoChecklist.hasDescription },
-                                            { label: 'Has H2 headings', check: seoChecklist.hasH2 },
-                                            { label: '500+ words', check: seoChecklist.hasContent },
-                                            { label: 'Featured image', check: seoChecklist.hasImage },
-                                        ].map((item, i) => (
-                                            <div key={i} className={`flex items-center gap-2 p-2 rounded-lg ${item.check ? 'bg-green-50' : 'bg-gray-50'}`}>
-                                                <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs ${item.check ? 'bg-green-100 text-green-600' : 'bg-gray-200 text-gray-400'}`}>
-                                                    {item.check ? '✓' : '○'}
-                                                </span>
-                                                <span className={`text-sm ${item.check ? 'text-green-700' : 'text-gray-500'}`}>
-                                                    {item.label}
+                                    {/* Google Preview */}
+                                    <div className="bg-white rounded-lg border border-gray-200 p-3 shadow-sm hover:shadow-md transition-shadow cursor-default">
+                                        <p className="text-[#1a0dab] text-sm font-medium hover:underline truncate">
+                                            {form.seo.metaTitle || form.title || 'Page Title'}
+                                        </p>
+                                        <p className="text-[#006621] text-xs mt-0.5 truncate">
+                                            makeuslive.com › blog › {form.slug || 'post'}
+                                        </p>
+                                        <p className="text-[#545454] text-xs mt-1 line-clamp-2 leading-relaxed">
+                                            {form.seo.metaDescription || form.excerpt || 'Meta description will appear here...'}
+                                        </p>
+                                    </div>
+
+                                    <div className="space-y-3 pt-2">
+                                        <div>
+                                            <div className="flex justify-between mb-1">
+                                                <label className="text-xs font-bold text-gray-500 uppercase">Meta Title</label>
+                                                <span className={`text-[10px] font-bold ${(form.seo.metaTitle || form.title).length > 60 ? 'text-red-500' : 'text-gray-400'}`}>
+                                                    {(form.seo.metaTitle || form.title).length}/60
                                                 </span>
                                             </div>
-                                        ))}
+                                            <input
+                                                type="text"
+                                                value={form.seo.metaTitle}
+                                                onChange={(e) => setForm({ ...form, seo: { ...form.seo, metaTitle: e.target.value } })}
+                                                className="w-full text-sm bg-white border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-blue-400"
+                                                placeholder={form.title}
+                                            />
+                                        </div>
+                                        <div>
+                                            <div className="flex justify-between mb-1">
+                                                <label className="text-xs font-bold text-gray-500 uppercase">Meta Description</label>
+                                                <span className={`text-[10px] font-bold ${(form.seo.metaDescription || form.excerpt).length > 160 ? 'text-red-500' : 'text-gray-400'}`}>
+                                                    {(form.seo.metaDescription || form.excerpt).length}/160
+                                                </span>
+                                            </div>
+                                            <textarea
+                                                value={form.seo.metaDescription}
+                                                onChange={(e) => setForm({ ...form, seo: { ...form.seo, metaDescription: e.target.value } })}
+                                                rows={3}
+                                                className="w-full text-sm bg-white border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-blue-400 resize-none"
+                                                placeholder={form.excerpt}
+                                            />
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            </>
                         )}
 
-                        {/* Settings Tab */}
+                        {/* SETTINGS TAB */}
                         {rightPanel === 'settings' && (
                             <div className="space-y-6">
-                                <div className="flex items-center justify-between p-4 bg-yellow-50 border border-yellow-100 rounded-xl">
-                                    <div className="flex items-center gap-3">
-                                        <span className="text-yellow-500 text-xl">★</span>
-                                        <div>
-                                            <p className="font-medium text-gray-900">Featured Post</p>
-                                            <p className="text-xs text-gray-500">Show on homepage</p>
-                                        </div>
-                                    </div>
-                                    <label className="relative inline-flex items-center cursor-pointer">
-                                        <input
-                                            type="checkbox"
-                                            checked={form.featured}
-                                            onChange={(e) => setForm({ ...form, featured: e.target.checked })}
-                                            className="sr-only peer"
-                                        />
-                                        <div className="w-11 h-6 bg-gray-200 peer-focus:ring-4 peer-focus:ring-blue-100 rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
-                                    </label>
-                                </div>
-
                                 <div>
-                                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Priority</label>
-                                    <div className="flex gap-2">
-                                        {(['low', 'medium', 'high'] as const).map((p) => (
-                                            <button
-                                                key={p}
-                                                onClick={() => setForm({ ...form, priority: p })}
-                                                className={`flex-1 py-2 text-sm font-medium rounded-lg capitalize transition-colors ${form.priority === p
-                                                        ? p === 'high' ? 'bg-red-100 text-red-700 border border-red-200' :
-                                                            p === 'medium' ? 'bg-yellow-100 text-yellow-700 border border-yellow-200' :
-                                                                'bg-gray-100 text-gray-700 border border-gray-200'
-                                                        : 'bg-gray-50 text-gray-500 border border-gray-200 hover:bg-gray-100'
-                                                    }`}
-                                            >
-                                                {p}
-                                            </button>
-                                        ))}
+                                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Featured Image</label>
+                                    <div className="group relative border-2 border-dashed border-gray-200 rounded-xl overflow-hidden bg-gray-50 hover:bg-gray-100 transition-colors aspect-video flex items-center justify-center">
+                                        {form.image ? (
+                                            <>
+                                                <img src={form.image} alt="Featured" className="w-full h-full object-cover" />
+                                                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                                                    <label className="cursor-pointer px-3 py-1.5 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white text-xs font-medium rounded-lg">
+                                                        Replace
+                                                        <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
+                                                    </label>
+                                                    <button
+                                                        onClick={() => setForm({ ...form, image: '' })}
+                                                        className="px-3 py-1.5 bg-red-500/80 hover:bg-red-500 text-white text-xs font-medium rounded-lg"
+                                                    >
+                                                        Remove
+                                                    </button>
+                                                </div>
+                                            </>
+                                        ) : (
+                                            <label className="cursor-pointer text-center p-4 w-full h-full flex flex-col items-center justify-center">
+                                                <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
+                                                <span className="w-10 h-10 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center mb-2 group-hover:bg-blue-100 transition-colors">
+                                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                                                    </svg>
+                                                </span>
+                                                <span className="text-xs font-medium text-gray-500">Upload Cover</span>
+                                            </label>
+                                        )}
                                     </div>
-                                </div>
-
-                                <div>
-                                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Featured Image</label>
-                                    <input
-                                        type="url"
-                                        value={form.image}
-                                        onChange={(e) => setForm({ ...form, image: e.target.value })}
-                                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        placeholder="https://..."
-                                    />
-                                    {form.image && (
-                                        <div className="mt-3 rounded-xl overflow-hidden border border-gray-200">
-                                            <img src={form.image} alt="Preview" className="w-full h-32 object-cover" />
-                                        </div>
-                                    )}
                                 </div>
                             </div>
                         )}

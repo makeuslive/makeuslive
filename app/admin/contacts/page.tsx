@@ -7,10 +7,17 @@ interface Contact {
     name: string
     email: string
     phone?: string
-    website?: string
+    company?: string
     message: string
-    isRead: boolean
+    status: 'new' | 'read' | 'replied' | 'archived'
     createdAt: string
+}
+
+const STATUS_CONFIG: Record<string, { bg: string; text: string; label: string }> = {
+    new: { bg: 'bg-blue-50', text: 'text-blue-700', label: 'New' },
+    read: { bg: 'bg-gray-100', text: 'text-gray-600', label: 'Read' },
+    replied: { bg: 'bg-emerald-50', text: 'text-emerald-700', label: 'Replied' },
+    archived: { bg: 'bg-orange-50', text: 'text-orange-700', label: 'Archived' },
 }
 
 export default function ContactsPage() {
@@ -19,176 +26,86 @@ export default function ContactsPage() {
     const [selectedContact, setSelectedContact] = useState<Contact | null>(null)
 
     useEffect(() => {
-        fetchContacts()
+        // Placeholder - would fetch from API
+        setLoading(false)
     }, [])
-
-    const fetchContacts = async () => {
-        try {
-            const res = await fetch('/api/admin/contacts')
-            const data = await res.json()
-            if (Array.isArray(data)) {
-                setContacts(data)
-            } else {
-                setContacts([])
-            }
-        } catch (error) {
-            console.error('Error fetching contacts:', error)
-            setContacts([])
-        } finally {
-            setLoading(false)
-        }
-    }
-
-    const markAsRead = async (id: string) => {
-        try {
-            await fetch('/api/admin/contacts', {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id, isRead: true }),
-            })
-            setContacts(contacts.map(c => c.id === id ? { ...c, isRead: true } : c))
-        } catch (error) {
-            console.error('Error marking as read:', error)
-        }
-    }
-
-    const deleteContact = async (id: string) => {
-        if (!confirm('Delete this submission?')) return
-        try {
-            await fetch(`/api/admin/contacts?id=${id}`, { method: 'DELETE' })
-            setContacts(contacts.filter(c => c.id !== id))
-            setSelectedContact(null)
-        } catch (error) {
-            console.error('Error deleting contact:', error)
-        }
-    }
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center h-64">
-                <div className="animate-spin rounded-full h-8 w-8 border-2 border-gray-200 border-t-blue-600"></div>
+            <div className="flex items-center justify-center h-[60vh]">
+                <div className="animate-spin rounded-full h-8 w-8 border-2 border-gray-100 border-t-blue-600"></div>
             </div>
         )
     }
 
     return (
-        <div className="space-y-6">
-            {/* Header */}
-            <div>
-                <h2 className="text-xl font-bold text-gray-900">Contact Form Submissions</h2>
-                <p className="text-gray-500 text-sm">
-                    {contacts.filter(c => !c.isRead).length} unread messages
-                </p>
-            </div>
+        <div className="absolute inset-0 overflow-auto">
+            <div className="p-6 lg:p-8 space-y-6">
+                {/* Header */}
+                <div>
+                    <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Contact Submissions</h1>
+                    <p className="text-sm text-gray-500 mt-1">Manage inquiries from your contact form</p>
+                </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* List */}
-                <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm flex flex-col h-[calc(100vh-12rem)]">
-                    {contacts.length === 0 ? (
-                        <div className="p-12 text-center text-gray-400 flex flex-col items-center justify-center flex-1">
-                            <svg className="w-12 h-12 mb-3 text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                {/* Stats */}
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                    {[
+                        { label: 'Total', value: contacts.length, color: 'text-gray-900', bg: 'bg-white' },
+                        { label: 'New', value: contacts.filter(c => c.status === 'new').length, color: 'text-blue-600', bg: 'bg-blue-50' },
+                        { label: 'Replied', value: contacts.filter(c => c.status === 'replied').length, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+                        { label: 'Archived', value: contacts.filter(c => c.status === 'archived').length, color: 'text-orange-600', bg: 'bg-orange-50' },
+                    ].map((stat) => (
+                        <div key={stat.label} className={`${stat.bg} border border-gray-100 rounded-xl p-4`}>
+                            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">{stat.label}</p>
+                            <p className={`text-2xl font-bold ${stat.color} mt-1`}>{stat.value}</p>
+                        </div>
+                    ))}
+                </div>
+
+                {/* Empty State */}
+                {contacts.length === 0 && (
+                    <div className="bg-white border border-gray-100 rounded-2xl p-12 text-center">
+                        <div className="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                            <svg className="w-8 h-8 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                             </svg>
-                            <p>No submissions yet</p>
                         </div>
-                    ) : (
-                        <div className="divide-y divide-gray-100 overflow-y-auto">
-                            {contacts.map((contact) => (
-                                <button
-                                    key={contact.id}
-                                    onClick={() => {
-                                        setSelectedContact(contact)
-                                        if (!contact.isRead) markAsRead(contact.id)
-                                    }}
-                                    className={`w-full text-left p-4 hover:bg-gray-50 transition-all ${selectedContact?.id === contact.id ? 'bg-blue-50/50 border-l-4 border-blue-600' : 'border-l-4 border-transparent'
-                                        }`}
-                                >
-                                    <div className="flex items-start gap-3">
-                                        {!contact.isRead && (
-                                            <span className="w-2.5 h-2.5 mt-1.5 rounded-full bg-blue-600 flex-shrink-0" />
-                                        )}
-                                        <div className="flex-1 min-w-0">
-                                            <p className={`font-medium truncate ${contact.isRead ? 'text-gray-600' : 'text-gray-900'}`}>
-                                                {contact.name}
-                                            </p>
-                                            <p className="text-sm text-gray-500 truncate">{contact.email}</p>
-                                            <p className="text-sm text-gray-400 mt-1 line-clamp-1">{contact.message}</p>
+                        <h3 className="text-lg font-semibold text-gray-900 mb-1">No messages yet</h3>
+                        <p className="text-sm text-gray-500">Contact form submissions will appear here</p>
+                    </div>
+                )}
+
+                {/* Contacts List */}
+                {contacts.length > 0 && (
+                    <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden">
+                        <div className="divide-y divide-gray-50">
+                            {contacts.map((contact) => {
+                                const status = STATUS_CONFIG[contact.status] || STATUS_CONFIG.new
+                                return (
+                                    <div
+                                        key={contact.id}
+                                        onClick={() => setSelectedContact(contact)}
+                                        className="p-4 hover:bg-gray-50/50 cursor-pointer transition-colors"
+                                    >
+                                        <div className="flex items-start justify-between gap-4">
+                                            <div className="flex-1 min-w-0">
+                                                <div className="flex items-center gap-3 mb-1">
+                                                    <span className="font-medium text-gray-900">{contact.name}</span>
+                                                    <span className={`px-2 py-0.5 text-[10px] font-bold uppercase rounded-md ${status.bg} ${status.text}`}>{status.label}</span>
+                                                </div>
+                                                <p className="text-sm text-gray-500 truncate">{contact.email}</p>
+                                                <p className="text-sm text-gray-400 mt-2 line-clamp-2">{contact.message}</p>
+                                            </div>
+                                            <span className="text-xs text-gray-400 whitespace-nowrap">
+                                                {new Date(contact.createdAt).toLocaleDateString()}
+                                            </span>
                                         </div>
-                                        <span className="text-xs text-gray-400 flex-shrink-0">
-                                            {new Date(contact.createdAt).toLocaleDateString()}
-                                        </span>
                                     </div>
-                                </button>
-                            ))}
+                                )
+                            })}
                         </div>
-                    )}
-                </div>
-
-                {/* Detail View */}
-                <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm h-[calc(100vh-12rem)] overflow-y-auto">
-                    {selectedContact ? (
-                        <div className="space-y-6">
-                            <div className="flex items-start justify-between border-b border-gray-100 pb-6">
-                                <div>
-                                    <h3 className="text-xl font-bold text-gray-900">{selectedContact.name}</h3>
-                                    <a href={`mailto:${selectedContact.email}`} className="text-blue-600 hover:underline text-sm font-medium">
-                                        {selectedContact.email}
-                                    </a>
-                                </div>
-                                <button
-                                    onClick={() => deleteContact(selectedContact.id)}
-                                    className="px-3 py-1.5 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors border border-red-100"
-                                >
-                                    Delete Submission
-                                </button>
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-4">
-                                {selectedContact.phone && (
-                                    <div className="p-3 bg-gray-50 rounded-lg border border-gray-100">
-                                        <span className="text-xs text-gray-400 uppercase tracking-wider font-bold block mb-1">Phone</span>
-                                        <span className="text-gray-900 font-medium">{selectedContact.phone}</span>
-                                    </div>
-                                )}
-                                {selectedContact.website && (
-                                    <div className="p-3 bg-gray-50 rounded-lg border border-gray-100">
-                                        <span className="text-xs text-gray-400 uppercase tracking-wider font-bold block mb-1">Website</span>
-                                        <a href={selectedContact.website} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline truncate block">
-                                            {selectedContact.website}
-                                        </a>
-                                    </div>
-                                )}
-                            </div>
-
-                            <div>
-                                <span className="text-xs text-gray-400 uppercase tracking-wider font-bold block mb-2">Message</span>
-                                <div className="p-4 bg-gray-50 rounded-xl border border-gray-100 text-gray-700 whitespace-pre-wrap leading-relaxed">
-                                    {selectedContact.message}
-                                </div>
-                            </div>
-
-                            <p className="text-xs text-gray-400 pt-4 border-t border-gray-100">
-                                Received on {new Date(selectedContact.createdAt).toLocaleString(undefined, {
-                                    weekday: 'long',
-                                    year: 'numeric',
-                                    month: 'long',
-                                    day: 'numeric',
-                                    hour: '2-digit',
-                                    minute: '2-digit'
-                                })}
-                            </p>
-                        </div>
-                    ) : (
-                        <div className="h-full flex flex-col items-center justify-center text-gray-400">
-                            <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4">
-                                <svg className="w-8 h-8 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                </svg>
-                            </div>
-                            <p>Select a message to view details</p>
-                        </div>
-                    )}
-                </div>
+                    </div>
+                )}
             </div>
         </div>
     )

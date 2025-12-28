@@ -5,11 +5,10 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
 
-// Dynamically import the editor
-const TiptapEditor = dynamic(() => import('@/components/admin/tiptap-editor'), {
+const NovelEditor = dynamic(() => import('@/components/admin/novel-editor'), {
     ssr: false,
     loading: () => (
-        <div className="flex items-center justify-center h-[400px] bg-gray-50 border border-gray-200 rounded-xl">
+        <div className="flex items-center justify-center h-64">
             <div className="flex flex-col items-center gap-3">
                 <div className="w-6 h-6 border-2 border-gray-200 border-t-blue-600 rounded-full animate-spin" />
                 <p className="text-gray-400 text-sm">Loading Editor...</p>
@@ -18,7 +17,6 @@ const TiptapEditor = dynamic(() => import('@/components/admin/tiptap-editor'), {
     )
 })
 
-// Types
 interface SEOConfig {
     metaTitle: string
     metaDescription: string
@@ -48,11 +46,7 @@ interface BlogData {
     wordCount: number
 }
 
-// Constants
-const CATEGORIES = [
-    'General', 'AI & Technology', 'Design', 'Development',
-    'UX Research', 'Animation', 'Business', 'Tutorial', 'Case Study',
-]
+const CATEGORIES = ['General', 'AI & Technology', 'Design', 'Development', 'UX Research', 'Animation', 'Business', 'Tutorial', 'Case Study']
 
 const STATUSES = [
     { value: 'idea', label: 'Idea', color: 'bg-gray-100 text-gray-600', dot: 'bg-gray-400' },
@@ -60,25 +54,20 @@ const STATUSES = [
     { value: 'review', label: 'Review', color: 'bg-blue-50 text-blue-700', dot: 'bg-blue-400' },
     { value: 'seo_review', label: 'SEO Review', color: 'bg-purple-50 text-purple-700', dot: 'bg-purple-400' },
     { value: 'scheduled', label: 'Scheduled', color: 'bg-cyan-50 text-cyan-700', dot: 'bg-cyan-400' },
-    { value: 'published', label: 'Published', color: 'bg-green-50 text-green-700', dot: 'bg-green-400' },
+    { value: 'published', label: 'Published', color: 'bg-emerald-50 text-emerald-700', dot: 'bg-emerald-400' },
     { value: 'archived', label: 'Archived', color: 'bg-orange-50 text-orange-700', dot: 'bg-orange-400' },
 ]
 
-// Extract headings from HTML content
 function extractHeadings(content: string) {
     const headings: { level: number; text: string }[] = []
     const regex = /<h([1-4])[^>]*>([^<]+)<\/h[1-4]>/gi
     let match
     while ((match = regex.exec(content)) !== null) {
-        headings.push({
-            level: parseInt(match[1]),
-            text: match[2].replace(/&[^;]+;/g, ' ').trim(),
-        })
+        headings.push({ level: parseInt(match[1]), text: match[2].replace(/&[^;]+;/g, ' ').trim() })
     }
     return headings
 }
 
-// Count words in HTML content
 function countWords(content: string) {
     const text = content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim()
     return text ? text.split(' ').length : 0
@@ -89,76 +78,40 @@ export default function EditBlogPage({ params }: { params: Promise<{ id: string 
     const router = useRouter()
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
-    const [uploading, setUploading] = useState(false)
     const [lastSaved, setLastSaved] = useState<Date | null>(null)
-    const [rightPanel, setRightPanel] = useState<'keywords' | 'seo' | 'workflow' | 'settings'>('keywords')
-
-    // Panel Toggles
-    const [leftPanelOpen, setLeftPanelOpen] = useState(true)
-    const [rightPanelOpen, setRightPanelOpen] = useState(true)
+    const [activeTab, setActiveTab] = useState<'details' | 'seo' | 'settings'>('details')
+    const [showLeftPanel, setShowLeftPanel] = useState(true)
+    const [showRightPanel, setShowRightPanel] = useState(true)
 
     const [form, setForm] = useState<BlogData>({
-        id: '',
-        title: '',
-        slug: '',
-        excerpt: '',
-        content: '',
-        category: 'General',
-        tags: [],
-        featuredImage: '',
-        status: 'draft',
-        featured: false,
-        priority: 'medium',
-        primaryKeyword: '',
-        secondaryKeywords: [],
-        seo: {
-            metaTitle: '',
-            metaDescription: '',
-            canonicalUrl: '',
-            schemaType: 'Article',
-            noIndex: false,
-            noFollow: false,
-        },
-        views: 0,
-        readTime: '1 min',
-        wordCount: 0,
+        id: '', title: '', slug: '', excerpt: '', content: '', category: 'General',
+        tags: [], featuredImage: '', status: 'draft', featured: false, priority: 'medium',
+        primaryKeyword: '', secondaryKeywords: [],
+        seo: { metaTitle: '', metaDescription: '', canonicalUrl: '', schemaType: 'Article', noIndex: false, noFollow: false },
+        views: 0, readTime: '1 min', wordCount: 0,
     })
 
     const [tagsInput, setTagsInput] = useState('')
-    const [secondaryKeywordsInput, setSecondaryKeywordsInput] = useState('')
 
-    // Computed values
     const headings = useMemo(() => extractHeadings(form.content), [form.content])
     const wordCount = useMemo(() => countWords(form.content), [form.content])
     const readTime = useMemo(() => `${Math.max(1, Math.ceil(wordCount / 200))} min`, [wordCount])
 
-    // SEO Checklist
-    const seoChecklist = useMemo(() => {
-        const title = form.seo.metaTitle || form.title
-        const desc = form.seo.metaDescription || form.excerpt
-        const contentLower = form.content.toLowerCase()
-        const keywordInContent = form.primaryKeyword ? contentLower.includes(form.primaryKeyword.toLowerCase()) : false
-
-        return {
-            hasKeyword: !!form.primaryKeyword,
-            keywordInTitle: form.primaryKeyword ? form.title.toLowerCase().includes(form.primaryKeyword.toLowerCase()) : false,
-            keywordInContent,
-            hasTitle: title.length >= 30,
-            hasDescription: desc.length >= 120,
-            hasContent: wordCount >= 500,
-            hasImage: !!form.featuredImage,
-            hasH2: headings.some(h => h.level === 2),
-        }
+    const seoScore = useMemo(() => {
+        const checks = [
+            !!form.primaryKeyword,
+            form.primaryKeyword ? form.title.toLowerCase().includes(form.primaryKeyword.toLowerCase()) : false,
+            form.primaryKeyword ? form.content.toLowerCase().includes(form.primaryKeyword.toLowerCase()) : false,
+            (form.seo.metaTitle || form.title).length >= 30,
+            (form.seo.metaDescription || form.excerpt).length >= 120,
+            wordCount >= 500,
+            !!form.featuredImage,
+            headings.some(h => h.level === 2),
+        ]
+        return Math.round((checks.filter(Boolean).length / checks.length) * 100)
     }, [form, wordCount, headings])
 
-    const seoScore = useMemo(() => {
-        const checks = Object.values(seoChecklist)
-        return Math.round((checks.filter(Boolean).length / checks.length) * 100)
-    }, [seoChecklist])
-
-    useEffect(() => {
-        fetchPost()
-    }, [resolvedParams.id])
+    useEffect(() => { fetchPost() }, [resolvedParams.id])
 
     const fetchPost = async () => {
         try {
@@ -169,17 +122,9 @@ export default function EditBlogPage({ params }: { params: Promise<{ id: string 
                 if (post) {
                     setForm({
                         ...post,
-                        seo: post.seo || {
-                            metaTitle: post.title || '',
-                            metaDescription: post.excerpt || '',
-                            canonicalUrl: '',
-                            schemaType: 'Article',
-                            noIndex: false,
-                            noFollow: false,
-                        },
+                        seo: post.seo || { metaTitle: '', metaDescription: '', canonicalUrl: '', schemaType: 'Article', noIndex: false, noFollow: false },
                     })
                     setTagsInput(post.tags?.join(', ') || '')
-                    setSecondaryKeywordsInput(post.secondaryKeywords?.join(', ') || '')
                 }
             }
         } catch (error) {
@@ -192,7 +137,6 @@ export default function EditBlogPage({ params }: { params: Promise<{ id: string 
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
         if (!file) return
-        setUploading(true)
         const formData = new FormData()
         formData.append('file', file)
         formData.append('folder', 'blog')
@@ -202,36 +146,18 @@ export default function EditBlogPage({ params }: { params: Promise<{ id: string 
             if (data.url) setForm({ ...form, featuredImage: data.url })
         } catch (error) {
             console.error('Upload error:', error)
-        } finally {
-            setUploading(false)
         }
     }
 
     const handleSave = useCallback(async (newStatus?: BlogData['status']) => {
         setSaving(true)
         const tags = tagsInput.split(',').map(t => t.trim()).filter(Boolean)
-        const secondaryKeywords = secondaryKeywordsInput.split(',').map(k => k.trim()).filter(Boolean)
-        const status = newStatus || form.status
-
         try {
             const payload = {
-                ...form,
-                tags,
-                secondaryKeywords,
-                status,
-                wordCount,
-                readTime,
-                seo: {
-                    ...form.seo,
-                    metaTitle: form.seo.metaTitle || form.title,
-                    metaDescription: form.seo.metaDescription || form.excerpt,
-                },
+                ...form, tags, status: newStatus || form.status, wordCount, readTime,
+                seo: { ...form.seo, metaTitle: form.seo.metaTitle || form.title, metaDescription: form.seo.metaDescription || form.excerpt },
             }
-            const res = await fetch('/api/admin/blog', {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload),
-            })
+            const res = await fetch('/api/admin/blog', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
             if (res.ok) {
                 setLastSaved(new Date())
                 if (newStatus) setForm({ ...form, status: newStatus })
@@ -241,14 +167,11 @@ export default function EditBlogPage({ params }: { params: Promise<{ id: string 
         } finally {
             setSaving(false)
         }
-    }, [form, tagsInput, secondaryKeywordsInput, wordCount, readTime])
+    }, [form, tagsInput, wordCount, readTime])
 
     const handlePublish = async () => {
-        if (seoScore < 50) {
-            if (!confirm('SEO score is below 50%. Publish anyway?')) return
-        }
+        if (seoScore < 50 && !confirm('SEO score is below 50%. Publish anyway?')) return
         await handleSave('published')
-        router.push('/admin/blog')
     }
 
     if (loading) {
@@ -262,561 +185,274 @@ export default function EditBlogPage({ params }: { params: Promise<{ id: string 
     const statusConfig = STATUSES.find(s => s.value === form.status) || STATUSES[1]
 
     return (
-        <div className="h-[calc(100vh-3.5rem)] flex flex-col bg-gray-50 -m-6 relative">
+        <div className="absolute inset-0 flex flex-col bg-gray-100/50">
             {/* Top Bar */}
-            <div className="h-16 border-b border-gray-200 flex items-center justify-between px-6 bg-white shrink-0 shadow-sm z-20">
-                <div className="flex items-center gap-4">
-                    <Link
-                        href="/admin/blog"
-                        className="flex items-center gap-2 text-gray-500 hover:text-gray-700 transition-colors"
-                    >
+            <header className="h-14 bg-white border-b border-gray-200 flex items-center justify-between px-4 shrink-0 z-30">
+                <div className="flex items-center gap-3">
+                    <Link href="/admin/blog" className="p-2 -ml-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                         </svg>
-                        <span className="text-sm font-medium">Back</span>
                     </Link>
-
-                    <div className="h-6 w-px bg-gray-200" />
-
-                    <div className="flex items-center gap-3">
-                        <span className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-full ${statusConfig.color}`}>
-                            <span className={`w-1.5 h-1.5 rounded-full ${statusConfig.dot}`} />
+                    <div className="hidden sm:flex items-center gap-2">
+                        <span className="text-sm font-medium text-gray-900 max-w-[200px] truncate">{form.title || 'Untitled'}</span>
+                        <span className={`flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold uppercase rounded-full ${statusConfig.color}`}>
+                            <span className={`w-1.5 h-1.5 rounded-full ${statusConfig.dot}`}></span>
                             {statusConfig.label}
                         </span>
-                        {form.featured && (
-                            <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-yellow-50 text-yellow-700">
-                                ★ Featured
-                            </span>
-                        )}
                     </div>
                 </div>
 
-                <div className="absolute left-1/2 transform -translate-x-1/2 flex items-center gap-2">
-                    <button
-                        onClick={() => setLeftPanelOpen(!leftPanelOpen)}
-                        className={`p-1.5 rounded-lg transition-colors ${leftPanelOpen ? 'text-blue-600 bg-blue-50' : 'text-gray-400 hover:text-gray-600'}`}
-                        title="Toggle Structure"
-                    >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h7" />
-                        </svg>
-                    </button>
-                    <button
-                        onClick={() => setRightPanelOpen(!rightPanelOpen)}
-                        className={`p-1.5 rounded-lg transition-colors ${rightPanelOpen ? 'text-blue-600 bg-blue-50' : 'text-gray-400 hover:text-gray-600'}`}
-                        title="Toggle Sidebar"
-                    >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                    </button>
-                </div>
+                <div className="flex items-center gap-2">
+                    {/* Panel Toggles */}
+                    <div className="hidden lg:flex items-center gap-1 mr-2">
+                        <button
+                            onClick={() => setShowLeftPanel(!showLeftPanel)}
+                            className={`p-2 rounded-lg transition-colors ${showLeftPanel ? 'bg-gray-100 text-gray-700' : 'text-gray-400 hover:text-gray-600'}`}
+                            title="Toggle Structure Panel"
+                        >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h8m-8 6h16" />
+                            </svg>
+                        </button>
+                        <button
+                            onClick={() => setShowRightPanel(!showRightPanel)}
+                            className={`p-2 rounded-lg transition-colors ${showRightPanel ? 'bg-gray-100 text-gray-700' : 'text-gray-400 hover:text-gray-600'}`}
+                            title="Toggle Settings Panel"
+                        >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                        </button>
+                    </div>
 
-                <div className="flex items-center gap-3">
-                    {lastSaved && (
-                        <span className="text-xs text-gray-400 hidden sm:inline">
-                            Saved {lastSaved.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                        </span>
-                    )}
-                    <button
-                        onClick={() => handleSave()}
-                        disabled={saving}
-                        className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
-                    >
+                    {lastSaved && <span className="text-xs text-gray-400 hidden sm:inline mr-2">{lastSaved.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>}
+                    <button onClick={() => handleSave()} disabled={saving} className="px-3 py-1.5 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50">
                         {saving ? 'Saving...' : 'Save'}
                     </button>
-                    {form.status === 'published' ? (
-                        <a
-                            href={`/blog/${form.slug}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors flex items-center gap-1"
-                        >
-                            View
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                            </svg>
-                        </a>
-                    ) : (
-                        <button
-                            onClick={handlePublish}
-                            className="px-4 py-2 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
-                        >
-                            Publish
-                        </button>
-                    )}
+                    <button onClick={form.status === 'published' ? () => handleSave('draft') : handlePublish} className={`px-4 py-1.5 text-sm font-medium text-white rounded-lg transition-all shadow-sm ${form.status === 'published' ? 'bg-gray-900 hover:bg-gray-800' : 'bg-blue-600 hover:bg-blue-700'}`}>
+                        {form.status === 'published' ? 'Unpublish' : 'Publish'}
+                    </button>
                 </div>
-            </div>
+            </header>
 
-            {/* Three-Pane Layout */}
-            <div className="flex-1 flex overflow-hidden relative">
-                {/* Left Panel - Structure */}
-                <div
-                    className={`bg-white border-r border-gray-200 overflow-y-auto shrink-0 transition-all duration-300 ease-in-out ${leftPanelOpen ? 'w-64 opacity-100' : 'w-0 opacity-0 overflow-hidden border-none'
-                        }`}
-                >
-                    <div className="p-5 w-64">
-                        {/* SEO Score */}
-                        <div className="mb-6">
-                            <div className="flex items-center justify-between mb-2">
-                                <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider">SEO Score</h3>
-                                <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${seoScore >= 80 ? 'bg-green-100 text-green-700' :
-                                        seoScore >= 50 ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'
-                                    }`}>
-                                    {seoScore >= 80 ? 'Good' : seoScore >= 50 ? 'Fair' : 'Needs Work'}
-                                </span>
+            {/* Main Editor Area */}
+            <div className="flex-1 flex overflow-hidden">
+                {/* Left Panel - Document Structure */}
+                {showLeftPanel && (
+                    <aside className="w-64 bg-white border-r border-gray-200 flex-col shrink-0 hidden xl:flex overflow-y-auto">
+                        <div className="p-5">
+                            {/* Stats */}
+                            <div className="grid grid-cols-2 gap-3 mb-6">
+                                <div className="text-center p-3 bg-gray-50 rounded-xl">
+                                    <p className="text-2xl font-bold text-gray-900">{wordCount}</p>
+                                    <p className="text-[10px] font-medium text-gray-400 uppercase mt-0.5">Words</p>
+                                </div>
+                                <div className="text-center p-3 bg-gray-50 rounded-xl">
+                                    <p className="text-2xl font-bold text-gray-900">{readTime}</p>
+                                    <p className="text-[10px] font-medium text-gray-400 uppercase mt-0.5">Read</p>
+                                </div>
                             </div>
-                            <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
+
+                            {/* SEO Score */}
+                            <div className="mb-6">
                                 <div className="flex items-center justify-between mb-2">
-                                    <span className={`text-2xl font-bold ${seoScore >= 80 ? 'text-green-600' :
-                                            seoScore >= 50 ? 'text-yellow-600' : 'text-red-500'
-                                        }`}>{seoScore}%</span>
+                                    <span className="text-xs font-semibold text-gray-500">SEO Score</span>
+                                    <span className={`text-sm font-bold ${seoScore >= 80 ? 'text-emerald-600' : seoScore >= 50 ? 'text-amber-600' : 'text-red-500'}`}>{seoScore}%</span>
                                 </div>
-                                <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                                    <div
-                                        className={`h-full rounded-full transition-all ${seoScore >= 80 ? 'bg-green-500' :
-                                                seoScore >= 50 ? 'bg-yellow-500' : 'bg-red-500'
-                                            }`}
-                                        style={{ width: `${seoScore}%` }}
-                                    />
+                                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                                    <div className={`h-full rounded-full transition-all duration-500 ${seoScore >= 80 ? 'bg-emerald-500' : seoScore >= 50 ? 'bg-amber-500' : 'bg-red-500'}`} style={{ width: `${seoScore}%` }} />
                                 </div>
                             </div>
-                        </div>
 
-                        {/* Document Info */}
-                        <div className="mb-6">
-                            <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Structure</h3>
-                            <div className="grid grid-cols-2 gap-2">
-                                <div className="bg-gray-50 rounded-lg p-2 border border-gray-100 text-center">
-                                    <span className="text-xs text-gray-500 block">Words</span>
-                                    <span className="font-semibold text-gray-900 text-sm">{wordCount.toLocaleString()}</span>
-                                </div>
-                                <div className="bg-gray-50 rounded-lg p-2 border border-gray-100 text-center">
-                                    <span className="text-xs text-gray-500 block">Time</span>
-                                    <span className="font-semibold text-gray-900 text-sm">{readTime}</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Structure Outline */}
-                        <div className="pb-10">
-                            <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Outline</h3>
-                            <div className="space-y-0.5">
-                                {headings.length === 0 ? (
-                                    <p className="text-xs text-gray-400 italic text-center py-4 bg-gray-50 rounded-lg border border-dashed border-gray-200">
-                                        Use H1-H4 headings
-                                    </p>
-                                ) : (
-                                    headings.map((h, i) => (
-                                        <div
-                                            key={i}
-                                            className={`flex items-start gap-2 px-2 py-1.5 rounded hover:bg-gray-50 cursor-pointer transition-colors text-xs ${h.level === 1 ? 'font-semibold text-gray-900 bg-gray-50' :
-                                                    h.level === 2 ? 'pl-3 text-gray-700' :
-                                                        h.level === 3 ? 'pl-5 text-gray-600' :
-                                                            'pl-7 text-gray-500'
-                                                }`}
-                                        >
-                                            <span className={`shrink-0 w-4 h-4 rounded flex items-center justify-center font-mono text-[10px] ${h.level === 1 ? 'bg-blue-100 text-blue-700' :
-                                                    h.level === 2 ? 'bg-gray-100 text-gray-600' :
-                                                        'bg-gray-50 text-gray-400'
-                                                }`}>
-                                                H{h.level}
-                                            </span>
-                                            <span className="line-clamp-1 py-0.5">{h.text}</span>
+                            {/* Outline */}
+                            <div>
+                                <p className="text-xs font-semibold text-gray-500 mb-3">Document Outline</p>
+                                <div className="space-y-0.5">
+                                    {headings.length === 0 ? (
+                                        <div className="py-8 text-center">
+                                            <svg className="w-8 h-8 text-gray-200 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6h16M4 12h8m-8 6h16" />
+                                            </svg>
+                                            <p className="text-xs text-gray-400">Add headings to see outline</p>
                                         </div>
-                                    ))
-                                )}
+                                    ) : (
+                                        headings.map((h, i) => (
+                                            <div key={i} className={`flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors text-sm ${h.level === 1 ? 'font-semibold text-gray-900' : h.level === 2 ? 'pl-4 text-gray-700' : 'pl-6 text-gray-500'}`}>
+                                                <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${h.level === 1 ? 'bg-blue-500' : h.level === 2 ? 'bg-gray-400' : 'bg-gray-300'}`} />
+                                                <span className="truncate">{h.text}</span>
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                    </aside>
+                )}
 
-                {/* Center Panel - Editor */}
-                <div className="flex-1 overflow-y-auto bg-white scroll-smooth relative">
-                    <div className={`max-w-3xl mx-auto px-8 py-8 transition-all duration-300 ${!leftPanelOpen && !rightPanelOpen ? 'max-w-4xl' : ''}`}>
-                        {/* Title */}
-                        <textarea
-                            value={form.title}
-                            onChange={(e) => setForm({ ...form, title: e.target.value })}
-                            className="w-full text-4xl font-bold text-gray-900 bg-transparent border-none focus:outline-none focus:ring-0 mb-4 placeholder-gray-300 resize-none overflow-hidden"
-                            placeholder="Post title"
-                            rows={1}
-                            style={{ minHeight: '3rem' }}
-                            onInput={(e) => {
-                                const target = e.target as HTMLTextAreaElement;
-                                target.style.height = 'auto';
-                                target.style.height = target.scrollHeight + 'px';
-                            }}
-                        />
-
-                        {/* Slug */}
-                        <div className="flex items-center gap-1 text-sm text-gray-400 mb-6 pb-6 border-b border-gray-100 group">
-                            <span className="text-gray-300 group-hover:text-blue-400 transition-colors">/blog/</span>
+                {/* Center - Writing Canvas */}
+                <main className="flex-1 overflow-y-auto">
+                    <div className="min-h-full py-12 px-4 lg:px-8">
+                        <article className="max-w-3xl mx-auto">
+                            {/* Title */}
                             <input
                                 type="text"
-                                value={form.slug}
-                                onChange={(e) => setForm({ ...form, slug: e.target.value.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') })}
-                                className="bg-transparent border-none text-gray-500 focus:outline-none focus:ring-0 p-0 min-w-[200px] w-full hover:text-blue-600 transition-colors"
-                                placeholder="post-slug"
+                                value={form.title}
+                                onChange={(e) => setForm({ ...form, title: e.target.value })}
+                                className="w-full text-4xl lg:text-5xl font-bold text-gray-900 placeholder-gray-300 border-none focus:outline-none focus:ring-0 p-0 bg-transparent mb-4 leading-tight tracking-tight"
+                                placeholder="Untitled Post"
                             />
-                        </div>
 
-                        {/* Excerpt */}
-                        <div className="mb-8">
-                            <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Excerpt</label>
+                            {/* Meta */}
+                            <div className="flex items-center gap-3 text-sm mb-8 pb-6 border-b border-gray-200">
+                                <span className="text-gray-400 font-mono text-xs">/blog/</span>
+                                <input
+                                    type="text"
+                                    value={form.slug}
+                                    onChange={(e) => setForm({ ...form, slug: e.target.value.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') })}
+                                    className="bg-transparent border-none text-gray-500 font-mono text-xs focus:outline-none p-0 flex-1 max-w-[150px]"
+                                    placeholder="url-slug"
+                                />
+                                <span className="text-gray-200">•</span>
+                                <span className="text-gray-400 text-xs">{new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
+                            </div>
+
+                            {/* Excerpt */}
                             <textarea
                                 value={form.excerpt}
                                 onChange={(e) => setForm({ ...form, excerpt: e.target.value })}
                                 rows={2}
-                                className="w-full text-lg text-gray-600 bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none placeholder-gray-400 transition-shadow hover:bg-white focus:bg-white"
-                                placeholder="Write a brief summary of your post..."
+                                className="w-full text-xl text-gray-500 bg-transparent border-none focus:outline-none resize-none placeholder-gray-300 mb-8 leading-relaxed"
+                                placeholder="Write a compelling excerpt that summarizes your post..."
+                                onInput={(e) => {
+                                    e.currentTarget.style.height = 'auto'
+                                    e.currentTarget.style.height = e.currentTarget.scrollHeight + 'px'
+                                }}
                             />
-                        </div>
 
-                        {/* Content Editor */}
-                        <div className="pb-20">
-                            <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Content</label>
-                            <TiptapEditor
-                                markdown={form.content}
-                                onChange={(content) => setForm({ ...form, content })}
-                                placeholder="Start writing your post..."
+                            {/* Editor */}
+                            <NovelEditor
+                                content={form.content}
+                                onChange={(content: string) => setForm({ ...form, content })}
                             />
-                        </div>
+                        </article>
                     </div>
-                </div>
+                </main>
 
-                {/* Right Panel - Context */}
-                <div
-                    className={`bg-white border-l border-gray-200 overflow-y-auto shrink-0 transition-all duration-300 ease-in-out ${rightPanelOpen ? 'w-80 opacity-100' : 'w-0 opacity-0 overflow-hidden border-none'
-                        }`}
-                >
-                    <div className="w-80">
+                {/* Right Panel - Settings */}
+                {showRightPanel && (
+                    <aside className="w-80 bg-white border-l border-gray-200 flex-col shrink-0 hidden lg:flex">
                         {/* Tabs */}
-                        <div className="flex border-b border-gray-200 sticky top-0 bg-white z-10">
-                            {(['keywords', 'seo', 'workflow', 'settings'] as const).map((tab) => (
-                                <button
-                                    key={tab}
-                                    onClick={() => setRightPanel(tab)}
-                                    className={`flex-1 px-2 py-3.5 text-[10px] font-bold uppercase tracking-wider transition-colors ${rightPanel === tab
-                                            ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50/30'
-                                            : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
-                                        }`}
-                                >
-                                    {tab === 'seo' ? 'SEO' : tab}
-                                </button>
-                            ))}
+                        <div className="p-3 border-b border-gray-100">
+                            <div className="flex p-1 bg-gray-100 rounded-lg">
+                                {(['details', 'seo', 'settings'] as const).map((tab) => (
+                                    <button key={tab} onClick={() => setActiveTab(tab)} className={`flex-1 py-1.5 text-xs font-semibold rounded-md capitalize transition-all ${activeTab === tab ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>{tab}</button>
+                                ))}
+                            </div>
                         </div>
 
-                        <div className="p-5 pb-20">
-                            {/* Keywords Tab */}
-                            {rightPanel === 'keywords' && (
-                                <div className="space-y-6">
-                                    <div>
-                                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
-                                            Primary Keyword
-                                            <span className="text-red-500 ml-0.5">*</span>
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={form.primaryKeyword}
-                                            onChange={(e) => setForm({ ...form, primaryKeyword: e.target.value })}
-                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                                            placeholder="e.g., AI development"
-                                        />
-                                        {!form.primaryKeyword && (
-                                            <p className="text-xs text-amber-600 mt-2 flex items-center gap-1 bg-amber-50 p-2 rounded-lg border border-amber-100">
-                                                <svg className="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                                                </svg>
-                                                Required for SEO
-                                            </p>
-                                        )}
+                        <div className="flex-1 overflow-y-auto p-4 space-y-5">
+                            {activeTab === 'details' && (
+                                <>
+                                    <div className="p-4 rounded-xl bg-gray-50 space-y-4">
+                                        <div className="flex items-center justify-between">
+                                            <label className="text-xs font-semibold text-gray-500">Status</label>
+                                            <select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value as BlogData['status'] })} className="text-xs font-medium bg-white border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none">
+                                                {STATUSES.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
+                                            </select>
+                                        </div>
+                                        <div className="flex items-center justify-between">
+                                            <label className="text-xs font-semibold text-gray-500">Featured</label>
+                                            <button onClick={() => setForm({ ...form, featured: !form.featured })} className={`relative w-10 h-6 rounded-full transition-colors ${form.featured ? 'bg-blue-600' : 'bg-gray-200'}`}>
+                                                <span className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow transition-transform ${form.featured ? 'translate-x-4' : ''}`} />
+                                            </button>
+                                        </div>
                                     </div>
 
                                     <div>
-                                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
-                                            Secondary Keywords
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={secondaryKeywordsInput}
-                                            onChange={(e) => setSecondaryKeywordsInput(e.target.value)}
-                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                            placeholder="keyword1, keyword2"
-                                        />
-                                        <p className="text-xs text-gray-400 mt-1 pl-1">Comma separated</p>
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Category</label>
-                                        <select
-                                            value={form.category}
-                                            onChange={(e) => setForm({ ...form, category: e.target.value })}
-                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        >
-                                            {CATEGORIES.map((cat) => (
-                                                <option key={cat} value={cat}>{cat}</option>
-                                            ))}
+                                        <label className="block text-xs font-semibold text-gray-500 mb-2">Category</label>
+                                        <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className="w-full text-sm bg-white border border-gray-200 rounded-lg px-3 py-2.5 focus:outline-none focus:border-blue-400">
+                                            {CATEGORIES.map((cat) => <option key={cat} value={cat}>{cat}</option>)}
                                         </select>
                                     </div>
 
                                     <div>
-                                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Tags</label>
-                                        <input
-                                            type="text"
-                                            value={tagsInput}
-                                            onChange={(e) => setTagsInput(e.target.value)}
-                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                            placeholder="AI, Design, Next.js"
-                                        />
+                                        <label className="block text-xs font-semibold text-gray-500 mb-2">Tags</label>
+                                        <input type="text" value={tagsInput} onChange={(e) => setTagsInput(e.target.value)} className="w-full text-sm bg-white border border-gray-200 rounded-lg px-3 py-2.5 focus:outline-none focus:border-blue-400" placeholder="design, tutorial, next.js" />
                                     </div>
-
-                                    {/* Keyword Usage */}
-                                    <div className="pt-4 border-t border-gray-100">
-                                        <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Keyword Optimization</h4>
-                                        {form.primaryKeyword ? (
-                                            <div className="space-y-2">
-                                                <div className={`flex items-center gap-2 p-2 rounded-lg border ${seoChecklist.keywordInTitle ? 'bg-green-50 border-green-100' : 'bg-gray-50 border-gray-100'}`}>
-                                                    <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs shrink-0 ${seoChecklist.keywordInTitle ? 'bg-green-100 text-green-600' : 'bg-gray-200 text-gray-400'}`}>
-                                                        {seoChecklist.keywordInTitle ? '✓' : '○'}
-                                                    </span>
-                                                    <span className={`text-sm ${seoChecklist.keywordInTitle ? 'text-green-700' : 'text-gray-500'}`}>
-                                                        In title
-                                                    </span>
-                                                </div>
-                                                <div className={`flex items-center gap-2 p-2 rounded-lg border ${seoChecklist.keywordInContent ? 'bg-green-50 border-green-100' : 'bg-gray-50 border-gray-100'}`}>
-                                                    <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs shrink-0 ${seoChecklist.keywordInContent ? 'bg-green-100 text-green-600' : 'bg-gray-200 text-gray-400'}`}>
-                                                        {seoChecklist.keywordInContent ? '✓' : '○'}
-                                                    </span>
-                                                    <span className={`text-sm ${seoChecklist.keywordInContent ? 'text-green-700' : 'text-gray-500'}`}>
-                                                        In content
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        ) : (
-                                            <p className="text-sm text-gray-400 italic text-center py-4 bg-gray-50 rounded-lg border border-dashed border-gray-200">
-                                                Set primary keyword first
-                                            </p>
-                                        )}
-                                    </div>
-                                </div>
+                                </>
                             )}
 
-                            {/* SEO Tab */}
-                            {rightPanel === 'seo' && (
-                                <div className="space-y-6">
+                            {activeTab === 'seo' && (
+                                <>
+                                    <div>
+                                        <label className="block text-xs font-semibold text-gray-500 mb-2">Primary Keyword</label>
+                                        <input type="text" value={form.primaryKeyword} onChange={(e) => setForm({ ...form, primaryKeyword: e.target.value })} className="w-full text-sm bg-white border border-gray-200 rounded-lg px-3 py-2.5 focus:outline-none focus:border-blue-400" placeholder="e.g., AI development" />
+                                    </div>
+
                                     {/* Google Preview */}
+                                    <div className="p-4 bg-white rounded-xl border border-gray-200">
+                                        <p className="text-xs font-semibold text-gray-400 mb-3">Search Preview</p>
+                                        <p className="text-[#1a0dab] text-base font-medium line-clamp-1">{form.seo.metaTitle || form.title || 'Page Title'}</p>
+                                        <p className="text-[#006621] text-xs mt-1">makeuslive.com › blog › {form.slug || 'post'}</p>
+                                        <p className="text-[#545454] text-xs mt-1 line-clamp-2">{form.seo.metaDescription || form.excerpt || 'Add a meta description...'}</p>
+                                    </div>
+
                                     <div>
-                                        <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Search Preview</h4>
-                                        <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow">
-                                            <p className="text-[#1a0dab] text-lg font-normal line-clamp-1 hover:underline cursor-pointer">
-                                                {form.seo.metaTitle || form.title || 'Post Title'}
-                                            </p>
-                                            <div className="flex items-center gap-1 text-sm mt-1">
-                                                <span className="text-[#202124]">makeuslive.com</span>
-                                                <span className="text-[#5f6368]">› blog › {form.slug || 'slug'}</span>
-                                            </div>
-                                            <p className="text-[#4d5156] text-sm line-clamp-2 mt-1">
-                                                {form.seo.metaDescription || form.excerpt || 'Add a description to see how it appears in search results...'}
-                                            </p>
+                                        <div className="flex justify-between mb-1">
+                                            <label className="text-xs font-semibold text-gray-500">Meta Title</label>
+                                            <span className={`text-[10px] font-semibold ${(form.seo.metaTitle || form.title).length > 60 ? 'text-red-500' : 'text-gray-400'}`}>{(form.seo.metaTitle || form.title).length}/60</span>
                                         </div>
+                                        <input type="text" value={form.seo.metaTitle} onChange={(e) => setForm({ ...form, seo: { ...form.seo, metaTitle: e.target.value } })} className="w-full text-sm bg-white border border-gray-200 rounded-lg px-3 py-2 focus:outline-none" placeholder={form.title} />
                                     </div>
 
                                     <div>
-                                        <label className="flex items-center justify-between text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
-                                            Meta Title
-                                            <span className={`font-normal normal-case ${(form.seo.metaTitle || form.title).length > 60 ? 'text-red-500' : 'text-gray-400'}`}>
-                                                {(form.seo.metaTitle || form.title).length}/60
-                                            </span>
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={form.seo.metaTitle}
-                                            onChange={(e) => setForm({ ...form, seo: { ...form.seo, metaTitle: e.target.value } })}
-                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-                                            placeholder={form.title || 'SEO Title'}
-                                            maxLength={70}
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <label className="flex items-center justify-between text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
-                                            Meta Description
-                                            <span className={`font-normal normal-case ${(form.seo.metaDescription || form.excerpt).length > 160 ? 'text-red-500' : 'text-gray-400'}`}>
-                                                {(form.seo.metaDescription || form.excerpt).length}/160
-                                            </span>
-                                        </label>
-                                        <textarea
-                                            value={form.seo.metaDescription}
-                                            onChange={(e) => setForm({ ...form, seo: { ...form.seo, metaDescription: e.target.value } })}
-                                            rows={3}
-                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none text-sm"
-                                            placeholder={form.excerpt || 'SEO Description'}
-                                            maxLength={170}
-                                        />
-                                    </div>
-
-                                    {/* SEO Checklist */}
-                                    <div className="pt-4 border-t border-gray-100">
-                                        <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">SEO Checklist</h4>
-                                        <div className="space-y-2">
-                                            {[
-                                                { key: 'hasKeyword', label: 'Primary keyword set', check: seoChecklist.hasKeyword },
-                                                { key: 'hasTitle', label: 'Title 30+ characters', check: seoChecklist.hasTitle },
-                                                { key: 'hasDescription', label: 'Description 120+ chars', check: seoChecklist.hasDescription },
-                                                { key: 'hasH2', label: 'Has H2 headings', check: seoChecklist.hasH2 },
-                                                { key: 'hasContent', label: '500+ words', check: seoChecklist.hasContent },
-                                                { key: 'hasImage', label: 'Featured image set', check: seoChecklist.hasImage },
-                                            ].map((item) => (
-                                                <div key={item.key} className={`flex items-center gap-2 p-2 rounded-lg border ${item.check ? 'bg-green-50 border-green-100' : 'bg-gray-50 border-gray-100'}`}>
-                                                    <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs shrink-0 ${item.check ? 'bg-green-100 text-green-600' : 'bg-gray-200 text-gray-400'}`}>
-                                                        {item.check ? '✓' : '○'}
-                                                    </span>
-                                                    <span className={`text-sm ${item.check ? 'text-green-700' : 'text-gray-500'}`}>
-                                                        {item.label}
-                                                    </span>
-                                                </div>
-                                            ))}
+                                        <div className="flex justify-between mb-1">
+                                            <label className="text-xs font-semibold text-gray-500">Meta Description</label>
+                                            <span className={`text-[10px] font-semibold ${(form.seo.metaDescription || form.excerpt).length > 160 ? 'text-red-500' : 'text-gray-400'}`}>{(form.seo.metaDescription || form.excerpt).length}/160</span>
                                         </div>
+                                        <textarea value={form.seo.metaDescription} onChange={(e) => setForm({ ...form, seo: { ...form.seo, metaDescription: e.target.value } })} rows={3} className="w-full text-sm bg-white border border-gray-200 rounded-lg px-3 py-2 focus:outline-none resize-none" placeholder={form.excerpt} />
                                     </div>
-                                </div>
+                                </>
                             )}
 
-                            {/* Workflow Tab */}
-                            {rightPanel === 'workflow' && (
-                                <div className="space-y-6">
+                            {activeTab === 'settings' && (
+                                <>
                                     <div>
-                                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Status</label>
-                                        <select
-                                            value={form.status}
-                                            onChange={(e) => setForm({ ...form, status: e.target.value as BlogData['status'] })}
-                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        >
-                                            {STATUSES.map((s) => (
-                                                <option key={s.value} value={s.value}>{s.label}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-
-                                    <div className="flex items-center justify-between p-4 bg-yellow-50 border border-yellow-100 rounded-xl">
-                                        <div className="flex items-center gap-3">
-                                            <span className="text-yellow-500 text-xl">★</span>
-                                            <div>
-                                                <p className="font-medium text-gray-900">Featured Post</p>
-                                                <p className="text-xs text-gray-500">Show on homepage</p>
-                                            </div>
-                                        </div>
-                                        <label className="relative inline-flex items-center cursor-pointer">
-                                            <input
-                                                type="checkbox"
-                                                checked={form.featured}
-                                                onChange={(e) => setForm({ ...form, featured: e.target.checked })}
-                                                className="sr-only peer"
-                                            />
-                                            <div className="w-11 h-6 bg-gray-200 peer-focus:ring-4 peer-focus:ring-blue-100 rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
-                                        </label>
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Priority</label>
-                                        <div className="flex gap-2">
-                                            {(['low', 'medium', 'high'] as const).map((p) => (
-                                                <button
-                                                    key={p}
-                                                    onClick={() => setForm({ ...form, priority: p })}
-                                                    className={`flex-1 py-2 text-sm font-medium rounded-lg capitalize transition-colors ${form.priority === p
-                                                            ? p === 'high' ? 'bg-red-100 text-red-700 border border-red-200' :
-                                                                p === 'medium' ? 'bg-yellow-100 text-yellow-700 border border-yellow-200' :
-                                                                    'bg-gray-100 text-gray-700 border border-gray-200'
-                                                            : 'bg-gray-50 text-gray-500 border border-gray-200 hover:bg-gray-100'
-                                                        }`}
-                                                >
-                                                    {p}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    </div>
-
-                                    <div className="pt-4 space-y-3">
-                                        <button
-                                            onClick={handlePublish}
-                                            disabled={saving}
-                                            className="w-full py-3 bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 transition-colors disabled:opacity-50 shadow-sm shadow-blue-200"
-                                        >
-                                            Publish Now
-                                        </button>
-                                        <button
-                                            onClick={() => handleSave('draft')}
-                                            disabled={saving}
-                                            className="w-full py-3 text-gray-600 bg-gray-100 font-medium rounded-xl hover:bg-gray-200 transition-colors"
-                                        >
-                                            Save as Draft
-                                        </button>
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* Settings Tab */}
-                            {rightPanel === 'settings' && (
-                                <div className="space-y-6">
-                                    <div>
-                                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Featured Image</label>
-                                        <div className="border-2 border-dashed border-gray-200 rounded-xl overflow-hidden bg-gray-50 hover:bg-gray-100 transition-colors">
+                                        <label className="block text-xs font-semibold text-gray-500 mb-2">Featured Image</label>
+                                        <div className="border-2 border-dashed border-gray-200 rounded-xl overflow-hidden bg-gray-50 hover:bg-gray-100 transition-colors aspect-video flex items-center justify-center relative group">
                                             {form.featuredImage ? (
-                                                <div className="relative group">
-                                                    <img src={form.featuredImage} alt="Featured" className="w-full h-40 object-cover" />
-                                                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                                        <button
-                                                            onClick={() => setForm({ ...form, featuredImage: '' })}
-                                                            className="px-3 py-1.5 bg-white text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-100 transition-colors"
-                                                        >
-                                                            Remove
-                                                        </button>
+                                                <>
+                                                    <img src={form.featuredImage} alt="Featured" className="w-full h-full object-cover" />
+                                                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                                                        <label className="cursor-pointer px-3 py-1.5 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white text-xs font-medium rounded-lg">Replace<input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" /></label>
+                                                        <button onClick={() => setForm({ ...form, featuredImage: '' })} className="px-3 py-1.5 bg-red-500/80 hover:bg-red-500 text-white text-xs font-medium rounded-lg">Remove</button>
                                                     </div>
-                                                </div>
+                                                </>
                                             ) : (
-                                                <label className="cursor-pointer block py-10 text-center">
+                                                <label className="cursor-pointer text-center p-4 w-full h-full flex flex-col items-center justify-center">
                                                     <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
-                                                    <svg className="w-10 h-10 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                                    </svg>
-                                                    <p className="text-gray-500 text-sm font-medium">
-                                                        {uploading ? 'Uploading...' : 'Click to upload'}
-                                                    </p>
-                                                    <p className="text-gray-400 text-xs mt-1">PNG, JPG up to 10MB</p>
+                                                    <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center mb-2">
+                                                        <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+                                                    </div>
+                                                    <span className="text-xs font-medium text-gray-500">Upload Cover</span>
                                                 </label>
                                             )}
                                         </div>
                                     </div>
 
                                     <div className="pt-4 border-t border-gray-100">
-                                        <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Analytics</h4>
-                                        <div className="grid grid-cols-2 gap-3">
-                                            <div className="bg-gray-50 rounded-xl p-4 text-center border border-gray-100">
-                                                <p className="text-2xl font-bold text-gray-900">{(form.views || 0).toLocaleString()}</p>
-                                                <p className="text-xs text-gray-500 mt-1">Views</p>
-                                            </div>
-                                            <div className="bg-gray-50 rounded-xl p-4 text-center border border-gray-100">
-                                                <p className="text-2xl font-bold text-gray-900">{readTime}</p>
-                                                <p className="text-xs text-gray-500 mt-1">Read Time</p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="pt-4 border-t border-gray-100">
-                                        <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Danger Zone</h4>
-                                        <button
-                                            onClick={() => handleSave('archived')}
-                                            className="w-full py-3 text-red-600 bg-red-50 font-medium rounded-xl hover:bg-red-100 transition-colors border border-red-100"
-                                        >
-                                            Archive Post
+                                        <button onClick={() => handleSave('archived')} className="w-full px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors text-left flex items-center gap-2">
+                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                            Move to Trash
                                         </button>
                                     </div>
-                                </div>
+                                </>
                             )}
                         </div>
-                    </div>
-                </div>
+                    </aside>
+                )}
             </div>
         </div>
     )

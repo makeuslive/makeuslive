@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, createContext, useContext, type ReactNode } from 'react'
+import { usePathname } from 'next/navigation'
 import Lenis from 'lenis'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -22,8 +23,17 @@ interface LenisProviderProps {
 
 export function LenisProvider({ children }: LenisProviderProps) {
   const lenisRef = useRef<Lenis | null>(null)
+  const pathname = usePathname()
+
+  // Disable Lenis on admin routes - they need native scrolling for nested containers
+  const isAdminRoute = pathname?.startsWith('/admin')
 
   useEffect(() => {
+    // Skip Lenis initialization for admin routes
+    if (isAdminRoute) {
+      return
+    }
+
     // Check for reduced motion preference
     const prefersReducedMotion = window.matchMedia(
       '(prefers-reduced-motion: reduce)'
@@ -79,7 +89,7 @@ export function LenisProvider({ children }: LenisProviderProps) {
       lenis.destroy()
       lenisRef.current = null
     }
-  }, [])
+  }, [isAdminRoute])
 
   return (
     <LenisContext.Provider value={lenisRef.current}>
