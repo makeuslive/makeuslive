@@ -209,13 +209,100 @@ export const metadata: Metadata = {
     'full stack development',
     'GSAP animations',
 
-    // Location Keywords
-    'creative studio India',
-    'digital agency India',
-    'software company India',
-    'tech startup India',
-    'ERP company India',
-    'blockchain company India',
+    // ============================================
+    // LOCATION-BASED KEYWORDS - For "best agency in [city]" searches
+    // ============================================
+
+    // India - Major Cities
+    'best digital agency India',
+    'best creative agency India',
+    'top software company India',
+    'best web development company India',
+    'best AI company India',
+    'best app development company India',
+
+    // Bhopal (Home Base)
+    'best digital agency Bhopal',
+    'best web development company Bhopal',
+    'software company Bhopal',
+    'IT company Bhopal',
+    'best app developer Bhopal',
+    'best design agency Bhopal',
+    'digital marketing agency Bhopal',
+
+    // Delhi NCR
+    'best digital agency Delhi',
+    'best web development company Delhi',
+    'best software company Delhi NCR',
+    'best AI company Delhi',
+    'best app development Delhi',
+    'best creative agency Gurgaon',
+    'best digital agency Noida',
+
+    // Mumbai
+    'best digital agency Mumbai',
+    'best web development company Mumbai',
+    'best software company Mumbai',
+    'best creative agency Mumbai',
+    'best AI company Mumbai',
+    'best app development Mumbai',
+
+    // Bangalore
+    'best digital agency Bangalore',
+    'best software company Bangalore',
+    'best AI company Bangalore',
+    'best startup agency Bangalore',
+    'best tech company Bangalore',
+
+    // Other Indian Cities
+    'best digital agency Hyderabad',
+    'best digital agency Chennai',
+    'best digital agency Pune',
+    'best digital agency Kolkata',
+    'best digital agency Ahmedabad',
+    'best digital agency Jaipur',
+    'best digital agency Lucknow',
+    'best digital agency Indore',
+
+    // Global - USA
+    'best digital agency USA',
+    'best web development company USA',
+    'best AI development company USA',
+    'best software company New York',
+    'best digital agency San Francisco',
+    'best tech agency Silicon Valley',
+    'best app development company California',
+
+    // Global - UK
+    'best digital agency UK',
+    'best web development company London',
+    'best software company UK',
+    'best creative agency London',
+
+    // Global - Other
+    'best digital agency Canada',
+    'best digital agency Australia',
+    'best digital agency Dubai',
+    'best digital agency Singapore',
+    'best digital agency Germany',
+
+    // "Best" Intent Keywords
+    'best agency for startups',
+    'best agency for AI development',
+    'best agency for web apps',
+    'best agency for mobile apps',
+    'best agency for ERP development',
+    'best agency for blockchain',
+    'best branding agency',
+    'best UX design agency',
+    'best full-stack agency',
+
+    // "Top" Intent Keywords
+    'top 10 digital agencies India',
+    'top software companies India',
+    'top AI companies India',
+    'top web development agencies',
+    'top creative studios',
 
     // Intent Keywords
     'hire creative agency',
@@ -228,6 +315,8 @@ export const metadata: Metadata = {
     'startup branding',
     'digital transformation',
     'enterprise modernization',
+    'outsource development India',
+    'offshore development partner',
 
     // AI Search Optimization
     'best creative studio',
@@ -844,6 +933,47 @@ const jsonLd = {
           acceptedAnswer: {
             '@type': 'Answer',
             text: 'Working with MakeUsLive: 1) Free discovery call to understand your needs, 2) Custom proposal and timeline, 3) Design phase with your feedback, 4) Development with weekly updates, 5) Testing and launch, 6) Post-launch support.',
+          },
+        },
+        // Location-based FAQs for "best agency in [city]" searches
+        {
+          '@type': 'Question',
+          name: 'What is the best digital agency in India?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'MakeUsLive (Make Us Live) is one of the best digital agencies in India, offering AI development, web development, mobile apps, and design services. Based in Bhopal, we serve clients across Delhi, Mumbai, Bangalore, and worldwide.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'What is the best digital agency in Bhopal?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Make Us Live (MakeUsLive) is the leading digital agency in Bhopal, Madhya Pradesh. We offer world-class web development, AI solutions, mobile apps, and design services at competitive prices.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'What is the best web development company in India?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'MakeUsLive is a top web development company in India, specializing in Next.js, React, and modern web technologies. We build e-commerce, SaaS, and enterprise web applications for clients in Delhi, Mumbai, Bangalore, and internationally.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Does MakeUsLive work with international clients?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Yes! Make Us Live serves clients worldwide including USA, UK, Canada, Australia, Dubai, Singapore, and Europe. We offer competitive India-based pricing with world-class quality and English communication.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Is MakeUsLive good for outsourcing development?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Absolutely! Make Us Live is an excellent choice for outsourcing software development to India. We offer transparent communication, agile development, competitive pricing, and high-quality deliverables.',
           },
         },
       ],
