@@ -6,14 +6,11 @@ import Link from 'next/link'
 interface Work {
     id: string
     title: string
-    slug: string
-    description: string
     category: string
+    description: string
     image: string
-    client?: string
-    year?: string
-    status: 'draft' | 'published'
-    featured: boolean
+    tags: string[]
+    order: number
     createdAt: string
 }
 
@@ -22,14 +19,48 @@ export default function WorksPage() {
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        // Placeholder - would fetch from API
-        setLoading(false)
+        fetchWorks()
     }, [])
+
+    const fetchWorks = async () => {
+        try {
+            const res = await fetch('/api/admin/works')
+            const data = await res.json()
+            if (Array.isArray(data)) {
+                setWorks(data)
+            }
+        } catch (error) {
+            console.error('Error fetching works:', error)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const deleteWork = async (id: string) => {
+        if (!confirm('Delete this project? This action cannot be undone.')) return
+        try {
+            const res = await fetch(`/api/admin/works?id=${id}`, { method: 'DELETE' })
+            if (res.ok) {
+                setWorks(works.filter(w => w.id !== id))
+            }
+        } catch (error) {
+            console.error('Error deleting work:', error)
+        }
+    }
+
+    const stats = {
+        total: works.length,
+        published: works.length, // All are published for now
+        featured: works.filter(w => w.order === 0).length,
+        drafts: 0,
+    }
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center h-[60vh]">
-                <div className="animate-spin rounded-full h-8 w-8 border-2 border-gray-100 border-t-blue-600"></div>
+            <div className="absolute inset-0 overflow-auto">
+                <div className="flex items-center justify-center h-[60vh]">
+                    <div className="animate-spin rounded-full h-8 w-8 border-2 border-gray-100 border-t-blue-600"></div>
+                </div>
             </div>
         )
     }
@@ -57,10 +88,10 @@ export default function WorksPage() {
                 {/* Stats */}
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
                     {[
-                        { label: 'Total', value: works.length, color: 'text-gray-900', bg: 'bg-white' },
-                        { label: 'Published', value: works.filter(w => w.status === 'published').length, color: 'text-emerald-600', bg: 'bg-emerald-50' },
-                        { label: 'Featured', value: works.filter(w => w.featured).length, color: 'text-blue-600', bg: 'bg-blue-50' },
-                        { label: 'Drafts', value: works.filter(w => w.status === 'draft').length, color: 'text-amber-600', bg: 'bg-amber-50' },
+                        { label: 'Total', value: stats.total, color: 'text-gray-900', bg: 'bg-white' },
+                        { label: 'Published', value: stats.published, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+                        { label: 'Featured', value: stats.featured, color: 'text-blue-600', bg: 'bg-blue-50' },
+                        { label: 'Drafts', value: stats.drafts, color: 'text-amber-600', bg: 'bg-amber-50' },
                     ].map((stat) => (
                         <div key={stat.label} className={`${stat.bg} border border-gray-100 rounded-xl p-4`}>
                             <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">{stat.label}</p>
@@ -106,10 +137,46 @@ export default function WorksPage() {
                                             </svg>
                                         </div>
                                     )}
+                                    {/* Hover Actions */}
+                                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                                        <Link
+                                            href={`/admin/works/${work.id}`}
+                                            className="p-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white rounded-lg transition-colors"
+                                        >
+                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                            </svg>
+                                        </Link>
+                                        <button
+                                            onClick={() => deleteWork(work.id)}
+                                            className="p-2 bg-red-500/80 hover:bg-red-500 text-white rounded-lg transition-colors"
+                                        >
+                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                            </svg>
+                                        </button>
+                                    </div>
                                 </div>
                                 <div className="p-4">
-                                    <h3 className="font-semibold text-gray-900 mb-1">{work.title}</h3>
-                                    <p className="text-sm text-gray-500">{work.category}</p>
+                                    <div className="flex items-start justify-between gap-2">
+                                        <div>
+                                            <h3 className="font-semibold text-gray-900 mb-1">{work.title}</h3>
+                                            <p className="text-sm text-gray-500">{work.category}</p>
+                                        </div>
+                                        {work.order === 0 && (
+                                            <span className="px-2 py-0.5 text-[10px] font-bold uppercase bg-blue-50 text-blue-600 rounded-full">Featured</span>
+                                        )}
+                                    </div>
+                                    {work.tags && work.tags.length > 0 && (
+                                        <div className="flex flex-wrap gap-1 mt-3">
+                                            {work.tags.slice(0, 3).map((tag, i) => (
+                                                <span key={i} className="px-2 py-0.5 text-xs bg-gray-100 text-gray-500 rounded-md">{tag}</span>
+                                            ))}
+                                            {work.tags.length > 3 && (
+                                                <span className="px-2 py-0.5 text-xs text-gray-400">+{work.tags.length - 3}</span>
+                                            )}
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         ))}
@@ -117,5 +184,5 @@ export default function WorksPage() {
                 )}
             </div>
         </div>
-    )   
+    )
 }

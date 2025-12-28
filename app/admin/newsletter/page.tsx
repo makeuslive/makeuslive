@@ -5,29 +5,116 @@ import { useState, useEffect } from 'react'
 interface Subscriber {
     id: string
     email: string
-    status: 'active' | 'unsubscribed'
-    source: string
-    createdAt: string
+    subscribedAt: string
+    isActive: boolean
 }
 
 export default function NewsletterPage() {
     const [subscribers, setSubscribers] = useState<Subscriber[]>([])
     const [loading, setLoading] = useState(true)
     const [searchQuery, setSearchQuery] = useState('')
+    const [showAddModal, setShowAddModal] = useState(false)
+    const [newEmail, setNewEmail] = useState('')
+    const [adding, setAdding] = useState(false)
 
     useEffect(() => {
-        // Placeholder - would fetch from API
-        setLoading(false)
+        fetchSubscribers()
     }, [])
+
+    const fetchSubscribers = async () => {
+        try {
+            const res = await fetch('/api/newsletter')
+            const data = await res.json()
+            if (Array.isArray(data)) {
+                setSubscribers(data)
+            }
+        } catch (error) {
+            console.error('Error fetching subscribers:', error)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const addSubscriber = async () => {
+        if (!newEmail.trim() || !newEmail.includes('@')) {
+            alert('Please enter a valid email address')
+            return
+        }
+
+        setAdding(true)
+        try {
+            const res = await fetch('/api/newsletter', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: newEmail }),
+            })
+
+            if (res.ok) {
+                setNewEmail('')
+                setShowAddModal(false)
+                fetchSubscribers()
+            } else {
+                const data = await res.json()
+                alert(data.error || 'Failed to add subscriber')
+            }
+        } catch (error) {
+            console.error('Error adding subscriber:', error)
+            alert('Failed to add subscriber')
+        } finally {
+            setAdding(false)
+        }
+    }
+
+    const deleteSubscriber = async (id: string) => {
+        if (!confirm('Remove this subscriber?')) return
+        try {
+            const res = await fetch(`/api/newsletter?id=${id}`, { method: 'DELETE' })
+            if (res.ok) {
+                setSubscribers(subscribers.filter(s => s.id !== id))
+            }
+        } catch (error) {
+            console.error('Error removing subscriber:', error)
+        }
+    }
+
+    const exportCSV = () => {
+        const headers = ['Email', 'Subscribed Date', 'Status']
+        const rows = subscribers.map(s => [
+            s.email,
+            new Date(s.subscribedAt).toLocaleDateString(),
+            s.isActive ? 'Active' : 'Inactive'
+        ])
+
+        const csv = [headers, ...rows].map(row => row.join(',')).join('\n')
+        const blob = new Blob([csv], { type: 'text/csv' })
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = `newsletter-subscribers-${new Date().toISOString().split('T')[0]}.csv`
+        a.click()
+        URL.revokeObjectURL(url)
+    }
 
     const filteredSubscribers = subscribers.filter(sub =>
         sub.email.toLowerCase().includes(searchQuery.toLowerCase())
     )
 
+    // Calculate stats
+    const now = new Date()
+    const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+    const stats = {
+        total: subscribers.length,
+        active: subscribers.filter(s => s.isActive).length,
+        thisWeek: subscribers.filter(s => new Date(s.subscribedAt) >= weekAgo).length,
+        inactive: subscribers.filter(s => !s.isActive).length,
+    }
+
     if (loading) {
         return (
-            <div className="flex items-center justify-center h-[60vh]">
-                <div className="animate-spin rounded-full h-8 w-8 border-2 border-gray-100 border-t-blue-600"></div>
+            <div className="absolute inset-0 overflow-auto">
+                <div className="flex items-center justify-center h-[60vh]">
+                    <div className="animate-spin rounded-full h-8 w-8 border-2 border-gray-100 border-t-blue-600"></div>
+                </div>
             </div>
         )
     }
@@ -41,21 +128,36 @@ export default function NewsletterPage() {
                         <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Newsletter</h1>
                         <p className="text-sm text-gray-500 mt-1">Manage your email subscribers</p>
                     </div>
-                    <button className="inline-flex items-center gap-2 px-4 py-2.5 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors shadow-sm">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                        </svg>
-                        Export CSV
-                    </button>
+                    <div className="flex gap-2">
+                        <button
+                            onClick={() => setShowAddModal(true)}
+                            className="inline-flex items-center gap-2 px-4 py-2.5 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors shadow-sm"
+                        >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                            </svg>
+                            Add Subscriber
+                        </button>
+                        <button
+                            onClick={exportCSV}
+                            disabled={subscribers.length === 0}
+                            className="inline-flex items-center gap-2 px-4 py-2.5 border border-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                            </svg>
+                            Export CSV
+                        </button>
+                    </div>
                 </div>
 
                 {/* Stats */}
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
                     {[
-                        { label: 'Total', value: subscribers.length, color: 'text-gray-900', bg: 'bg-white' },
-                        { label: 'Active', value: subscribers.filter(s => s.status === 'active').length, color: 'text-emerald-600', bg: 'bg-emerald-50' },
-                        { label: 'This Week', value: 0, color: 'text-blue-600', bg: 'bg-blue-50' },
-                        { label: 'Unsubscribed', value: subscribers.filter(s => s.status === 'unsubscribed').length, color: 'text-gray-500', bg: 'bg-gray-50' },
+                        { label: 'Total', value: stats.total, color: 'text-gray-900', bg: 'bg-white' },
+                        { label: 'Active', value: stats.active, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+                        { label: 'This Week', value: stats.thisWeek, color: 'text-blue-600', bg: 'bg-blue-50' },
+                        { label: 'Inactive', value: stats.inactive, color: 'text-gray-500', bg: 'bg-gray-50' },
                     ].map((stat) => (
                         <div key={stat.label} className={`${stat.bg} border border-gray-100 rounded-xl p-4`}>
                             <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">{stat.label}</p>
@@ -87,7 +189,16 @@ export default function NewsletterPage() {
                             </svg>
                         </div>
                         <h3 className="text-lg font-semibold text-gray-900 mb-1">No subscribers yet</h3>
-                        <p className="text-sm text-gray-500">Newsletter subscriptions will appear here</p>
+                        <p className="text-sm text-gray-500 mb-6">Newsletter subscriptions will appear here</p>
+                        <button
+                            onClick={() => setShowAddModal(true)}
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                        >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                            </svg>
+                            Add First Subscriber
+                        </button>
                     </div>
                 )}
 
@@ -99,8 +210,8 @@ export default function NewsletterPage() {
                                 <tr className="border-b border-gray-100">
                                     <th className="text-left px-6 py-4 text-xs font-semibold text-gray-400 uppercase">Email</th>
                                     <th className="text-left px-6 py-4 text-xs font-semibold text-gray-400 uppercase">Status</th>
-                                    <th className="text-left px-6 py-4 text-xs font-semibold text-gray-400 uppercase hidden md:table-cell">Source</th>
-                                    <th className="text-left px-6 py-4 text-xs font-semibold text-gray-400 uppercase hidden lg:table-cell">Date</th>
+                                    <th className="text-left px-6 py-4 text-xs font-semibold text-gray-400 uppercase hidden md:table-cell">Date</th>
+                                    <th className="text-right px-6 py-4 text-xs font-semibold text-gray-400 uppercase">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-50">
@@ -110,17 +221,25 @@ export default function NewsletterPage() {
                                             <span className="text-gray-900">{sub.email}</span>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <span className={`inline-flex items-center gap-1.5 px-2 py-1 text-xs font-medium rounded-full ${sub.status === 'active' ? 'bg-emerald-50 text-emerald-700' : 'bg-gray-100 text-gray-500'
+                                            <span className={`inline-flex items-center gap-1.5 px-2 py-1 text-xs font-medium rounded-full ${sub.isActive ? 'bg-emerald-50 text-emerald-700' : 'bg-gray-100 text-gray-500'
                                                 }`}>
-                                                <span className={`w-1.5 h-1.5 rounded-full ${sub.status === 'active' ? 'bg-emerald-400' : 'bg-gray-400'}`}></span>
-                                                {sub.status === 'active' ? 'Active' : 'Unsubscribed'}
+                                                <span className={`w-1.5 h-1.5 rounded-full ${sub.isActive ? 'bg-emerald-400' : 'bg-gray-400'}`}></span>
+                                                {sub.isActive ? 'Active' : 'Inactive'}
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 hidden md:table-cell">
-                                            <span className="text-sm text-gray-500">{sub.source}</span>
+                                            <span className="text-sm text-gray-500">{new Date(sub.subscribedAt).toLocaleDateString()}</span>
                                         </td>
-                                        <td className="px-6 py-4 hidden lg:table-cell">
-                                            <span className="text-sm text-gray-500">{new Date(sub.createdAt).toLocaleDateString()}</span>
+                                        <td className="px-6 py-4 text-right">
+                                            <button
+                                                onClick={() => deleteSubscriber(sub.id)}
+                                                className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                                title="Remove"
+                                            >
+                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
+                                            </button>
                                         </td>
                                     </tr>
                                 ))}
@@ -129,6 +248,44 @@ export default function NewsletterPage() {
                     </div>
                 )}
             </div>
+
+            {/* Add Subscriber Modal */}
+            {showAddModal && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6">
+                        <h2 className="text-lg font-semibold text-gray-900 mb-4">Add Subscriber</h2>
+                        <div className="mb-4">
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                            <input
+                                type="email"
+                                value={newEmail}
+                                onChange={(e) => setNewEmail(e.target.value)}
+                                placeholder="subscriber@example.com"
+                                className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                                onKeyDown={(e) => e.key === 'Enter' && addSubscriber()}
+                            />
+                        </div>
+                        <div className="flex gap-3">
+                            <button
+                                onClick={addSubscriber}
+                                disabled={adding}
+                                className="flex-1 px-4 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+                            >
+                                {adding ? 'Adding...' : 'Add Subscriber'}
+                            </button>
+                            <button
+                                onClick={() => {
+                                    setShowAddModal(false)
+                                    setNewEmail('')
+                                }}
+                                className="px-4 py-2.5 border border-gray-200 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }
