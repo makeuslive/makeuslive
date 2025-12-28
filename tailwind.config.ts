@@ -33,6 +33,8 @@ const config: Config = {
       fontFamily: {
         sans: ['var(--font-general-sans)', 'system-ui', 'sans-serif'],
         display: ['var(--font-agbalumo)', 'cursive'],
+        mono: ['var(--font-ibm-plex-mono)', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
+        serif: ['var(--font-nanum-myeongjo)', 'Georgia', 'Cambria', 'serif'],
       },
       fontSize: {
         hero: ['128px', { lineHeight: '1.1', fontWeight: '700' }],
@@ -88,7 +90,9 @@ const config: Config = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/typography'),
+  ],
 }
 
 export default config

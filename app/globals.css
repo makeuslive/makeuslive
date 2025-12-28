@@ -632,3 +632,27 @@ select {
     border-color: inherit;
   }
 }
+
+/* MDXEditor Dark Theme Overrides */
+.mdx-editor-wrapper [role="toolbar"] {
+  background-color: transparent !important;
+}
+
+.mdx-editor-wrapper button {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.mdx-editor-wrapper button:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: white !important;
+}
+
+.mdx-editor-wrapper button[aria-pressed="true"] {
+  background-color: rgba(221, 206, 175, 0.2) !important;
+  color: #ddceaf !important;
+}
+
+.mdx-editor-wrapper [role="combobox"] {
+  background-color: transparent !important;
+  color: white !important;
+}

@@ -2,6 +2,7 @@
 
 import { memo, useEffect, useRef } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { cn } from '@/lib/utils'
@@ -171,19 +172,21 @@ export const Hero = memo<HeroProps>(({ className }) => {
 
         {/* CTA Buttons */}
         <div className="hero-cta flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Button
-            variant="primary"
-            size="lg"
-            rightIcon={
-              <ArrowRight
-                className="group-hover:translate-x-1 transition-transform"
-                size={20}
-              />
-            }
-            className="group"
-          >
-            {COPY.hero.cta}
-          </Button>
+          <Link href="/works">
+            <Button
+              variant="primary"
+              size="lg"
+              rightIcon={
+                <ArrowRight
+                  className="group-hover:translate-x-1 transition-transform"
+                  size={20}
+                />
+              }
+              className="group"
+            >
+              {COPY.hero.cta}
+            </Button>
+          </Link>
         </div>
       </div>
 

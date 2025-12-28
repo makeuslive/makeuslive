@@ -123,6 +123,7 @@ export interface PostItem {
     avatar: string
   }
   image: string
+  featuredImage?: string
   category: string
   slug: string
   featured?: boolean

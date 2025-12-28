@@ -237,17 +237,17 @@ export default function AboutPage() {
 
               {/* Subtitle */}
               <p className="hero-subtitle text-lg md:text-xl text-text-muted leading-relaxed max-w-xl mb-10">
-                We are a collective of engineers and designers driven by a singular obsession:
-                to craft digital experiences that feel inevitable, not designed. Every project is a chance
-                to redefine what&apos;s possible.
+                We started as freelancers in 2023—grinding on SMM, building MVPs, and helping businesses
+                find their digital footing. Now in 2025, we&apos;re a full-service studio tackling enterprise
+                backends, AI systems, and brands that demand excellence.
               </p>
 
               {/* Philosophy Quote */}
               <div className="hero-philosophy relative pl-6 border-l-2 border-gold/40">
                 <p className="text-text italic text-lg mb-2">
-                  &ldquo;Think like an artist. Research like a scientist.&rdquo;
+                  &ldquo;From freelancers to founders. We know the hustle because we lived it.&rdquo;
                 </p>
-                <p className="text-gold/80 text-sm">— Our Philosophy</p>
+                <p className="text-gold/80 text-sm">— Our Story</p>
               </div>
             </div>
 
@@ -264,12 +264,12 @@ export default function AboutPage() {
                   <p className="text-text-muted text-sm">Client Satisfaction</p>
                 </div>
                 <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/10 backdrop-blur-sm">
-                  <p className="text-4xl font-bold text-gold mb-2">5+</p>
-                  <p className="text-text-muted text-sm">Years Experience</p>
+                  <p className="text-4xl font-bold text-gold mb-2">2+</p>
+                  <p className="text-text-muted text-sm">Years of Grinding</p>
                 </div>
                 <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/10 backdrop-blur-sm mt-8">
                   <p className="text-4xl font-bold text-gold mb-2">24/7</p>
-                  <p className="text-text-muted text-sm">Support & Partnership</p>
+                  <p className="text-text-muted text-sm">Obsessed with Quality</p>
                 </div>
               </div>
             </div>
@@ -425,24 +425,24 @@ export default function AboutPage() {
               </h2>
               <div className="space-y-0">
                 <Milestone
-                  year="2019"
-                  title="The Beginning"
-                  description="Started as a freelance design studio with a vision to bridge the gap between design and technology."
-                />
-                <Milestone
-                  year="2021"
-                  title="First Major Client"
-                  description="Landed our first enterprise client, proving that quality work speaks for itself."
+                  year="2023"
+                  title="The Hustle Begins"
+                  description="Started as freelancers, grinding on Social Media Marketing (SMM) and helping small businesses build their digital presence."
                 />
                 <Milestone
                   year="2023"
-                  title="AI Integration"
-                  description="Pioneered AI-first development approach, helping clients automate and scale intelligently."
+                  title="MVP Builders"
+                  description="Transitioned to building MVPs for startups and businesses. Late nights, endless coffee, and relentless iteration—we helped ideas become real products."
                 />
                 <Milestone
                   year="2024"
-                  title="Global Expansion"
-                  description="Extended our reach across borders, working with clients from 10+ countries."
+                  title="Growing as a Team"
+                  description="Started working as a proper team, building brands, crafting designs, and taking on enterprise-level backends, AI/ML solutions, and sales automations."
+                />
+                <Milestone
+                  year="2025"
+                  title="Agency Launch"
+                  description="Officially launched MakeUsLive as a full-service creative & technology studio. From freelancers to founders—ready to take it to another level."
                   isLast
                 />
               </div>
@@ -455,14 +455,14 @@ export default function AboutPage() {
                 <div className="absolute -right-20 -bottom-20 w-64 h-64 bg-gold/10 rounded-full blur-3xl" />
 
                 <div className="relative z-10">
-                  <p className="text-sm font-medium text-gold tracking-wider uppercase mb-4">Looking Forward</p>
+                  <p className="text-sm font-medium text-gold tracking-wider uppercase mb-4">Where We&apos;re Headed</p>
                   <h3 className="text-2xl md:text-3xl font-bold text-text mb-6 leading-tight">
-                    We&apos;re on a mission to make technology more human.
+                    We built this from nothing. Now we&apos;re building it for you.
                   </h3>
                   <p className="text-text-muted leading-relaxed mb-8">
-                    As AI reshapes industries, we believe the companies that win will be those
-                    that use technology to amplify human creativity, not replace it. We&apos;re building
-                    that future, one project at a time.
+                    From late-night freelance gigs to enterprise AI systems—we&apos;ve done the work.
+                    SEO, sales automations, ML models, stunning designs—we don&apos;t just talk,
+                    we deliver. 2025 is our year to scale this properly.
                   </p>
                   <div className="flex items-center gap-4">
                     <div className="flex -space-x-3">

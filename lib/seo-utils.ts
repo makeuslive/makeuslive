@@ -6,8 +6,27 @@ import { Metadata } from 'next'
 // =====================================================
 
 const SITE_URL = 'https://makeuslive.com'
-const SITE_NAME = 'MakeUsLive'
+const SITE_NAME = 'Make Us Live'
+const SITE_NAME_ALT = 'MakeUsLive'
 const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.png`
+
+// Brand name variations for SEO
+const BRAND_VARIATIONS = [
+  'MakeUsLive',
+  'Make Us Live',
+  'make us live',
+  'MAKEUSLIVE',
+  'Make Us Live Agency',
+  'make us live agency',
+  'MakeUsLive Agency',
+  'makeuslive agency',
+  'MUL Studio',
+  'MUL Agency',
+  'Make Us Live Studio',
+  'Make Us Live Digital',
+  'MakeUsLive Creative Studio',
+  'Make Us Live Creative Agency',
+]
 
 // =====================================================
 // TYPES
@@ -78,6 +97,9 @@ export function generatePageMetadata({
     keywords: [
       ...keywords,
       'MakeUsLive',
+      'Make Us Live',
+      'make us live',
+      'Make Us Live Agency',
       'digital agency',
       'web development',
       'AI development',
@@ -106,8 +128,8 @@ export function generatePageMetadata({
       title: fullTitle,
       description,
       images: [image],
-      site: '@makeuslive',
-      creator: '@makeuslive',
+      site: '@makeuslivee',
+      creator: '@makeuslivee',
     },
     robots: noIndex
       ? { index: false, follow: false }
@@ -175,7 +197,7 @@ export function generateBlogMetadata({
       title,
       description,
       images: [image],
-      site: '@makeuslive',
+      site: '@makeuslivee',
     },
   }
 }
@@ -300,6 +322,24 @@ export function generateServiceSchema({
       },
     }),
     ...(category && { category }),
+  }
+}
+
+/**
+ * Generate Brand schema for brand recognition
+ * Critical for helping search engines understand brand name variations
+ */
+export function generateBrandSchema() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Brand',
+    '@id': `${SITE_URL}/#brand`,
+    name: SITE_NAME_ALT,
+    alternateName: BRAND_VARIATIONS,
+    url: SITE_URL,
+    logo: `${SITE_URL}/logo.png`,
+    description: 'Make Us Live (MakeUsLive) is a creative digital agency offering AI development, web development, mobile apps, and design services.',
+    slogan: 'Design. Think. Build. Automate.',
   }
 }
 
@@ -558,7 +598,9 @@ export function generateSocialShareUrls(url: string, title: string, description?
 export const SEO_CONFIG = {
   siteUrl: SITE_URL,
   siteName: SITE_NAME,
+  siteNameAlt: SITE_NAME_ALT,
+  brandVariations: BRAND_VARIATIONS,
   defaultOgImage: DEFAULT_OG_IMAGE,
-  twitterHandle: '@makeuslive',
+  twitterHandle: '@makeuslivee',
   locale: 'en_US',
 }

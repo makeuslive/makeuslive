@@ -1,13 +1,12 @@
 import type { Metadata, Viewport } from 'next'
-import { Inter, Space_Grotesk, Agbalumo } from 'next/font/google'
+import { Inter, Space_Grotesk, Agbalumo, Nanum_Myeongjo, IBM_Plex_Mono } from 'next/font/google'
 import type { ReactNode } from 'react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Analytics } from '@vercel/analytics/next'
 import dynamic from 'next/dynamic'
 
 import { Providers } from '@/components/providers'
-import { Navbar } from '@/components/layout/navbar'
-import { Footer } from '@/components/layout/footer'
+import { LayoutWrapper } from '@/components/layout/layout-wrapper'
 import { GoogleAnalytics } from '@/components/analytics/GoogleAnalytics'
 import { MicrosoftClarity } from '@/components/analytics/MicrosoftClarity'
 import { COPY } from '@/lib/constants'
@@ -40,6 +39,20 @@ const agbalumo = Agbalumo({
   display: 'swap',
 })
 
+const ibmPlexMono = IBM_Plex_Mono({
+  weight: ['400', '500', '600'],
+  subsets: ['latin'],
+  variable: '--font-ibm-plex-mono',
+  display: 'swap',
+})
+
+const nanumMyeongjo = Nanum_Myeongjo({
+  weight: ['400', '700', '800'],
+  subsets: ['latin'],
+  variable: '--font-nanum-myeongjo',
+  display: 'swap',
+})
+
 // Viewport configuration
 export const viewport: Viewport = {
   themeColor: [
@@ -60,7 +73,7 @@ export const metadata: Metadata = {
     template: `%s | ${COPY.brand.name}`,
   },
   description:
-    'MakeUsLive is a creative studio and digital agency that thinks like artists and researches like scientists. We craft AI-powered products, stunning websites, mobile apps, and design systems. Boutique agency creating digital experiences that inspire, engage, and convert. Based in India, serving clients worldwide.',
+    'Make Us Live (MakeUsLive) is a creative studio and digital agency - also known as Make Us Live Agency. We think like artists and research like scientists, crafting AI-powered products, stunning websites, mobile apps, and design systems. Make Us Live creates digital experiences that inspire, engage, and convert. Based in India, serving clients worldwide.',
 
   // Extended keywords - Full-Service Creative Studio + AI Search Optimization
   keywords: [
@@ -207,10 +220,38 @@ export const metadata: Metadata = {
     'award winning design',
     'innovative technology',
 
-    // Brand
+    // Brand Name Variations (Critical for Search)
     'MakeUsLive',
     'Make Us Live',
+    'make us live',
+    'MAKEUSLIVE',
+    'makeuslive',
+    'Make Us Live Agency',
+    'make us live agency',
+    'MakeUsLive Agency',
+    'makeuslive agency',
     'MUL Studio',
+    'MUL Agency',
+    'Make Us Live Studio',
+    'make us live studio',
+    'Make Us Live Digital',
+    'make us live digital',
+    'MakeUsLive Digital Agency',
+    'Make Us Live Creative',
+    'make us live creative agency',
+    'MakeUsLive India',
+    'Make Us Live India',
+    'make us live india',
+    'MakeUsLive Bhopal',
+    'Make Us Live Bhopal',
+    'MakeUsLive creative studio',
+    'make us live creative studio',
+    'MakeUsLive web development',
+    'make us live web development',
+    'MakeUsLive AI',
+    'make us live AI',
+    'MakeUsLive design',
+    'make us live design',
   ],
 
   // Authors and creator
@@ -241,9 +282,9 @@ export const metadata: Metadata = {
     locale: 'en_US',
     url: 'https://makeuslive.com',
     siteName: 'MakeUsLive',
-    title: 'MakeUsLive - Premium Digital Agency | AI, Web Development, Design',
+    title: 'Make Us Live (MakeUsLive) - Premium Digital Agency | AI, Web Development, Design',
     description:
-      'Transform your business with MakeUsLive. We specialize in AI-powered products, web development, mobile apps, and design systems. Build products that scale.',
+      'Transform your business with Make Us Live (MakeUsLive Agency). We specialize in AI-powered products, web development, mobile apps, and design systems. Make Us Live helps you build products that scale.',
     images: [
       {
         url: '/og-image.png',
@@ -265,11 +306,11 @@ export const metadata: Metadata = {
   // Twitter Card
   twitter: {
     card: 'summary_large_image',
-    site: '@makeuslive',
-    creator: '@makeuslive',
-    title: 'MakeUsLive - Premium Digital Agency | AI, Web Development, Design',
+    site: '@makeuslivee',
+    creator: '@makeuslivee',
+    title: 'Make Us Live (MakeUsLive) - Premium Digital Agency | AI, Web Development, Design',
     description:
-      'Transform your business with MakeUsLive. AI-powered products, web development, mobile apps, and design systems.',
+      'Transform your business with Make Us Live (MakeUsLive Agency). AI-powered products, web development, mobile apps, and design systems.',
     images: ['/twitter-image.png'],
   },
 
@@ -348,7 +389,27 @@ const jsonLd = {
       '@type': ['Organization', 'CreativeWork'],
       '@id': 'https://makeuslive.com/#organization',
       name: 'MakeUsLive',
-      alternateName: ['Make Us Live', 'MUL Studio', 'MakeUsLive Creative Studio'],
+      legalName: 'MakeUsLive',
+      alternateName: [
+        'Make Us Live',
+        'make us live',
+        'MAKEUSLIVE',
+        'Make Us Live Agency',
+        'make us live agency',
+        'MakeUsLive Agency',
+        'MUL Studio',
+        'MUL Agency',
+        'Make Us Live Studio',
+        'Make Us Live Digital',
+        'Make Us Live Digital Agency',
+        'MakeUsLive Creative Studio',
+        'Make Us Live Creative',
+        'Make Us Live Creative Agency',
+        'MakeUsLive India',
+        'Make Us Live India',
+        'MakeUsLive Bhopal',
+        'Make Us Live Bhopal',
+      ],
       url: 'https://makeuslive.com',
       logo: {
         '@type': 'ImageObject',
@@ -358,12 +419,12 @@ const jsonLd = {
         caption: 'MakeUsLive Creative Studio Logo',
       },
       image: 'https://makeuslive.com/og-image.png',
-      description: 'MakeUsLive is a boutique creative studio and digital agency that thinks like artists and researches like scientists. We craft AI-powered products, stunning websites, mobile apps, and design systems that inspire, engage, and convert.',
+      description: 'Make Us Live (also known as MakeUsLive or Make Us Live Agency) is a boutique creative studio and digital agency that thinks like artists and researches like scientists. We craft AI-powered products, stunning websites, mobile apps, and design systems that inspire, engage, and convert.',
       slogan: 'Design. Think. Build. Automate.',
-      disambiguatingDescription: 'A creative technology studio specializing in AI-powered digital experiences, web development, and design systems. Boutique agency serving startups and enterprises worldwide.',
+      disambiguatingDescription: 'Make Us Live Agency (MakeUsLive) - A creative technology studio specializing in AI-powered digital experiences, web development, and design systems. Boutique agency serving startups and enterprises worldwide. Search for: make us live, Make Us Live Agency, MakeUsLive.',
       email: 'hello@makeuslive.com',
       telephone: '+91-98765-43210',
-      foundingDate: '2019',
+      foundingDate: '2025',
       numberOfEmployees: {
         '@type': 'QuantitativeValue',
         minValue: 3,
@@ -378,11 +439,11 @@ const jsonLd = {
         addressCountry: 'IN',
       },
       sameAs: [
-        'https://twitter.com/makeuslive',
-        'https://linkedin.com/company/makeuslive',
-        'https://github.com/makeuslive',
-        'https://dribbble.com/makeuslive',
-        'https://instagram.com/makeuslive',
+        'https://twitter.com/makeuslivee',
+        'https://linkedin.com/company/makeuslivee',
+        'https://github.com/makeuslivee',
+        'https://dribbble.com/makeuslivee',
+        'https://instagram.com/makeuslivee',
       ],
       founder: [
         {
@@ -423,7 +484,8 @@ const jsonLd = {
       '@id': 'https://makeuslive.com/#website',
       url: 'https://makeuslive.com',
       name: 'MakeUsLive',
-      description: 'Premium Digital Agency - AI, Web Development, Design Systems',
+      alternateName: ['Make Us Live', 'make us live', 'Make Us Live Agency', 'MakeUsLive Agency'],
+      description: 'Make Us Live (MakeUsLive) - Premium Digital Agency - AI, Web Development, Design Systems',
       publisher: { '@id': 'https://makeuslive.com/#organization' },
       inLanguage: 'en-US',
       potentialAction: {
@@ -440,6 +502,7 @@ const jsonLd = {
       '@type': 'LocalBusiness',
       '@id': 'https://makeuslive.com/#localbusiness',
       name: 'MakeUsLive - Digital Agency Bhopal',
+      alternateName: ['Make Us Live Bhopal', 'Make Us Live Agency Bhopal', 'make us live bhopal'],
       image: 'https://makeuslive.com/og-image.png',
       url: 'https://makeuslive.com',
       telephone: '+91-98765-43210',
@@ -491,6 +554,7 @@ const jsonLd = {
       '@type': 'ProfessionalService',
       '@id': 'https://makeuslive.com/#service',
       name: 'MakeUsLive Digital Agency',
+      alternateName: ['Make Us Live Digital Agency', 'Make Us Live Agency', 'make us live agency'],
       image: 'https://makeuslive.com/og-image.png',
       url: 'https://makeuslive.com',
       telephone: '+91-98765-43210',
@@ -616,6 +680,78 @@ const jsonLd = {
         },
       ],
     },
+    // Brand Schema - Critical for brand name recognition
+    {
+      '@type': 'Brand',
+      '@id': 'https://makeuslive.com/#brand',
+      name: 'MakeUsLive',
+      alternateName: [
+        'Make Us Live',
+        'make us live',
+        'MAKEUSLIVE',
+        'Make Us Live Agency',
+        'make us live agency',
+        'MakeUsLive Agency',
+        'makeuslive agency',
+        'MUL Studio',
+        'MUL Agency',
+        'Make Us Live Studio',
+        'Make Us Live Digital',
+        'MakeUsLive Creative Studio',
+        'Make Us Live Creative Agency',
+      ],
+      url: 'https://makeuslive.com',
+      logo: 'https://makeuslive.com/logo.png',
+      description: 'Make Us Live (MakeUsLive) is a creative digital agency offering AI development, web development, mobile apps, and design services.',
+      slogan: 'Design. Think. Build. Automate.',
+    },
+    // FAQPage Schema - Helps with brand-related searches
+    {
+      '@type': 'FAQPage',
+      '@id': 'https://makeuslive.com/#faq',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: 'What is MakeUsLive?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'MakeUsLive (also known as Make Us Live or Make Us Live Agency) is a creative digital agency and technology studio based in India. We specialize in AI-powered products, web development, mobile app development, and design systems.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'What is Make Us Live Agency?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Make Us Live Agency (MakeUsLive) is a boutique creative studio that thinks like artists and researches like scientists. We help startups and enterprises build digital products that scale, including AI solutions, websites, mobile apps, and comprehensive design systems.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'What services does Make Us Live offer?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Make Us Live (MakeUsLive) offers a comprehensive range of services including: AI & Data Science, Enterprise Software (ERP/CRM), Web Development, Mobile & Desktop Apps, Blockchain & Web3, AR/VR Development, UI/UX Design & Branding, and Digital Marketing (SMMA).',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Where is MakeUsLive located?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Make Us Live (MakeUsLive) is headquartered in Bhopal, Madhya Pradesh, India. We serve clients worldwide including the United States, United Kingdom, Canada, Australia, and across Asia.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'How can I contact Make Us Live?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'You can contact Make Us Live (MakeUsLive Agency) via email at hello@makeuslive.com or visit our website at makeuslive.com to schedule a consultation.',
+          },
+        },
+      ],
+    },
   ],
 }
 
@@ -631,6 +767,8 @@ export default function RootLayout({ children }: RootLayoutProps) {
         inter.variable,
         spaceGrotesk.variable,
         agbalumo.variable,
+        ibmPlexMono.variable,
+        nanumMyeongjo.variable,
         'antialiased'
       )}
       suppressHydrationWarning
@@ -661,14 +799,10 @@ export default function RootLayout({ children }: RootLayoutProps) {
           {/* Background canvas - disabled for performance */}
           <StarsCanvas />
 
-          {/* Navigation */}
-          <Navbar />
-
-          {/* Main content */}
-          <main className="relative z-10">{children}</main>
-
-          {/* Footer */}
-          <Footer />
+          {/* Conditional layout - hides navbar/footer on admin routes */}
+          <LayoutWrapper>
+            {children}
+          </LayoutWrapper>
         </Providers>
         <SpeedInsights />
         <Analytics />

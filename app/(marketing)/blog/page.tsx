@@ -1,395 +1,435 @@
 'use client'
 
 import { PostItem } from '@/types'
-import { memo, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, memo } from 'react'
 import Link from 'next/link'
-import { gsap } from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { useQuery } from '@apollo/client/react'
 import { cn } from '@/lib/utils'
 import { ArrowRight } from '@/components/ui'
+import { GET_BLOG_POSTS } from '@/lib/graphql/queries'
 
-if (typeof window !== 'undefined') {
-  gsap.registerPlugin(ScrollTrigger)
+const CATEGORIES = [
+  { name: 'All', icon: null },
+  { name: 'AI & Technology', icon: '💻' },
+  { name: 'Design', icon: '🎨' },
+  { name: 'Development', icon: '⚙️' },
+  { name: 'UX Research', icon: '🔍' },
+  { name: 'Animation', icon: '✨' },
+]
+
+// Category Icons as small SVG components
+const CategoryIcon = ({ category }: { category: string }) => {
+  const iconClass = "w-3 h-3 fill-current"
+
+  switch (category) {
+    case 'AI & Technology':
+      return (
+        <svg className={iconClass} viewBox="0 0 12 12">
+          <rect x="1" y="1" width="10" height="10" rx="2" fill="currentColor" opacity="0.8" />
+          <rect x="3" y="3" width="2" height="2" fill="currentColor" />
+          <rect x="7" y="3" width="2" height="2" fill="currentColor" />
+          <rect x="3" y="7" width="6" height="2" fill="currentColor" />
+        </svg>
+      )
+    case 'Design':
+      return (
+        <svg className={iconClass} viewBox="0 0 12 12">
+          <circle cx="6" cy="6" r="5" fill="none" stroke="currentColor" strokeWidth="1.5" />
+          <circle cx="6" cy="6" r="2" fill="currentColor" />
+        </svg>
+      )
+    case 'Development':
+      return (
+        <svg className={iconClass} viewBox="0 0 12 12">
+          <path d="M3 3L1 6L3 9" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+          <path d="M9 3L11 6L9 9" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+          <path d="M7 2L5 10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        </svg>
+      )
+    case 'UX Research':
+      return (
+        <svg className={iconClass} viewBox="0 0 12 12">
+          <circle cx="5" cy="5" r="4" fill="none" stroke="currentColor" strokeWidth="1.5" />
+          <path d="M8 8L11 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        </svg>
+      )
+    case 'Animation':
+      return (
+        <svg className={iconClass} viewBox="0 0 12 12">
+          <polygon points="2,1 11,6 2,11" fill="currentColor" />
+        </svg>
+      )
+    default:
+      return null
+  }
 }
 
-// Initial state or fallback
-const BLOG_POSTS: PostItem[] = []
-
-const CATEGORIES = ['All', 'AI & Technology', 'Design', 'Development', 'UX Research', 'Animation']
-
-// Featured blog card (large)
-const FeaturedBlogCard = memo(({ post }: { post: PostItem }) => (
-  <div
-    className={cn(
-      'blog-card group relative rounded-3xl overflow-hidden',
-      'border border-white/10 bg-[#0a0a0a]',
-      'cursor-pointer transition-all duration-700 ease-out',
-      'hover:border-white/20 hover:scale-[1.01]',
-      'md:col-span-2 min-h-[400px] md:min-h-[450px]'
-    )}
+// Featured Blog Card - Magazine Style
+const FeaturedCard = memo(({ post }: { post: PostItem }) => (
+  <Link
+    href={`/blog/${post.slug}`}
+    className="group block h-full"
   >
-    {/* Gradient background */}
-    <div className={cn(
-      'absolute inset-0 bg-gradient-to-br opacity-60 transition-opacity duration-700 group-hover:opacity-100',
-      post.gradient
-    )} />
-
-    {/* Noise texture */}
-    <div className="absolute inset-0 opacity-[0.02] mix-blend-overlay"
-      style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.8\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\'/%3E%3C/svg%3E")' }}
-    />
-
-    {/* Decorative element */}
-    <div className="absolute top-1/2 right-16 -translate-y-1/2 w-[300px] h-[300px] opacity-10 group-hover:opacity-20 transition-opacity duration-700 hidden md:block">
-      <div className="absolute inset-0 border border-white/30 rounded-full" />
-      <div className="absolute inset-12 border border-white/20 rounded-full" />
-      <div className="absolute inset-24 border border-white/10 rounded-full" />
-    </div>
-
-    {/* Glow effect */}
-    <div className="absolute -inset-px opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-3xl pointer-events-none"
-      style={{
-        background: 'radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(212, 175, 55, 0.06), transparent 40%)',
-      }}
-    />
-
-    {/* Content */}
-    <div className="relative z-10 h-full p-8 md:p-12 flex flex-col justify-between">
-      {/* Top */}
-      <div className="flex items-center gap-4">
-        <span className="px-3 py-1.5 rounded-full bg-gold/20 border border-gold/30 text-xs font-medium text-gold">
-          Featured
-        </span>
-        <span className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-medium text-white/60">
-          {post.category}
-        </span>
+    <div className="relative h-full bg-bg border border-white/10 overflow-hidden">
+      {/* Browser-style header */}
+      <div className="flex items-center gap-3 px-4 py-3 border-b border-white/10">
+        {/* Three dots */}
+        <div className="flex gap-1.5">
+          <span className="w-2 h-2 rounded-full border border-white/30" />
+          <span className="w-2 h-2 rounded-full border border-white/30" />
+          <span className="w-2 h-2 rounded-full border border-white/30" />
+        </div>
+        {/* Dashed line */}
+        <div className="flex-1 border-t border-dashed border-white/20" />
+        {/* Featured badge */}
+        <span className="text-[10px] uppercase tracking-wider text-white/50 px-2">Featured</span>
+        {/* Dashed line */}
+        <div className="flex-1 border-t border-dashed border-white/20" />
       </div>
 
-      {/* Bottom */}
-      <div className="max-w-xl">
-        <p className="text-white/40 text-sm mb-3">{post.date} · {post.readTime} read</p>
-        <h3 className="text-3xl md:text-4xl font-bold text-white mb-4 leading-tight group-hover:text-gold/90 transition-colors duration-300">
-          {post.title}
-        </h3>
-        <p className="text-white/50 text-base leading-relaxed mb-6">
-          {post.excerpt}
-        </p>
-        <div className="inline-flex items-center gap-2 text-gold group-hover:text-gold-dark transition-colors">
-          <span className="font-medium">Read Article</span>
-          <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+      {/* Image */}
+      <div className="relative aspect-[4/3] overflow-hidden">
+        {post.featuredImage && (post.featuredImage.startsWith('/') || post.featuredImage.startsWith('http')) ? (
+          <img
+            src={post.featuredImage}
+            alt={post.title}
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+        ) : (
+          <div className={`w-full h-full bg-gradient-to-br ${post.gradient || 'from-gold/20 to-gold/5'}`} />
+        )}
+
+        {/* Overlay gradient */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+
+        {/* Content overlay */}
+        <div className="absolute bottom-0 left-0 right-0 p-6">
+          {/* Badges */}
+          <div className="flex items-center gap-3 mb-4">
+            <span className="px-3 py-1 bg-gold/90 text-bg text-xs font-medium uppercase tracking-wider">
+              {post.category || 'Article'}
+            </span>
+            <span className="text-xs text-white/60 font-mono">
+              {post.readTime || '5 min read'}
+            </span>
+          </div>
+
+          {/* Title */}
+          <h3 className="text-2xl md:text-3xl font-serif font-bold text-white mb-3 leading-tight group-hover:text-gold transition-colors">
+            {post.title}
+          </h3>
+
+          {/* Excerpt */}
+          <p className="text-white/70 text-sm line-clamp-2 mb-4">
+            {post.excerpt}
+          </p>
+
+          {/* Author */}
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-gold/20 flex items-center justify-center text-gold text-sm font-medium">
+              {post.author?.charAt(0) || 'M'}
+            </div>
+            <div>
+              <div className="text-white text-sm font-medium">{post.author || 'MakeUsLive'}</div>
+              <div className="text-white/50 text-xs">{post.date}</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-
-    {/* Corner glow */}
-    <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-radial from-gold/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 blur-2xl" />
-  </div>
+  </Link>
 ))
-FeaturedBlogCard.displayName = 'FeaturedBlogCard'
+FeaturedCard.displayName = 'FeaturedCard'
 
-// Standard blog card
+// Standard blog card - Magazine grid style
 const BlogCard = memo(({ post }: { post: PostItem }) => (
-  <div
+  <Link
+    href={`/blog/${post.slug}`}
     className={cn(
-      'blog-card group relative rounded-2xl overflow-hidden',
-      'border border-white/10 bg-[#0a0a0a]',
-      'cursor-pointer transition-all duration-500',
-      'hover:border-white/20 hover:scale-[1.02]',
-      'min-h-[280px]'
+      'group flex flex-col h-full',
+      'border-r border-b border-white/10',
+      'hover:bg-white/[0.02] transition-colors duration-300'
     )}
   >
-    {/* Gradient background */}
-    <div className={cn(
-      'absolute inset-0 bg-gradient-to-br opacity-40 transition-opacity duration-500 group-hover:opacity-70',
-      post.gradient
-    )} />
-
-    {/* Glow effect */}
-    <div className="absolute -inset-px opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl pointer-events-none"
-      style={{
-        background: 'radial-gradient(400px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(212, 175, 55, 0.06), transparent 40%)',
-      }}
-    />
-
-    {/* Content */}
-    <div className="relative z-10 h-full p-6 flex flex-col justify-between">
-      {/* Top */}
-      <div>
-        <div className="flex items-center gap-3 mb-4">
-          <span className="px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-[11px] font-medium text-white/60">
-            {post.category}
-          </span>
-          <span className="text-white/30 text-xs">{post.readTime}</span>
-        </div>
-        <h3 className="text-xl font-bold text-white mb-3 leading-tight group-hover:text-gold/90 transition-colors duration-300">
-          {post.title}
-        </h3>
-        <p className="text-white/40 text-sm leading-relaxed line-clamp-2">
-          {post.excerpt}
-        </p>
+    <div className="flex flex-col h-full p-6 md:p-8">
+      {/* Date */}
+      <div className="mb-4 font-mono text-xs font-medium text-white/40 uppercase tracking-widest">
+        {post.date}
       </div>
 
-      {/* Bottom */}
-      <div className="flex items-center justify-between pt-4 border-t border-white/5">
-        <span className="text-white/30 text-xs">{post.date}</span>
-        <div className="flex items-center gap-2 text-sm font-medium text-white/50 group-hover:text-gold transition-colors">
-          Read
-          <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-        </div>
+      {/* Image */}
+      <div className="aspect-video w-full mb-6 overflow-hidden bg-white/5">
+        {post.featuredImage && (post.featuredImage.startsWith('/') || post.featuredImage.startsWith('http')) ? (
+          <img
+            src={post.featuredImage}
+            alt={post.title}
+            className="w-full h-full object-cover opacity-80 transition-transform duration-700 group-hover:scale-105 group-hover:opacity-100"
+          />
+        ) : (
+          <div className={`w-full h-full bg-gradient-to-br ${post.gradient || 'from-gold/10 to-transparent'} opacity-40`} />
+        )}
+      </div>
+
+      {/* Category */}
+      <div className="mb-3">
+        <span className="text-xs text-gold/80 font-medium uppercase tracking-wider">
+          {post.category || 'Article'}
+        </span>
+      </div>
+
+      {/* Title */}
+      <h3 className="text-xl font-serif font-semibold text-white mb-3 leading-tight group-hover:text-gold transition-colors">
+        {post.title}
+      </h3>
+
+      {/* Excerpt */}
+      <p className="text-white/50 text-sm line-clamp-2 mb-auto">
+        {post.excerpt}
+      </p>
+
+      {/* Read more */}
+      <div className="mt-6 flex items-center gap-2 text-gold text-sm font-medium group-hover:gap-3 transition-all">
+        Read Article
+        <ArrowRight size={14} />
       </div>
     </div>
-  </div>
+  </Link>
 ))
 BlogCard.displayName = 'BlogCard'
+
+// Newsletter subscription component for hero
+const HeroNewsletter = () => {
+  const [email, setEmail] = useState('')
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!email || !email.includes('@')) return
+
+    setStatus('loading')
+    try {
+      const res = await fetch('/api/newsletter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      })
+      if (res.ok) {
+        setStatus('success')
+        setEmail('')
+      } else {
+        setStatus('error')
+      }
+    } catch {
+      setStatus('error')
+    }
+  }
+
+  return (
+    <div className="relative bg-bg/50 border border-white/10 p-6 md:p-8">
+      {/* Decorative corners */}
+      <div className="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-gold/60" />
+      <div className="absolute top-0 right-0 w-6 h-6 border-t-2 border-r-2 border-gold/60" />
+      <div className="absolute bottom-0 left-0 w-6 h-6 border-b-2 border-l-2 border-gold/60" />
+      <div className="absolute bottom-0 right-0 w-6 h-6 border-b-2 border-r-2 border-gold/60" />
+
+      <div className="flex flex-col md:flex-row md:items-center gap-6">
+        <div className="flex-1">
+          <h4 className="text-xl font-serif font-bold text-white mb-2">Don&apos;t miss a thing</h4>
+          <p className="text-white/60 text-sm">Subscribe to get updates straight to your inbox.</p>
+        </div>
+
+        {/* Decorative arrow shape */}
+        <div className="hidden md:block">
+          <svg className="w-24 h-12 text-gold/30" viewBox="0 0 100 50">
+            <path d="M0,25 L60,25 L60,10 L100,25 L60,40 L60,25" fill="currentColor" />
+          </svg>
+        </div>
+      </div>
+
+      {status === 'success' ? (
+        <div className="mt-6 flex items-center gap-2 text-green-400 text-sm">
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          </svg>
+          Thanks for subscribing!
+        </div>
+      ) : (
+        <form onSubmit={handleSubmit} className="mt-6 flex gap-3">
+          <div className="flex-1 relative">
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter your email"
+              className="w-full h-12 px-4 bg-white/5 border border-white/10 text-white placeholder:text-white/40 focus:outline-none focus:border-gold/50 transition-colors"
+              disabled={status === 'loading'}
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={status === 'loading'}
+            className="h-12 px-6 bg-white text-bg font-medium uppercase text-xs tracking-wider hover:bg-gold transition-colors disabled:opacity-50"
+          >
+            {status === 'loading' ? '...' : 'Subscribe'}
+          </button>
+        </form>
+      )}
+    </div>
+  )
+}
 
 export default function BlogPage() {
   const pageRef = useRef<HTMLDivElement>(null)
   const [activeCategory, setActiveCategory] = useState('All')
-  const [posts, setPosts] = useState<PostItem[]>([])
+  const [currentPage, setCurrentPage] = useState(1)
+
+  const { data, loading } = useQuery(GET_BLOG_POSTS, {
+    variables: {
+      status: 'published',
+      category: activeCategory,
+      page: currentPage,
+      limit: 13
+    }
+  })
 
   useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const res = await fetch('/api/posts')
-        const data = await res.json()
-        if (data.success) {
-          setPosts(data.data)
-        }
-      } catch (error) {
-        console.error('Failed to fetch posts:', error)
-      }
+    setCurrentPage(1)
+  }, [activeCategory])
+
+  const postsData = (data as any)?.blogPosts
+  const posts: PostItem[] = postsData?.posts || []
+  const { totalPages, hasNextPage, hasPreviousPage } = postsData || {}
+
+  const featuredPost = posts.find(p => p.featured) || posts[0]
+  const gridPosts = posts.filter(p => p.id !== featuredPost?.id)
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage)
+    const grid = document.getElementById('blog-grid')
+    if (grid) {
+      grid.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
-    fetchPosts()
-  }, [])
-
-  const filteredPosts = activeCategory === 'All'
-    ? posts
-    : posts.filter(post => post.category === activeCategory)
-
-  useEffect(() => {
-    const page = pageRef.current
-    if (!page) return
-
-    const ctx = gsap.context(() => {
-      // Hero animations
-      gsap.from('.blog-hero-badge', { y: 30, opacity: 0, duration: 0.8, ease: 'power3.out' })
-      gsap.from('.blog-hero-title', { y: 60, opacity: 0, duration: 1, delay: 0.1, ease: 'power3.out' })
-      gsap.from('.blog-hero-subtitle', { y: 40, opacity: 0, duration: 0.8, delay: 0.2, ease: 'power3.out' })
-
-      // Categories
-      gsap.from('.category-btn', {
-        y: 20,
-        opacity: 0,
-        duration: 0.5,
-        stagger: 0.05,
-        delay: 0.3,
-        ease: 'power3.out'
-      })
-
-      // Blog cards - individual triggers
-      document.querySelectorAll('.blog-card').forEach((el, i) => {
-        gsap.fromTo(el,
-          { y: 50, opacity: 0 },
-          {
-            y: 0,
-            opacity: 1,
-            duration: 0.7,
-            delay: i * 0.1,
-            ease: 'power3.out',
-            scrollTrigger: {
-              trigger: el,
-              start: 'top 90%',
-              toggleActions: 'play none none none',
-            }
-          }
-        )
-      })
-
-      // Newsletter section
-      gsap.fromTo('.newsletter-section',
-        { y: 40, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.7,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: '.newsletter-section',
-            start: 'top 90%',
-            toggleActions: 'play none none none',
-          }
-        }
-      )
-    }, page)
-
-    // Mouse tracking for glow effect
-    const handleMouseMove = (e: MouseEvent) => {
-      const cards = page.querySelectorAll('.blog-card')
-      cards.forEach((card) => {
-        const rect = (card as HTMLElement).getBoundingClientRect()
-        const x = ((e.clientX - rect.left) / rect.width) * 100
-        const y = ((e.clientY - rect.top) / rect.height) * 100
-          ; (card as HTMLElement).style.setProperty('--mouse-x', `${x}%`)
-          ; (card as HTMLElement).style.setProperty('--mouse-y', `${y}%`)
-      })
-    }
-    page.addEventListener('mousemove', handleMouseMove)
-
-    return () => {
-      ctx.revert()
-      page.removeEventListener('mousemove', handleMouseMove)
-    }
-  }, [])
+  }
 
   return (
-    <div ref={pageRef} className="min-h-screen">
+    <div ref={pageRef} className="min-h-screen bg-bg text-white">
       {/* Hero Section */}
-      <section className="relative min-h-[50vh] flex items-center justify-center overflow-hidden pt-24 pb-8">
-        {/* Background Effects */}
-        <div className="absolute inset-0 -z-10">
-          <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-gold/5 rounded-full blur-[150px]" />
-          <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-purple-500/5 rounded-full blur-[120px]" />
-          {/* Grid pattern */}
-          <div className="absolute inset-0 opacity-[0.02]"
-            style={{
-              backgroundImage: 'linear-gradient(to right, white 1px, transparent 1px), linear-gradient(to bottom, white 1px, transparent 1px)',
-              backgroundSize: '60px 60px'
-            }}
-          />
-        </div>
+      <section className="pt-8 pb-12 md:pt-12 md:pb-20">
+        <div className="max-w-[1460px] mx-auto px-6 md:px-8">
 
-        <div className="max-w-5xl mx-auto px-4 text-center">
-          {/* Badge */}
-          <div className="blog-hero-badge inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-8">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-gold"></span>
-            </span>
-            <span className="text-sm font-medium text-white/70">Insights & Ideas</span>
+          {/* Large BLOG Title */}
+          <div className="mb-8 md:mb-12 overflow-hidden">
+            <h1 className="text-[80px] md:text-[140px] lg:text-[180px] font-serif font-bold text-white leading-none tracking-tight">
+              BLOG
+            </h1>
           </div>
 
-          {/* Title */}
-          <h1 className="blog-hero-title text-5xl sm:text-6xl md:text-7xl font-bold mb-6 leading-[0.95]">
-            <span className="text-white">The</span>{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-gold via-amber-300 to-gold">
-              Blog
-            </span>
-          </h1>
+          {/* Category Navigation Bar */}
+          <div className="relative bg-white/5 backdrop-blur-sm mb-12 md:mb-16 overflow-x-auto no-scrollbar">
+            <div className="flex items-center justify-start md:justify-center min-w-max px-4 py-4">
+              {CATEGORIES.map((category, index) => (
+                <div key={category.name} className="flex items-center">
+                  {index > 0 && (
+                    <div className="w-px h-4 bg-white/20 mx-4 md:mx-6" />
+                  )}
+                  <button
+                    onClick={() => setActiveCategory(category.name)}
+                    className={cn(
+                      'flex items-center gap-2 text-xs md:text-sm uppercase tracking-wider transition-colors whitespace-nowrap',
+                      activeCategory === category.name
+                        ? 'text-gold font-medium'
+                        : 'text-white/60 hover:text-white'
+                    )}
+                  >
+                    {category.name !== 'All' && (
+                      <span className={activeCategory === category.name ? 'text-gold' : 'text-white/40'}>
+                        <CategoryIcon category={category.name} />
+                      </span>
+                    )}
+                    {category.name}
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
 
-          {/* Subtitle */}
-          <p className="blog-hero-subtitle text-lg md:text-xl text-white/50 max-w-2xl mx-auto leading-relaxed">
-            Thoughts on design, development, AI, and building products that people love.
-          </p>
-        </div>
-      </section>
+          {/* Two Column Layout */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
+            {/* Left Column - Text & Newsletter */}
+            <div className="flex flex-col justify-between">
+              <div className="mb-12">
+                <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white leading-tight mb-6">
+                  A modern magazine<br />for curious minds
+                </h2>
+                <p className="text-white/60 text-lg leading-relaxed max-w-lg">
+                  Dive into well-crafted stories, interviews, and guides designed to inform,
+                  inspire, and keep you updated with the latest in tech, design, and creativity.
+                </p>
+              </div>
 
-      {/* Categories */}
-      <section className="py-8">
-        <div className="max-w-7xl mx-auto px-4 md:px-8">
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            {CATEGORIES.map((category) => (
-              <button
-                key={category}
-                onClick={() => setActiveCategory(category)}
-                className={cn(
-                  'category-btn px-4 py-2 rounded-full text-sm font-medium transition-all duration-300',
-                  'border',
-                  activeCategory === category
-                    ? 'bg-gold text-bg border-gold'
-                    : 'bg-transparent text-white/60 border-white/10 hover:border-gold/40 hover:text-gold'
-                )}
-              >
-                {category}
-              </button>
-            ))}
+              <HeroNewsletter />
+            </div>
+
+            {/* Right Column - Featured Article */}
+            {featuredPost && (
+              <div className="h-full min-h-[500px]">
+                <FeaturedCard post={featuredPost} />
+              </div>
+            )}
           </div>
         </div>
       </section>
 
       {/* Blog Grid */}
-      <section className="py-12 md:py-16">
-        <div className="max-w-7xl mx-auto px-4 md:px-8">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-            {filteredPosts.map((post, index) => (
-              post.featured && activeCategory === 'All' ? (
-                <FeaturedBlogCard key={post.id} post={post} />
-              ) : (
+      <section id="blog-grid" className="bg-bg border-t border-white/10">
+        <div className="max-w-[1920px] mx-auto">
+          {loading ? (
+            <div className="flex justify-center py-40">
+              <div className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            </div>
+          ) : gridPosts.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 border-l border-white/10">
+              {gridPosts.map((post) => (
                 <BlogCard key={post.id} post={post} />
-              )
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className="py-20 text-center text-white/40">
+              <p>No posts found in this category.</p>
+            </div>
+          )}
 
-          {filteredPosts.length === 0 && (
-            <div className="text-center py-20">
-              <p className="text-white/40 text-lg">No articles found in this category.</p>
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex justify-center items-center gap-4 py-20 border-t border-white/10">
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={!hasPreviousPage}
+                className="p-3 rounded-full border border-white/10 hover:bg-white/5 disabled:opacity-20 disabled:hover:bg-transparent transition-colors"
+              >
+                <ArrowRight className="rotate-180 text-white" size={20} />
+              </button>
+              <div className="font-mono text-sm text-white/60">
+                PAGE {currentPage} / {totalPages}
+              </div>
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={!hasNextPage}
+                className="p-3 rounded-full border border-white/10 hover:bg-white/5 disabled:opacity-20 disabled:hover:bg-transparent transition-colors"
+              >
+                <ArrowRight className="text-white" size={20} />
+              </button>
             </div>
           )}
         </div>
       </section>
 
-      {/* Newsletter Section */}
-      <section className="newsletter-section py-16 md:py-24">
-        <div className="max-w-4xl mx-auto px-4 md:px-8">
-          <div className="relative p-8 md:p-12 rounded-3xl bg-gradient-to-br from-gold/10 via-gold/5 to-transparent border border-gold/20 overflow-hidden">
-            {/* Background decoration */}
-            <div className="absolute -left-20 -bottom-20 w-64 h-64 bg-gold/10 rounded-full blur-3xl" />
-            <div className="absolute -right-20 -top-20 w-64 h-64 bg-gold/5 rounded-full blur-3xl" />
-
-            <div className="relative z-10 text-center">
-              <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-                Stay in the Loop
-              </h2>
-              <p className="text-white/50 text-lg mb-8 max-w-lg mx-auto">
-                Get the latest insights delivered straight to your inbox. No spam, just quality content.
-              </p>
-              <form className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-                <input
-                  type="email"
-                  placeholder="Enter your email"
-                  className={cn(
-                    'flex-grow h-12 rounded-xl bg-white/5 px-5',
-                    'text-white placeholder:text-white/40',
-                    'border border-white/10',
-                    'focus:outline-none focus:border-gold/50 transition-colors'
-                  )}
-                />
-                <button
-                  type="submit"
-                  className={cn(
-                    'px-6 h-12 rounded-xl font-semibold',
-                    'bg-gradient-to-r from-gold to-gold-dark text-bg',
-                    'hover:scale-105 hover:shadow-xl hover:shadow-gold/20',
-                    'transition-all duration-300'
-                  )}
-                >
-                  Subscribe
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-16 md:py-24">
-        <div className="max-w-4xl mx-auto px-4 md:px-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-            Have a Story to Share?
-          </h2>
-          <p className="text-white/50 text-lg max-w-xl mx-auto mb-10">
-            We&apos;re always looking for guest contributors. Share your insights with our community.
-          </p>
-          <Link
-            href="/contact"
-            className={cn(
-              'group inline-flex items-center gap-3 px-8 py-4 rounded-xl',
-              'bg-white/5 border border-white/10 text-white font-medium',
-              'transition-all duration-300 hover:border-gold/40 hover:bg-white/10'
-            )}
-          >
-            Get in Touch
-            <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
-          </Link>
+      {/* Bottom Newsletter */}
+      <section className="border-y border-white/10 bg-bg py-20 px-6">
+        <div className="max-w-xl mx-auto text-center">
+          <h3 className="text-3xl font-serif font-bold mb-4 text-white">Stay in the loop</h3>
+          <p className="text-white/60 mb-8">Get the latest insights on AI and design delivered to your inbox.</p>
+          <HeroNewsletter />
         </div>
       </section>
     </div>

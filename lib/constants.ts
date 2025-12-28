@@ -58,12 +58,11 @@ export const COPY = {
   },
   nav: {
     links: [
-      { label: 'About', href: '/about' },
-      { label: 'Works', href: '/works' },
-      { label: 'Services', href: '/services' },
+      { label: 'Home', href: '/' },
       { label: 'Blog', href: '/blog' },
+      { label: 'Podcast', href: '/podcast', badge: '5' },
     ],
-    cta: 'Start a Project',
+    cta: 'Subscribe',
   },
   hero: {
     greeting: 'नमस्ते',
@@ -356,10 +355,11 @@ export const COPY = {
       },
     ],
     social: [
-      { name: 'Twitter', href: 'https://twitter.com/makeuslive', icon: 'twitter' },
-      { name: 'LinkedIn', href: 'https://linkedin.com/company/makeuslive', icon: 'linkedin' },
-      { name: 'GitHub', href: 'https://github.com/makeuslive', icon: 'github' },
-      { name: 'Dribbble', href: 'https://dribbble.com/makeuslive', icon: 'dribbble' },
+      { name: 'Twitter', href: 'https://twitter.com/makeuslivee', icon: 'twitter' },
+      { name: 'LinkedIn', href: 'https://linkedin.com/company/makeuslivee', icon: 'linkedin' },
+      { name: 'GitHub', href: 'https://github.com/makeuslivee', icon: 'github' },
+      { name: 'Dribbble', href: 'https://dribbble.com/makeuslivee', icon: 'dribbble' },
+      { name: 'Instagram', href: 'https://instagram.com/makeuslivee', icon: 'instagram' },
     ],
     copyright: '© 2025 MakeUsLive. All rights reserved.',
     tagline: 'Built with ❤️ by Engineers + Designers',
