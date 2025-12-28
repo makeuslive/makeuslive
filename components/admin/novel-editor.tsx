@@ -236,19 +236,20 @@ interface NovelEditorProps {
 }
 
 export default function NovelEditor({ content, onChange }: NovelEditorProps) {
-    // Parse initial content - handle HTML string
-    const getInitialContent = useCallback((): JSONContent | undefined => {
+    // Parse initial content - handle HTML string or JSON
+    const getInitialContent = useCallback((): JSONContent | string | undefined => {
         if (!content) return undefined
         // If it looks like JSON, try to parse it
         if (content.startsWith('{') || content.startsWith('[')) {
             try {
                 return JSON.parse(content) as JSONContent
             } catch {
-                return undefined
+                return content // Return as-is if JSON parse fails
             }
         }
-        // For HTML content, we return undefined and let the editor handle it via the content prop in extensions
-        return undefined
+        // For HTML content, return the HTML string directly
+        // Novel's EditorContent accepts HTML strings as initialContent
+        return content
     }, [content])
 
     return (
@@ -256,7 +257,7 @@ export default function NovelEditor({ content, onChange }: NovelEditorProps) {
             <EditorRoot>
                 <EditorContent
                     immediatelyRender={false}
-                    initialContent={getInitialContent()}
+                    initialContent={getInitialContent() as any}
                     extensions={extensions}
                     onUpdate={({ editor }) => {
                         onChange(editor.getHTML())
