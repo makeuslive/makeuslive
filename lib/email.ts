@@ -148,11 +148,19 @@ const emailWrapper = (content: string, preheader?: string) => `
         </tr>
         <tr>
             <td align="center" style="padding-top: 30px;">
-                <p style="${baseStyles.footer}">© 2025 MakeUsLive • Bhopal, India</p>
                 <p style="${baseStyles.footer}">
                     <a href="https://makeuslive.com" style="color: ${baseStyles.gold}; text-decoration: none;">Website</a> • 
                     <a href="https://twitter.com/makeuslivee" style="color: ${baseStyles.gold}; text-decoration: none;">Twitter</a> • 
                     <a href="https://linkedin.com/company/makeuslivee" style="color: ${baseStyles.gold}; text-decoration: none;">LinkedIn</a>
+                </p>
+                <p style="${baseStyles.footer}">
+                    MakeUsLive • Bhopal, Madhya Pradesh 462001, India
+                </p>
+                <p style="${baseStyles.footer}">
+                    © 2025 MakeUsLive. All rights reserved.
+                </p>
+                <p style="${baseStyles.footer}">
+                    <a href="https://makeuslive.com/unsubscribe" style="color: rgba(255,255,255,0.3); text-decoration: underline;">Unsubscribe</a>
                 </p>
             </td>
         </tr>
