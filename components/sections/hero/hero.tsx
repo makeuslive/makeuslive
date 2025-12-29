@@ -136,9 +136,15 @@ export const Hero = memo<HeroProps>(({ className }) => {
             backfaceVisibility: 'hidden',
           }}
         >
-          {/* Responsive video sources - smaller file for mobile, full quality for desktop */}
+          {/* Responsive video sources - optimized formats and sizes */}
+          {/* Desktop: Full HD MP4 (H.264) - Best compatibility */}
           <source src="/images/hero-bg.mp4" type="video/mp4" media="(min-width: 768px)" />
+          {/* Desktop: WebM (VP9) - Better compression for modern browsers */}
+          <source src="/images/hero-bg.webm" type="video/webm" media="(min-width: 768px)" />
+          {/* Mobile: HD MP4 (H.264) - Smaller file size */}
           <source src="/images/hero-bg-mobile.mp4" type="video/mp4" />
+          {/* Mobile: WebM (VP9) - Better compression for modern browsers */}
+          <source src="/images/hero-bg-mobile.webm" type="video/webm" />
         </video>
         {/* Gradient overlays */}
         <div className="absolute inset-0 bg-gradient-to-b from-bg/40 via-transparent to-bg" />

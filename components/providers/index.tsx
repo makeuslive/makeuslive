@@ -20,15 +20,15 @@ export function Providers({ children }: ProvidersProps) {
         gaId={process.env.NEXT_PUBLIC_GA_ID || 'G-EC3FCCNML9'}
         clarityId={process.env.NEXT_PUBLIC_CLARITY_ID || 'urpwf3kysj'}
       />
-      <AuthProvider>
-        <GSAPProvider>
-          <LenisProvider>
-            <GreetingProvider>
-              <LoadingProvider>{children}</LoadingProvider>
-            </GreetingProvider>
-          </LenisProvider>
-        </GSAPProvider>
-      </AuthProvider>
+    <AuthProvider>
+      <GSAPProvider>
+        <LenisProvider>
+          <GreetingProvider>
+            <LoadingProvider>{children}</LoadingProvider>
+          </GreetingProvider>
+        </LenisProvider>
+      </GSAPProvider>
+    </AuthProvider>
     </ConsentManager>
   )
 }
