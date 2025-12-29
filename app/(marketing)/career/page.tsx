@@ -77,7 +77,7 @@ export default function CareerPage() {
               { title: 'Remote First', description: 'Work from anywhere in the world' },
               { title: 'Competitive Pay', description: 'Fair compensation for great work' },
               { title: 'Growth Opportunities', description: 'Learn and grow with cutting-edge tech' },
-              { title: 'Flexible Hours', description: 'Work when you're most productive' },
+              { title: 'Flexible Hours', description: "Work when you're most productive" },
               { title: 'Health Benefits', description: 'Comprehensive health insurance' },
               { title: 'Team Events', description: 'Regular team building and fun activities' },
             ].map((perk, index) => (
