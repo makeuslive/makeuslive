@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, Suspense } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 
@@ -33,7 +33,26 @@ const STATUS_CONFIG: Record<string, { bg: string; text: string; dot: string; lab
     archived: { bg: 'bg-orange-50', text: 'text-orange-700', dot: 'bg-orange-400', label: 'Archived' },
 }
 
+function BlogPageLoading() {
+    return (
+        <div className="flex items-center justify-center h-[60vh]">
+            <div className="flex flex-col items-center gap-3">
+                <div className="animate-spin rounded-full h-8 w-8 border-2 border-gray-100 border-t-blue-600"></div>
+                <p className="text-sm text-gray-400">Loading posts...</p>
+            </div>
+        </div>
+    )
+}
+
 export default function BlogPage() {
+    return (
+        <Suspense fallback={<BlogPageLoading />}>
+            <BlogContent />
+        </Suspense>
+    )
+}
+
+function BlogContent() {
     const searchParams = useSearchParams()
     const [posts, setPosts] = useState<BlogPost[]>([])
     const [loading, setLoading] = useState(true)
