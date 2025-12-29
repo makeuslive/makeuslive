@@ -132,6 +132,41 @@ export default function ContactsPage() {
         return true
     })
 
+    // Group contacts by email address to show as conversation threads
+    const groupedContacts = filteredContacts.reduce((acc, contact) => {
+        const existing = acc.find(c => c.email === contact.email)
+        if (existing) {
+            // Add this message to the thread
+            if (!existing.messages) {
+                existing.messages = [{
+                    message: existing.message,
+                    createdAt: existing.createdAt,
+                    website: existing.website
+                }]
+            }
+            existing.messages.push({
+                message: contact.message,
+                createdAt: contact.createdAt,
+                website: contact.website
+            })
+            // Sort messages by date (newest first for preview, but we'll reverse in display)
+            existing.messages.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+            // Update the preview to show the latest message
+            existing.message = existing.messages[0].message
+            existing.createdAt = existing.messages[0].createdAt
+            // Mark as unread if any message is unread
+            if (!contact.isRead) {
+                existing.isRead = false
+            }
+        } else {
+            acc.push({ ...contact })
+        }
+        return acc
+    }, [] as (Contact & { messages?: Array<{ message: string; createdAt: string; website?: string }> })[])
+
+    // Sort by latest message date
+    groupedContacts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+
     const stats = {
         total: contacts.length,
         unread: contacts.filter(c => !c.isRead).length,
@@ -191,7 +226,7 @@ export default function ContactsPage() {
 
                 {/* List */}
                 <div className="flex-1 overflow-y-auto bg-gray-50">
-                    {filteredContacts.length === 0 ? (
+                    {groupedContacts.length === 0 ? (
                         <div className="flex flex-col items-center justify-center h-full text-gray-400">
                             <svg className="w-12 h-12 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -200,7 +235,7 @@ export default function ContactsPage() {
                         </div>
                     ) : (
                         <div className="divide-y divide-gray-100">
-                            {filteredContacts.map((contact) => (
+                            {groupedContacts.map((contact) => (
                                 <div
                                     key={contact.id}
                                     onClick={() => setSelectedContact(contact)}
@@ -216,6 +251,11 @@ export default function ContactsPage() {
                                                     <span className="w-2 h-2 bg-blue-500 rounded-full shrink-0"></span>
                                                 )}
                                                 <span className="text-gray-900 truncate">{contact.name}</span>
+                                                {contact.messages && contact.messages.length > 1 && (
+                                                    <span className="px-1.5 py-0.5 bg-blue-100 text-blue-700 text-xs rounded-full font-medium">
+                                                        {contact.messages.length}
+                                                    </span>
+                                                )}
                                             </div>
                                             <p className="text-sm text-gray-500 truncate mt-0.5">{contact.email}</p>
                                             <p className="text-sm text-gray-400 line-clamp-1 mt-1">{contact.message}</p>
