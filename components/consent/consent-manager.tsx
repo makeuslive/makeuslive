@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, type ReactNode } from 'react'
 import { createContext, useContext } from 'react'
 import { formatStorageDate, getCurrentStorageDate } from '@/lib/date-utils'
 import { cn } from '@/lib/utils'
@@ -42,7 +42,7 @@ const CONSENT_VERSION = '1.0'
  * Consent Manager Component
  * DPDP/GDPR-compliant cookie consent manager
  */
-export function ConsentManager({ children }: { children: React.ReactNode }) {
+export function ConsentManager({ children }: { children: ReactNode }) {
   const [preferences, setPreferences] = useState<ConsentPreferences>({
     essential: true,
     analytics: false,

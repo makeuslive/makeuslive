@@ -6,7 +6,7 @@ import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { cn } from '@/lib/utils'
 import { ArrowRight } from '@/components/ui'
-import { Tablist, Tab } from '@/components/ui/tablist'
+import { Tablist } from '@/components/ui/tablist'
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)

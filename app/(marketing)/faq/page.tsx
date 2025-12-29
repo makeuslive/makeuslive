@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useMemo, useCallback, useEffect } from 'react'
-import { Accordion, AccordionItem } from '@/components/ui/accordion'
+import { Accordion } from '@/components/ui/accordion'
+import type { AccordionItem } from '@/components/ui/accordion'
 import { formatDisplayDate } from '@/lib/date-utils'
 import { Input } from '@/components/ui'
 import { cn } from '@/lib/utils'
