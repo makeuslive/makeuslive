@@ -95,20 +95,26 @@ export const HowWeWork = memo<HowWeWorkProps>(({ className }) => {
   return (
     <section
       ref={sectionRef}
-      className={cn('section relative bg-gradient-section', className)}
+      className={cn('section relative bg-gradient-section py-24 md:py-32', className)}
     >
       <div className="max-w-7xl mx-auto px-4 md:px-8">
         {/* Header */}
         <div className="process-header text-center mb-12 md:mb-20">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gold/10 border border-gold/20 mb-6">
-            <span className="w-2 h-2 rounded-full bg-gold animate-pulse" />
-            <span className="text-sm font-medium text-gold">{COPY.howWeWork.badge}</span>
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-6">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-500 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+            </span>
+            <span className="text-sm font-semibold text-white/70 tracking-wide">{COPY.howWeWork.badge}</span>
           </div>
 
-          <h2 className="section-heading text-text">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 leading-[1.1]">
             {COPY.howWeWork.heading}
           </h2>
+          <p className="text-lg md:text-xl text-white/60 leading-relaxed max-w-2xl mx-auto">
+            A proven approach to delivering exceptional results
+          </p>
         </div>
 
         {/* Process Steps */}

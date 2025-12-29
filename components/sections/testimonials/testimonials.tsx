@@ -144,7 +144,7 @@ export const Testimonials = memo<TestimonialsProps>(({ className }) => {
   return (
     <section
       ref={sectionRef}
-      className={cn('section relative overflow-hidden', className)}
+      className={cn('section relative overflow-hidden py-24 md:py-32', className)}
     >
       {/* Background decoration - smaller on mobile */}
       <div className="absolute inset-0 -z-10">
@@ -156,16 +156,22 @@ export const Testimonials = memo<TestimonialsProps>(({ className }) => {
         {/* Header */}
         <div className="testimonials-header text-center mb-12 md:mb-16">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gold/10 border border-gold/20 mb-6">
-            <span className="w-2 h-2 rounded-full bg-gold animate-pulse" />
-            <span className="text-sm font-medium text-gold">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-6">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-gold"></span>
+            </span>
+            <span className="text-sm font-semibold text-white/70 tracking-wide">
               {COPY.testimonials.badge}
             </span>
           </div>
 
-          <h2 className="section-heading text-text">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 leading-[1.1]">
             {COPY.testimonials.heading}
           </h2>
+          <p className="text-lg md:text-xl text-white/60 leading-relaxed max-w-2xl mx-auto">
+            What our clients say about working with us
+          </p>
         </div>
       </div>
 

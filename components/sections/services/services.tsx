@@ -150,9 +150,24 @@ export const Services = memo<ServicesProps>(({ className }) => {
       <div className="max-w-7xl mx-auto px-4 md:px-8 relative z-10">
         {/* Section Header */}
         <div className="services-section-header text-center mb-8 md:mb-12 lg:mb-16">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-[56px] font-bold text-text leading-tight">
-            What We Help You Build.
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-6">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-500 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-purple-500"></span>
+            </span>
+            <span className="text-sm font-semibold text-white/70 tracking-wide">Our Services</span>
+          </div>
+
+          <h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-white leading-tight mb-4">
+            What We Help You{' '}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-gold via-amber-300 to-gold">
+              Build
+            </span>
           </h2>
+          <p className="text-lg md:text-xl text-white/60 leading-relaxed max-w-2xl mx-auto">
+            Full-stack capabilities to bring your vision to life
+          </p>
         </div>
 
         {/* Main Container */}
