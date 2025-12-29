@@ -5,6 +5,12 @@ export const dynamic = 'force-dynamic'
 
 export async function GET() {
   try {
+    // Check if MongoDB URI is configured
+    if (!process.env.MONGODB_URI) {
+      console.warn('MONGODB_URI not configured - returning empty works array')
+      return NextResponse.json({ success: true, data: [] })
+    }
+
     const collection = await getCollection('works')
     const works = await collection.find({}).sort({ order: 1, createdAt: -1 }).toArray()
     
@@ -23,9 +29,21 @@ export async function GET() {
     return NextResponse.json({ success: true, data: formatted })
   } catch (error) {
     console.error('Fetch works error:', error)
-    return NextResponse.json(
-      { success: false, error: 'Failed to fetch works' },
-      { status: 500 }
-    )
+    
+    // Enhanced error logging
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    console.error('Works API error details:', {
+      message: errorMessage,
+      hasMongoUri: !!process.env.MONGODB_URI,
+      errorType: error instanceof Error ? error.constructor.name : typeof error,
+    })
+    
+    // Return empty array instead of error to prevent frontend crashes
+    // This allows the site to still function even if database is unavailable
+    return NextResponse.json({ 
+      success: true, 
+      data: [],
+      warning: process.env.NODE_ENV === 'development' ? errorMessage : undefined
+    })
   }
 }
