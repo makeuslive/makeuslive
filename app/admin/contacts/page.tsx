@@ -21,6 +21,9 @@ export default function ContactsPage() {
     const [loading, setLoading] = useState(true)
     const [filter, setFilter] = useState<StatusFilter>('all')
     const [selectedContact, setSelectedContact] = useState<Contact | null>(null)
+    const [showReplyModal, setShowReplyModal] = useState(false)
+    const [replying, setReplying] = useState(false)
+    const [replyForm, setReplyForm] = useState({ subject: '', message: '' })
 
     useEffect(() => {
         fetchContacts()
@@ -72,6 +75,44 @@ export default function ContactsPage() {
             }
         } catch (error) {
             console.error('Error deleting contact:', error)
+        }
+    }
+
+    const sendReply = async () => {
+        if (!selectedContact || !replyForm.subject.trim() || !replyForm.message.trim()) {
+            alert('Subject and message are required')
+            return
+        }
+
+        setReplying(true)
+        try {
+            const res = await fetch('/api/admin/contacts', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    id: selectedContact.id,
+                    to: selectedContact.email,
+                    name: selectedContact.name,
+                    subject: replyForm.subject,
+                    message: replyForm.message,
+                    originalMessage: selectedContact.message,
+                }),
+            })
+
+            if (res.ok) {
+                alert('Reply sent successfully!')
+                setShowReplyModal(false)
+                setReplyForm({ subject: '', message: '' })
+                toggleRead(selectedContact) // Mark as read
+            } else {
+                const data = await res.json()
+                alert(data.error || 'Failed to send reply')
+            }
+        } catch (error) {
+            console.error('Error sending reply:', error)
+            alert('Failed to send reply')
+        } finally {
+            setReplying(false)
         }
     }
 
@@ -234,15 +275,21 @@ export default function ContactsPage() {
                             )}
                         </div>
                         <div className="p-4 border-t border-gray-100">
-                            <a
-                                href={`mailto:${selectedContact.email}?from=team@makeuslive.com&subject=Re: Your Inquiry to MakeUsLive&body=%0A%0A---%0AOriginal message from ${encodeURIComponent(selectedContact.name)}:%0A${encodeURIComponent(selectedContact.message)}`}
+                            <button
+                                onClick={() => {
+                                    setReplyForm({
+                                        subject: `Re: Your inquiry to MakeUsLive`,
+                                        message: `Hi ${selectedContact.name},\n\nThank you for reaching out to MakeUsLive.\n\n`
+                                    })
+                                    setShowReplyModal(true)
+                                }}
                                 className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
                             >
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                                 </svg>
-                                Reply from team@makeuslive.com
-                            </a>
+                                Send Reply Email
+                            </button>
                         </div>
                     </>
                 ) : (
@@ -254,6 +301,60 @@ export default function ContactsPage() {
                     </div>
                 )}
             </div>
+
+            {/* Reply Modal */}
+            {showReplyModal && selectedContact && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-2">Reply to {selectedContact.name}</h3>
+                        <p className="text-sm text-gray-500 mb-6">Sending to: {selectedContact.email}</p>
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Subject *</label>
+                                <input
+                                    type="text"
+                                    value={replyForm.subject}
+                                    onChange={(e) => setReplyForm({ ...replyForm, subject: e.target.value })}
+                                    placeholder="Email subject..."
+                                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Message *</label>
+                                <textarea
+                                    value={replyForm.message}
+                                    onChange={(e) => setReplyForm({ ...replyForm, message: e.target.value })}
+                                    placeholder="Write your reply..."
+                                    rows={8}
+                                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 resize-none"
+                                />
+                            </div>
+                            <div className="bg-gray-50 rounded-lg p-3">
+                                <p className="text-xs text-gray-500 mb-1">Original message:</p>
+                                <p className="text-sm text-gray-700 line-clamp-3">{selectedContact.message}</p>
+                            </div>
+                        </div>
+                        <div className="flex gap-3 mt-6">
+                            <button
+                                onClick={sendReply}
+                                disabled={replying || !replyForm.subject.trim() || !replyForm.message.trim()}
+                                className="flex-1 px-4 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+                            >
+                                {replying ? 'Sending...' : 'Send Reply'}
+                            </button>
+                            <button
+                                onClick={() => {
+                                    setShowReplyModal(false)
+                                    setReplyForm({ subject: '', message: '' })
+                                }}
+                                className="px-4 py-2.5 border border-gray-200 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }
