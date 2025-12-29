@@ -27,7 +27,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: 'Googlebot',
         allow: '/',
-        disallow: ['/api/', '/admin/', '/private/'],
+        disallow: ['/api/', '/admin/', '/private/', '/_next/', '/_vercel/', '/static/'],
       },
       {
         userAgent: 'Googlebot-Image',
@@ -52,7 +52,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: 'Bingbot',
         allow: '/',
-        disallow: ['/api/', '/admin/', '/private/'],
+        disallow: ['/api/', '/admin/', '/private/', '/_next/', '/_vercel/', '/static/'],
       },
       {
         userAgent: 'msnbot',

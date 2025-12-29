@@ -8,7 +8,7 @@ import { Metadata } from 'next'
 const SITE_URL = 'https://makeuslive.com'
 const SITE_NAME = 'Make Us Live'
 const SITE_NAME_ALT = 'MakeUsLive'
-const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.png`
+const DEFAULT_OG_IMAGE = `${SITE_URL}/images/logo.png`
 
 // Brand name variations for SEO
 const BRAND_VARIATIONS = [
@@ -269,7 +269,7 @@ export function generateArticleSchema({
       name: SITE_NAME,
       logo: {
         '@type': 'ImageObject',
-        url: `${SITE_URL}/logo.png`,
+        url: `${SITE_URL}/images/logo.png`,
       },
     },
     url: `${SITE_URL}/blog/${slug}`,
@@ -337,7 +337,7 @@ export function generateBrandSchema() {
     name: SITE_NAME_ALT,
     alternateName: BRAND_VARIATIONS,
     url: SITE_URL,
-    logo: `${SITE_URL}/logo.png`,
+    logo: `${SITE_URL}/images/logo.png`,
     description: 'Make Us Live (MakeUsLive) is a creative digital agency offering AI development, web development, mobile apps, and design services.',
     slogan: 'Design. Think. Build. Automate.',
   }

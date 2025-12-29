@@ -392,14 +392,14 @@ export const metadata: Metadata = {
       'Transform your business with Make Us Live (MakeUsLive Agency). We specialize in AI-powered products, web development, mobile apps, and design systems. Make Us Live helps you build products that scale.',
     images: [
       {
-        url: '/og-image.png',
+        url: '/images/logo.png',
         width: 1200,
         height: 630,
         alt: 'Make Us Live - Premium Digital Agency',
         type: 'image/png',
       },
       {
-        url: '/og-image-square.png',
+        url: '/images/logo.png',
         width: 600,
         height: 600,
         alt: 'MakeUsLive Logo',
@@ -416,7 +416,7 @@ export const metadata: Metadata = {
     title: 'Make Us Live (MakeUsLive) - Premium Digital Agency | AI, Web Development, Design',
     description:
       'Transform your business with Make Us Live (MakeUsLive Agency). AI-powered products, web development, mobile apps, and design systems.',
-    images: ['/twitter-image.png'],
+    images: ['/images/logo.png'],
   },
 
   // Robots directives
@@ -518,12 +518,12 @@ const jsonLd = {
       url: 'https://makeuslive.com',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://makeuslive.com/logo.png',
+        url: 'https://makeuslive.com/images/logo.png',
         width: 512,
         height: 512,
         caption: 'MakeUsLive Creative Studio Logo',
       },
-      image: 'https://makeuslive.com/og-image.png',
+      image: 'https://makeuslive.com/images/logo.png',
       description: 'Make Us Live (also known as MakeUsLive or Make Us Live Agency) is a boutique creative studio and digital agency that thinks like artists and researches like scientists. We craft AI-powered products, stunning websites, mobile apps, and design systems that inspire, engage, and convert.',
       slogan: 'Design. Think. Build. Automate.',
       disambiguatingDescription: 'Make Us Live Agency (MakeUsLive) - A creative technology studio specializing in AI-powered digital experiences, web development, and design systems. Boutique agency serving startups and enterprises worldwide. Search for: make us live, Make Us Live Agency, MakeUsLive.',
@@ -608,7 +608,7 @@ const jsonLd = {
       '@id': 'https://makeuslive.com/#localbusiness',
       name: 'Make Us Live - Digital Agency Bhopal',
       alternateName: ['Make Us Live Bhopal', 'Make Us Live Agency Bhopal', 'make us live bhopal'],
-      image: 'https://makeuslive.com/og-image.png',
+      image: 'https://makeuslive.com/images/logo.png',
       url: 'https://makeuslive.com',
       telephone: '+91-98765-43210',
       email: 'hello@makeuslive.com',
@@ -660,7 +660,7 @@ const jsonLd = {
       '@id': 'https://makeuslive.com/#service',
       name: 'MakeUsLive Digital Agency',
       alternateName: ['Make Us Live Digital Agency', 'Make Us Live Agency', 'make us live agency'],
-      image: 'https://makeuslive.com/og-image.png',
+      image: 'https://makeuslive.com/images/logo.png',
       url: 'https://makeuslive.com',
       telephone: '+91-98765-43210',
       email: 'hello@makeuslive.com',
@@ -806,7 +806,7 @@ const jsonLd = {
         'Make Us Live Creative Agency',
       ],
       url: 'https://makeuslive.com',
-      logo: 'https://makeuslive.com/logo.png',
+      logo: 'https://makeuslive.com/images/logo.png',
       description: 'Make Us Live (MakeUsLive) is a creative digital agency offering AI development, web development, mobile apps, and design services.',
       slogan: 'Design. Think. Build. Automate.',
     },
