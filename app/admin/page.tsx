@@ -28,6 +28,7 @@ export default function AdminDashboard() {
     useEffect(() => {
         const fetchStats = async () => {
             try {
+                // Fetch blog stats
                 const blogRes = await fetch('/api/admin/blog')
                 const blogData = await blogRes.json()
                 if (Array.isArray(blogData)) {
@@ -36,6 +37,20 @@ export default function AdminDashboard() {
                         blogPosts: blogData.length,
                         publishedPosts: blogData.filter((p: { status: string }) => p.status === 'published').length,
                         draftPosts: blogData.filter((p: { status: string }) => p.status === 'draft').length,
+                    }))
+                }
+
+                // Fetch contacts stats
+                const contactsRes = await fetch('/api/admin/contacts')
+                const contactsData = await contactsRes.json()
+                if (Array.isArray(contactsData)) {
+                    // Group by email to get unique contacts
+                    const uniqueEmails = new Set(contactsData.map((c: { email: string }) => c.email))
+                    const unreadCount = contactsData.filter((c: { isRead: boolean }) => !c.isRead).length
+
+                    setStats(prev => ({
+                        ...prev,
+                        unreadContacts: uniqueEmails.size,
                     }))
                 }
             } catch (error) {
