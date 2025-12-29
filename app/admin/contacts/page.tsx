@@ -11,6 +11,11 @@ interface Contact {
     message: string
     isRead: boolean
     createdAt: string
+    replies?: Array<{
+        message: string
+        sentAt: string
+        subject?: string
+    }>
 }
 
 const STATUS_OPTIONS = ['all', 'unread', 'read'] as const
@@ -103,7 +108,12 @@ export default function ContactsPage() {
                 alert('Reply sent successfully!')
                 setShowReplyModal(false)
                 setReplyForm({ subject: '', message: '' })
-                toggleRead(selectedContact) // Mark as read
+                // Refresh contacts to show the new reply
+                await fetchContacts()
+                // Mark as read
+                if (!selectedContact.isRead) {
+                    toggleRead(selectedContact)
+                }
             } else {
                 const data = await res.json()
                 alert(data.error || 'Failed to send reply')
@@ -262,15 +272,55 @@ export default function ContactsPage() {
                             </p>
                         </div>
                         <div className="flex-1 p-6 overflow-y-auto">
-                            <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Message</h3>
-                            <p className="text-gray-700 whitespace-pre-wrap leading-relaxed">{selectedContact.message}</p>
+                            <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">Conversation History</h3>
 
-                            {selectedContact.website && (
-                                <div className="mt-6">
-                                    <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Website</h3>
-                                    <a href={selectedContact.website} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline text-sm">
-                                        {selectedContact.website}
-                                    </a>
+                            {/* Original Message */}
+                            <div className="mb-4">
+                                <div className="flex items-start gap-3">
+                                    <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
+                                        <span className="text-blue-600 text-xs font-semibold">{selectedContact.name.charAt(0).toUpperCase()}</span>
+                                    </div>
+                                    <div className="flex-1">
+                                        <div className="flex items-center gap-2 mb-1">
+                                            <span className="text-sm font-medium text-gray-900">{selectedContact.name}</span>
+                                            <span className="text-xs text-gray-400">•</span>
+                                            <span className="text-xs text-gray-400">{new Date(selectedContact.createdAt).toLocaleString()}</span>
+                                        </div>
+                                        <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
+                                            <p className="text-sm text-gray-700 whitespace-pre-wrap">{selectedContact.message}</p>
+                                        </div>
+                                        {selectedContact.website && (
+                                            <a href={selectedContact.website} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline mt-2 inline-block">
+                                                🔗 {selectedContact.website}
+                                            </a>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Replies */}
+                            {selectedContact.replies && selectedContact.replies.length > 0 && (
+                                <div className="space-y-4">
+                                    {selectedContact.replies.map((reply, idx) => (
+                                        <div key={idx} className="flex items-start gap-3">
+                                            <div className="w-8 h-8 rounded-full bg-gold/20 flex items-center justify-center shrink-0">
+                                                <span className="text-gold text-xs font-semibold">M</span>
+                                            </div>
+                                            <div className="flex-1">
+                                                <div className="flex items-center gap-2 mb-1">
+                                                    <span className="text-sm font-medium text-gray-900">MakeUsLive Team</span>
+                                                    <span className="text-xs text-gray-400">•</span>
+                                                    <span className="text-xs text-gray-400">{new Date(reply.sentAt).toLocaleString()}</span>
+                                                </div>
+                                                {reply.subject && (
+                                                    <p className="text-xs text-gray-500 mb-1">Subject: {reply.subject}</p>
+                                                )}
+                                                <div className="bg-gold/5 rounded-lg p-3 border border-gold/20">
+                                                    <p className="text-sm text-gray-700 whitespace-pre-wrap">{reply.message}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
                                 </div>
                             )}
                         </div>
