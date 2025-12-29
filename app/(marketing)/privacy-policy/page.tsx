@@ -1,14 +1,50 @@
+import { formatDisplayDate } from '@/lib/date-utils'
+
 export const metadata = {
     title: 'Privacy Policy',
     description: 'Privacy Policy for MakeUsLive. Learn how we collect, use, and protect your data.',
 }
+
+// Effective date and change log
+const EFFECTIVE_DATE = new Date('2025-01-01')
+const LAST_UPDATED = new Date('2025-12-27')
+
+const CHANGE_LOG = [
+    { date: new Date('2025-12-27'), description: 'Updated cookie consent section to align with DPDP Act 2023' },
+    { date: new Date('2025-07-15'), description: 'Added data retention policies and user rights section' },
+    { date: new Date('2025-01-01'), description: 'Initial privacy policy published' },
+]
 
 export default function PrivacyPolicyPage() {
     return (
         <div className="max-w-7xl mx-auto px-4 md:px-8 py-24 md:py-32">
             <div className="max-w-3xl mx-auto prose prose-invert">
                 <h1 className="text-4xl font-bold mb-8 text-gold">Privacy Policy</h1>
-                <p className="text-text-muted mb-6">Last updated: December 27, 2025</p>
+                
+                <div className="mb-8 p-4 rounded-lg bg-white/5 border border-white/10">
+                    <p className="text-text-muted mb-2">
+                        <strong className="text-text">Effective Date:</strong> {formatDisplayDate(EFFECTIVE_DATE)}
+                    </p>
+                    <p className="text-text-muted">
+                        <strong className="text-text">Last Updated:</strong> {formatDisplayDate(LAST_UPDATED)}
+                    </p>
+                </div>
+
+                <section id="change-log" className="mb-8">
+                    <h2 className="text-2xl font-semibold mb-4 text-text">Change Log</h2>
+                    <ul className="list-none space-y-3">
+                        {CHANGE_LOG.map((change, index) => (
+                            <li key={index} className="p-3 rounded-lg bg-white/5 border border-white/10">
+                                <div className="flex items-start gap-3">
+                                    <span className="text-gold font-medium whitespace-nowrap">
+                                        {formatDisplayDate(change.date)}
+                                    </span>
+                                    <span className="text-text-dim">{change.description}</span>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </section>
 
                 <section className="mb-8">
                     <h2 className="text-2xl font-semibold mb-4 text-text">1. Introduction</h2>

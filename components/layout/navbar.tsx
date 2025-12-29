@@ -9,6 +9,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { cn } from '@/lib/utils'
 import { COPY } from '@/lib/constants'
 import { Button, MenuIcon, CloseIcon, ArrowRight } from '@/components/ui'
+import { SkipLinks } from './skip-links'
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
@@ -69,7 +70,9 @@ export const Navbar = memo(() => {
 
   return (
     <>
+      <SkipLinks />
       <nav
+        id="navigation"
         ref={navRef}
         className={cn(
           'fixed top-0 left-0 right-0 z-50',

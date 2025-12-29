@@ -6,9 +6,11 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Image from 'next/image'
+import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { COPY } from '@/lib/constants'
 import { contactFormSchema, type ContactFormData } from '@/lib/validations'
+import { formatDisplayDateTime } from '@/lib/date-utils'
 import {
   Button,
   Input,
@@ -45,6 +47,9 @@ export const Contact = memo<ContactProps>(({ className }) => {
   const [attachments, setAttachments] = useState<File[]>([])
   const [fileError, setFileError] = useState<string | null>(null)
   const [agreedToTerms, setAgreedToTerms] = useState(false)
+  const [submitTimestamp, setSubmitTimestamp] = useState<string>('')
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const pathname = usePathname()
 
   const {
     register,
@@ -139,6 +144,12 @@ export const Contact = memo<ContactProps>(({ className }) => {
       setStep('submitting')
 
       try {
+        // Determine pillar from pathname or referrer
+        const pillar = pathname?.includes('/services') ? 'services' 
+          : pathname?.includes('/blog') ? 'content'
+          : pathname?.includes('/about') ? 'system'
+          : 'system' // default
+
         // Create FormData with all fields and files
         const formData = new FormData()
         formData.append('name', data.name)
@@ -147,6 +158,7 @@ export const Contact = memo<ContactProps>(({ className }) => {
         formData.append('phone', data.phone || '')
         formData.append('message', data.message)
         formData.append('agreedToTerms', String(agreedToTerms))
+        formData.append('pillar', pillar) // Add pillar routing tag
 
         // Append all attachments
         attachments.forEach((file) => {
@@ -161,17 +173,39 @@ export const Contact = memo<ContactProps>(({ className }) => {
         const result = await response.json()
 
         if (!response.ok || !result.success) {
-          throw new Error(result.error || 'Submission failed')
+          const errorMsg = result.error || 'Submission failed'
+          setErrorMessage(errorMsg)
+          throw new Error(errorMsg)
         }
 
+        // Set timestamp for success message
+        const timestamp = formatDisplayDateTime(new Date())
+        setSubmitTimestamp(timestamp)
         setStep('success')
         setShowConfetti(true)
         reset()
         setAttachments([])
         setAgreedToTerms(false)
         setTimeout(() => setShowConfetti(false), 5000)
+
+        // Track analytics event (sanitized - no PII)
+        if (typeof window !== 'undefined' && 'gtag' in window) {
+          const gtag = (window as unknown as { gtag: (...args: unknown[]) => void }).gtag
+          gtag('event', 'contact_submit', {
+            pillar,
+            ts: new Date().toISOString(),
+          })
+        }
       } catch (error) {
         console.error('Form submission error:', error)
+        // If error message wasn't set from API response, use the error object
+        if (!errorMessage) {
+          setErrorMessage(
+            error instanceof Error 
+              ? error.message 
+              : 'An unexpected error occurred. Please try again.'
+          )
+        }
         setStep('error')
       }
     },
@@ -192,6 +226,7 @@ export const Contact = memo<ContactProps>(({ className }) => {
     setAttachments([])
     setAgreedToTerms(false)
     setFileError(null)
+    setErrorMessage(null)
   }, [reset])
 
   useEffect(() => {
@@ -359,6 +394,11 @@ export const Contact = memo<ContactProps>(({ className }) => {
                         </svg>
                       </div>
                       <h4 className="text-2xl font-semibold text-text mb-2">Message Sent!</h4>
+                      {submitTimestamp && (
+                        <p className="text-gold/80 text-sm mb-2">
+                          Submitted at {submitTimestamp}
+                        </p>
+                      )}
                       <p className="text-text-muted mb-8">We&apos;ll get back to you within 24 hours.</p>
                       <Button variant="glass" onClick={handleReset}>Send Another Message</Button>
                     </div>
@@ -370,7 +410,20 @@ export const Contact = memo<ContactProps>(({ className }) => {
                         </svg>
                       </div>
                       <h4 className="text-2xl font-semibold text-text mb-2">Something went wrong</h4>
-                      <p className="text-text-muted mb-8">Please try again or contact us directly.</p>
+                      <p className="text-text-muted mb-4">
+                        {errorMessage || 'Please try again or contact us directly.'}
+                      </p>
+                      {errorMessage && (
+                        <p className="text-text-dim text-sm mb-8">
+                          If this problem persists, please contact us directly at{' '}
+                          <a href="mailto:hello@makeuslive.com" className="text-gold hover:underline">
+                            hello@makeuslive.com
+                          </a>
+                        </p>
+                      )}
+                      {!errorMessage && (
+                        <p className="text-text-muted mb-8">Please try again or contact us directly.</p>
+                      )}
                       <div className="flex gap-4 justify-center">
                         <Button variant="primary" onClick={handleRetry}>Try Again</Button>
                         <Button variant="glass" onClick={() => (window.location.href = `mailto:${COPY.contact.info.email}`)}>Email Us</Button>

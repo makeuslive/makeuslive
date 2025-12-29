@@ -47,6 +47,7 @@
     "tailwind-merge": "^2.6.0",
     "three": "^0.162.0",
     "util-deprecate": "^1.0.2",
+    "web-vitals": "^4.2.4",
     "zod": "^3.24.1"
   },
   "devDependencies": {

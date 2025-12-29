@@ -24,7 +24,7 @@ export function LayoutWrapper({ children }: LayoutWrapperProps) {
             <Navbar />
 
             {/* Main content */}
-            <main className="relative z-10">{children}</main>
+            <main id="main-content" className="relative z-10">{children}</main>
 
             {/* Footer */}
             <Footer />

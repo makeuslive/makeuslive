@@ -9,6 +9,7 @@ import { Providers } from '@/components/providers'
 import { LayoutWrapper } from '@/components/layout/layout-wrapper'
 import { GoogleAnalytics } from '@/components/analytics/GoogleAnalytics'
 import { MicrosoftClarity } from '@/components/analytics/MicrosoftClarity'
+import { WebVitalsInit } from '@/components/web-vitals-init'
 import { COPY } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 
@@ -1020,8 +1021,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         )}
       >
         <Providers>
-          <GoogleAnalytics GA_MEASUREMENT_ID={process.env.NEXT_PUBLIC_GA_ID || 'G-EC3FCCNML9'} />
-          <MicrosoftClarity projectId={process.env.NEXT_PUBLIC_CLARITY_ID || 'urpwf3kysj'} />
+          {/* Analytics loaded conditionally based on consent */}
           {/* Background canvas - disabled for performance */}
           <StarsCanvas />
 
@@ -1032,6 +1032,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         </Providers>
         <SpeedInsights />
         <Analytics />
+        <WebVitalsInit />
       </body>
     </html>
   )

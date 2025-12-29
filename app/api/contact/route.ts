@@ -17,6 +17,7 @@ interface ContactSubmission {
     data: string // Base64 encoded file data
   }[]
   agreedToTerms: boolean
+  pillar?: string // Pillar routing tag (services, content, system)
   submittedAt: Date
   ipAddress?: string
   userAgent?: string
@@ -35,6 +36,7 @@ export async function POST(request: NextRequest) {
     const phone = formData.get('phone') as string
     const message = formData.get('message') as string
     const agreedToTerms = formData.get('agreedToTerms') === 'true'
+    const pillar = (formData.get('pillar') as string) || 'system' // Pillar routing tag
 
     // Validate form data
     const validationResult = contactFormSchema.safeParse({
@@ -125,6 +127,7 @@ export async function POST(request: NextRequest) {
       message,
       attachments,
       agreedToTerms,
+      pillar, // Pillar routing tag for CRM
       submittedAt: new Date(),
       ipAddress: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || undefined,
       userAgent: request.headers.get('user-agent') || undefined,
@@ -132,6 +135,12 @@ export async function POST(request: NextRequest) {
 
     // 1. Save to MongoDB
     try {
+      // Check if MongoDB URI is configured
+      if (!process.env.MONGODB_URI) {
+        console.error('MONGODB_URI environment variable is not set')
+        throw new Error('Database configuration error. Please contact support.')
+      }
+
       const collection = await getCollection('contact_submissions')
       const result = await collection.insertOne(submission)
 
@@ -140,6 +149,28 @@ export async function POST(request: NextRequest) {
       }
     } catch (dbError) {
       console.error('Database connection error:', dbError)
+      
+      // Provide more specific error information
+      const errorMessage = dbError instanceof Error 
+        ? dbError.message 
+        : 'Database connection failed'
+      
+      console.error('Database error details:', {
+        message: errorMessage,
+        hasMongoUri: !!process.env.MONGODB_URI,
+        errorType: dbError instanceof Error ? dbError.constructor.name : typeof dbError,
+        stack: dbError instanceof Error ? dbError.stack : undefined,
+      })
+      
+      // Check for specific MongoDB error types
+      if (errorMessage.includes('timeout') || errorMessage.includes('ECONNREFUSED')) {
+        throw new Error('Database connection timeout. Please try again in a moment.')
+      } else if (errorMessage.includes('authentication') || errorMessage.includes('auth')) {
+        throw new Error('Database authentication error. Please contact support.')
+      } else if (errorMessage.includes('MONGODB_URI')) {
+        throw new Error('Database configuration error. Please contact support.')
+      }
+      
       // We continue to try sending email even if DB fails, or throw? 
       // safer to throw as we want to ensure data persistence
       throw new Error('Failed to save submission. Please try again later.')
@@ -262,12 +293,39 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error) {
+    // Enhanced error logging for debugging
     console.error('Contact form submission error:', error)
+    
+    // Log error details in development
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Error details:', {
+        message: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : undefined,
+        name: error instanceof Error ? error.name : undefined,
+      })
+    }
+
+    // Provide more specific error messages based on error type
+    let errorMessage = 'An error occurred while processing your request. Please try again later.'
+    
+    if (error instanceof Error) {
+      // Check for common error types
+      if (error.message.includes('MongoDB') || error.message.includes('database') || error.message.includes('connection')) {
+        errorMessage = 'Database connection error. Please try again in a moment.'
+      } else if (error.message.includes('validation') || error.message.includes('Validation')) {
+        errorMessage = error.message
+      } else if (error.message.includes('size') || error.message.includes('file')) {
+        errorMessage = error.message
+      } else {
+        // For other errors, use the error message if it's safe to expose
+        errorMessage = error.message
+      }
+    }
     
     return NextResponse.json(
       { 
         success: false, 
-        error: 'An error occurred while processing your request. Please try again later.' 
+        error: errorMessage 
       },
       { status: 500 }
     )

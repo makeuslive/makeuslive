@@ -58,7 +58,6 @@ export const COPY = {
   },
   nav: {
     links: [
-      { label: 'Work', href: '/works' },
       { label: 'Services', href: '/services' },
       { label: 'Blog', href: '/blog' },
       { label: 'About', href: '/about' },

@@ -2,6 +2,9 @@ export { Button, buttonVariants, buttonSizes } from './button'
 export { Input, Textarea } from './input'
 export { GlassCard } from './glass-card'
 export { Confetti } from './confetti'
+export { Accordion, AccordionItem } from './accordion'
+export { Tablist, Tab } from './tablist'
+export { Toast, useToast } from './toast'
 export {
   ArrowRight,
   EmailIcon,

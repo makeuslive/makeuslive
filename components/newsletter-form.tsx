@@ -2,15 +2,18 @@
 
 import { useState, FormEvent } from 'react'
 import { cn } from '@/lib/utils'
+import { formatDisplayDateTime } from '@/lib/date-utils'
 
 export function NewsletterForm() {
     const [email, setEmail] = useState('')
     const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
     const [message, setMessage] = useState('')
+    const [subscribeTimestamp, setSubscribeTimestamp] = useState<string>('')
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault()
 
+        // Inline validation
         if (!email || !email.includes('@')) {
             setStatus('error')
             setMessage('Please enter a valid email address')
@@ -29,9 +32,20 @@ export function NewsletterForm() {
             const data = await res.json()
 
             if (res.ok) {
+                const timestamp = formatDisplayDateTime(new Date())
+                setSubscribeTimestamp(timestamp)
                 setStatus('success')
-                setMessage('Thanks for subscribing! 🎉')
+                setMessage(`Subscribed at ${timestamp}`)
                 setEmail('')
+                
+                // Track analytics event (sanitized - no email)
+                if (typeof window !== 'undefined' && 'gtag' in window) {
+                    const gtag = (window as unknown as { gtag: (...args: unknown[]) => void }).gtag
+                    gtag('event', 'newsletter_submit', {
+                        email_valid: true,
+                        ts: new Date().toISOString(),
+                    })
+                }
             } else if (res.status === 409) {
                 setStatus('error')
                 setMessage('You\'re already subscribed!')

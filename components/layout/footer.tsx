@@ -37,6 +37,7 @@ export const Footer = memo(() => {
 
   return (
     <footer
+      id="footer"
       ref={footerRef}
       className="relative bg-black/50 backdrop-blur-sm border-t border-white/10"
     >

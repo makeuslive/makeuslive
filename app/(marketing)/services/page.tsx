@@ -6,15 +6,17 @@ import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { cn } from '@/lib/utils'
 import { ArrowRight } from '@/components/ui'
+import { Tablist, Tab } from '@/components/ui/tablist'
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
 }
 
-// Services data with enhanced styling
+// Services data with enhanced styling and categories
 const SERVICES = [
   {
     id: 'ai-products',
+    category: 'ai-automation',
     number: '01',
     title: 'AI-Powered Products',
     subtitle: 'Intelligence at Scale',
@@ -27,6 +29,7 @@ const SERVICES = [
   },
   {
     id: 'design-systems',
+    category: 'ui-ux',
     number: '02',
     title: 'Design Systems',
     subtitle: 'Brands that Convert',
@@ -39,6 +42,7 @@ const SERVICES = [
   },
   {
     id: 'web-development',
+    category: 'dev',
     number: '03',
     title: 'Web Development',
     subtitle: 'Performance First',
@@ -51,6 +55,7 @@ const SERVICES = [
   },
   {
     id: 'mobile-apps',
+    category: 'dev',
     number: '04',
     title: 'Mobile Applications',
     subtitle: 'Native Experience',
@@ -63,6 +68,7 @@ const SERVICES = [
   },
   {
     id: 'consulting',
+    category: 'analytics',
     number: '05',
     title: 'Technical Consulting',
     subtitle: 'Expert Guidance',
@@ -73,6 +79,14 @@ const SERVICES = [
     iconGradient: 'from-yellow-500 to-amber-600',
     size: 'medium',
   },
+]
+
+const CATEGORIES = [
+  { id: 'all', label: 'All Services' },
+  { id: 'ui-ux', label: 'UI/UX' },
+  { id: 'dev', label: 'Dev' },
+  { id: 'ai-automation', label: 'AI/Automation' },
+  { id: 'analytics', label: 'Analytics' },
 ]
 
 // Process steps
@@ -399,7 +413,7 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      {/* Services Bento Grid */}
+      {/* Services with Category Tabs */}
       <section className="py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
           {/* Section Header */}
@@ -410,12 +424,27 @@ export default function ServicesPage() {
             </h2>
           </div>
 
-          {/* Bento Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-            {SERVICES.map((service) => (
-              <BentoServiceCard key={service.id} service={service} />
-            ))}
-          </div>
+          {/* Category Tabs with Services */}
+          <Tablist
+            tabs={CATEGORIES.map((category) => ({
+              id: category.id,
+              label: category.label,
+              content: (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                  {SERVICES.filter(
+                    (service) => category.id === 'all' || service.category === category.id
+                  ).map((service) => (
+                    <BentoServiceCard key={service.id} service={service} />
+                  ))}
+                </div>
+              ),
+            }))}
+            defaultTab="all"
+            syncWithHash={true}
+            onTabChange={(tabId) => {
+              // Analytics tracking handled in Tablist component
+            }}
+          />
         </div>
       </section>
 
