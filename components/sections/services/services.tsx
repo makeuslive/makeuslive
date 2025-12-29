@@ -54,7 +54,6 @@ const glassStyles: React.CSSProperties = {
 export const Services = memo<ServicesProps>(({ className }) => {
   const sectionRef = useRef<HTMLElement>(null)
   const imageRef = useRef<HTMLDivElement>(null)
-  const bgRef = useRef<HTMLDivElement>(null)
   const [activeService, setActiveService] = useState(0)
 
   const handleServiceClick = useCallback((index: number) => {
@@ -88,7 +87,6 @@ export const Services = memo<ServicesProps>(({ className }) => {
     const ctx = gsap.context(() => {
       // Set initial visible states
       gsap.set('.services-section-header', { opacity: 1, y: 0 })
-      gsap.set('.services-glass-overlay', { opacity: 1, y: 0 })
       gsap.set('.service-item', { opacity: 1, x: 0 })
       gsap.set('.services-image-panel', { opacity: 1, x: 0 })
 
@@ -105,18 +103,7 @@ export const Services = memo<ServicesProps>(({ className }) => {
         },
       })
 
-      // Glass container animation
-      gsap.from('.services-glass-overlay', {
-        y: 80,
-        opacity: 0,
-        duration: 1,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: '.services-glass-overlay',
-          start: 'top 85%',
-          toggleActions: 'play none none reverse',
-        },
-      })
+      // Glass overlay is now static - no animation
 
       // Service items stagger
       gsap.from('.service-item', {
@@ -145,23 +132,7 @@ export const Services = memo<ServicesProps>(({ className }) => {
         },
       })
 
-      // Background Parallax
-      if (bgRef.current) {
-        gsap.fromTo(bgRef.current,
-          { y: -50, scale: 1.1 },
-          {
-            y: 50,
-            scale: 1.1,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: '.services-wrapper',
-              start: 'top bottom',
-              end: 'bottom top',
-              scrub: true
-            }
-          }
-        )
-      }
+      // Background is now static - no parallax effect
     }, section)
 
     return () => ctx.revert()
@@ -189,8 +160,7 @@ export const Services = memo<ServicesProps>(({ className }) => {
 
           {/* Layer 1: Background Image (z-0) */}
           <div
-            ref={bgRef}
-            className="absolute inset-x-0 -top-[10%] -bottom-[10%]"
+            className="absolute inset-0"
             style={{ zIndex: 0 }}
           >
             <Image
@@ -248,29 +218,50 @@ export const Services = memo<ServicesProps>(({ className }) => {
               {/* Interactive Services List */}
               <div className="services-list space-y-0 pl-4 flex flex-col justify-start min-h-[160px] md:min-h-[176px]">
                 {SERVICES_DATA.map((service, index) => (
-                  <div key={service.id} className="service-item-wrapper relative mb-0">
+                  <div key={service.id} className="service-item-wrapper relative mb-0 group">
                     <button
                       onClick={() => handleServiceClick(index)}
                       className={cn(
-                        'service-item w-full text-left py-2 md:py-3 transition-all duration-300',
+                        'service-item w-full text-left py-2 md:py-3 transition-all duration-500 ease-out',
                         'text-text text-base md:text-lg lg:text-xl font-medium',
                         'hover:text-gold relative block',
                         'focus:outline-none focus-visible:ring-2 focus-visible:ring-gold/50 rounded',
-                        'min-h-[40px] md:min-h-[44px] flex items-center'
+                        'min-h-[40px] md:min-h-[44px] flex items-center',
+                        'hover:scale-[1.02] hover:translate-x-1',
+                        activeService === index && 'scale-[1.02]'
                       )}
-                      style={{ textShadow: '0 4px 4px rgba(0,0,0,0.25)' }}
+                      style={{
+                        textShadow: '0 4px 4px rgba(0,0,0,0.25)',
+                        transition: 'all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)'
+                      }}
                     >
                       <span className={cn(
-                        'relative inline-block transition-colors duration-300',
-                        activeService === index ? 'text-text' : 'text-text/70'
+                        'relative inline-block transition-all duration-500 ease-out',
+                        activeService === index ? 'text-text' : 'text-text/70',
+                        'group-hover:drop-shadow-[0_0_8px_rgba(212,175,55,0.4)]'
                       )}>
                         {service.title}
                       </span>
-                      {/* Gold underline for active */}
+                      {/* Gold underline for active with smooth animation */}
                       <div
                         className={cn(
-                          'absolute bottom-0 left-0 h-[2px] bg-gold-dark transition-all duration-500',
-                          activeService === index ? 'w-[249px] opacity-100' : 'w-0 opacity-0'
+                          'absolute bottom-0 left-0 h-[2px] bg-gradient-to-r from-gold-dark via-gold to-gold-dark',
+                          'transition-all duration-700 ease-out',
+                          'shadow-[0_0_8px_rgba(212,175,55,0.6)]',
+                          activeService === index ? 'w-[249px] opacity-100 scale-x-100' : 'w-0 opacity-0 scale-x-0'
+                        )}
+                        style={{
+                          transformOrigin: 'left center',
+                          transition: 'all 0.7s cubic-bezier(0.34, 1.56, 0.64, 1)'
+                        }}
+                      />
+                      {/* Hover glow effect */}
+                      <div
+                        className={cn(
+                          'absolute inset-0 -z-10 rounded transition-all duration-500',
+                          'bg-gradient-to-r from-transparent via-gold/5 to-transparent',
+                          'opacity-0 group-hover:opacity-100',
+                          activeService === index && 'opacity-50'
                         )}
                       />
                     </button>
