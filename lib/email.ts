@@ -21,7 +21,7 @@ const createTransporter = () => {
 
     console.log(`📧 Email: Configuring SMTP - ${host}:${port} (secure: ${secure}, user: ${user})`)
 
-    return nodemailer.createTransporter({
+    return nodemailer.createTransport({
         host,
         port,
         secure, // true for 465 (SSL), false for 587 (TLS)
