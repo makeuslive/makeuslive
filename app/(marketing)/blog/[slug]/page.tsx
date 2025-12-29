@@ -1,7 +1,5 @@
 'use client'
 
-import { useQuery } from '@apollo/client/react'
-import { GET_BLOG_POST_BY_SLUG } from '@/lib/graphql/queries'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
@@ -16,7 +14,7 @@ if (typeof window !== 'undefined') {
     gsap.registerPlugin(ScrollTrigger)
 }
 
-// Type definitions for GraphQL response
+// Type definitions for blog post
 interface BlogPost {
     id: string
     title: string
@@ -29,10 +27,6 @@ interface BlogPost {
     date: string
     readTime: string
     gradient?: string
-}
-
-interface BlogPostBySlugData {
-    blogPostBySlug: BlogPost | null
 }
 
 // Helper to extract headings from markdown content
@@ -56,15 +50,40 @@ export default function BlogPostPage() {
     const params = useParams()
     const { slug } = params
     const [activeId, setActiveId] = useState<string>('')
+    const [post, setPost] = useState<BlogPost | null>(null)
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState(false)
 
-    const { data, loading, error } = useQuery<BlogPostBySlugData>(GET_BLOG_POST_BY_SLUG, {
-        variables: { slug: slug },
-        skip: !slug,
-    })
+    // Fetch blog post from REST API
+    useEffect(() => {
+        if (!slug) return
+
+        const fetchPost = async () => {
+            try {
+                setLoading(true)
+                const response = await fetch(`/api/blog/${slug}`)
+                const result = await response.json()
+
+                if (result.success && result.data) {
+                    setPost(result.data)
+                    setError(false)
+                } else {
+                    setError(true)
+                }
+            } catch (err) {
+                console.error('Error fetching post:', err)
+                setError(true)
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        fetchPost()
+    }, [slug])
 
     // Intersection Observer for TOC highlight
     useEffect(() => {
-        if (loading || !data?.blogPostBySlug) return
+        if (loading || !post) return
 
         const observer = new IntersectionObserver(
             (entries) => {
@@ -82,7 +101,7 @@ export default function BlogPostPage() {
         })
 
         return () => observer.disconnect()
-    }, [data, loading])
+    }, [post, loading])
 
     if (loading) {
         return (
@@ -95,7 +114,7 @@ export default function BlogPostPage() {
         )
     }
 
-    if (error || !data?.blogPostBySlug) {
+    if (error || !post) {
         return (
             <div className="min-h-screen pt-32 pb-20 px-4 md:px-8 flex flex-col items-center justify-center text-center">
                 <h1 className="text-3xl md:text-5xl font-bold text-white mb-6">
@@ -115,7 +134,6 @@ export default function BlogPostPage() {
         )
     }
 
-    const post = data.blogPostBySlug
     const headings = extractHeadings(post.content || '')
 
     return (

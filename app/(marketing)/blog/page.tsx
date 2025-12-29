@@ -3,10 +3,8 @@
 import { PostItem } from '@/types'
 import { useEffect, useRef, useState, memo } from 'react'
 import Link from 'next/link'
-import { useQuery } from '@apollo/client/react'
 import { cn } from '@/lib/utils'
 import { ArrowRight } from '@/components/ui'
-import { GET_BLOG_POSTS } from '@/lib/graphql/queries'
 
 const CATEGORIES = [
   { name: 'All', icon: null },
@@ -269,23 +267,55 @@ export default function BlogPage() {
   const pageRef = useRef<HTMLDivElement>(null)
   const [activeCategory, setActiveCategory] = useState('All')
   const [currentPage, setCurrentPage] = useState(1)
+  const [posts, setPosts] = useState<PostItem[]>([])
+  const [loading, setLoading] = useState(true)
+  const [totalPages, setTotalPages] = useState(1)
+  const [hasNextPage, setHasNextPage] = useState(false)
+  const [hasPreviousPage, setHasPreviousPage] = useState(false)
 
-  const { data, loading } = useQuery(GET_BLOG_POSTS, {
-    variables: {
-      status: 'published',
-      category: activeCategory,
-      page: currentPage,
-      limit: 13
+  // Fetch blog posts from REST API
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        setLoading(true)
+
+        // Build query params
+        const params = new URLSearchParams({
+          status: 'published',
+          page: currentPage.toString(),
+          limit: '13',
+        })
+
+        if (activeCategory && activeCategory !== 'All') {
+          params.append('category', activeCategory)
+        }
+
+        const response = await fetch(`/api/blog?${params.toString()}`)
+        const result = await response.json()
+
+        if (result.success) {
+          setPosts(result.data.posts || [])
+          setTotalPages(result.data.pagination?.totalPages || 1)
+          setHasNextPage(result.data.pagination?.hasNextPage || false)
+          setHasPreviousPage(result.data.pagination?.hasPreviousPage || false)
+        } else {
+          console.error('Failed to fetch posts:', result.error)
+          setPosts([])
+        }
+      } catch (error) {
+        console.error('Error fetching posts:', error)
+        setPosts([])
+      } finally {
+        setLoading(false)
+      }
     }
-  })
+
+    fetchPosts()
+  }, [activeCategory, currentPage])
 
   useEffect(() => {
     setCurrentPage(1)
   }, [activeCategory])
-
-  const postsData = (data as any)?.blogPosts
-  const posts: PostItem[] = postsData?.posts || []
-  const { totalPages, hasNextPage, hasPreviousPage } = postsData || {}
 
   const featuredPost = posts.find(p => p.featured) || posts[0]
   const gridPosts = posts.filter(p => p.id !== featuredPost?.id)
