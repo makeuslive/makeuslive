@@ -133,50 +133,44 @@ export async function POST(request: NextRequest) {
       userAgent: request.headers.get('user-agent') || undefined,
     }
 
-    // 1. Save to MongoDB
+    // 1. Save to MongoDB (non-blocking - we'll continue even if this fails)
+    let dbSaved = false
+    let dbError: Error | null = null
+    
     try {
       // Check if MongoDB URI is configured
       if (!process.env.MONGODB_URI) {
-        console.error('MONGODB_URI environment variable is not set')
-        throw new Error('Database configuration error. Please contact support.')
-      }
+        console.warn('MONGODB_URI environment variable is not set - skipping database save')
+        dbError = new Error('MONGODB_URI not configured')
+      } else {
+        const collection = await getCollection('contact_submissions')
+        const result = await collection.insertOne(submission)
 
-      const collection = await getCollection('contact_submissions')
-      const result = await collection.insertOne(submission)
-
-      if (!result.acknowledged) {
-        throw new Error('Failed to save submission to database')
+        if (result.acknowledged) {
+          dbSaved = true
+          console.log('Contact submission saved to database successfully')
+        } else {
+          dbError = new Error('Database insert not acknowledged')
+          console.warn('Database insert not acknowledged')
+        }
       }
-    } catch (dbError) {
-      console.error('Database connection error:', dbError)
-      
-      // Provide more specific error information
-      const errorMessage = dbError instanceof Error 
-        ? dbError.message 
-        : 'Database connection failed'
-      
-      console.error('Database error details:', {
-        message: errorMessage,
+    } catch (error) {
+      dbError = error instanceof Error ? error : new Error('Unknown database error')
+      console.error('Database connection error:', {
+        message: dbError.message,
         hasMongoUri: !!process.env.MONGODB_URI,
-        errorType: dbError instanceof Error ? dbError.constructor.name : typeof dbError,
-        stack: dbError instanceof Error ? dbError.stack : undefined,
+        errorType: dbError.constructor.name,
+        stack: dbError.stack,
       })
       
-      // Check for specific MongoDB error types
-      if (errorMessage.includes('timeout') || errorMessage.includes('ECONNREFUSED')) {
-        throw new Error('Database connection timeout. Please try again in a moment.')
-      } else if (errorMessage.includes('authentication') || errorMessage.includes('auth')) {
-        throw new Error('Database authentication error. Please contact support.')
-      } else if (errorMessage.includes('MONGODB_URI')) {
-        throw new Error('Database configuration error. Please contact support.')
-      }
-      
-      // We continue to try sending email even if DB fails, or throw? 
-      // safer to throw as we want to ensure data persistence
-      throw new Error('Failed to save submission. Please try again later.')
+      // Log but don't throw - we'll continue with email sending
+      // This ensures the form submission doesn't fail completely if DB is down
     }
 
     // 2. Send Email Notifications (if configured)
+    let emailSent = false
+    let emailError: Error | null = null
+    
     if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
       try {
         const transporter = nodemailer.createTransport({
@@ -194,14 +188,13 @@ export async function POST(request: NextRequest) {
           },
         })
 
-        // Verify connection configuration
+        // Verify connection configuration (non-blocking)
         try {
           await transporter.verify()
           console.log('SMTP Connection established successfully')
         } catch (verifyError) {
-          console.error('SMTP Connection Failed:', verifyError)
-          // We don't throw here to ensure the DB save is still acknowledged
-          // But we return this info allows debugging
+          console.warn('SMTP Connection verification failed (continuing anyway):', verifyError)
+          // Continue anyway - some SMTP servers don't support verify
         }
 
         // Format attachments for Nodemailer
@@ -229,7 +222,9 @@ export async function POST(request: NextRequest) {
               phone: phone || undefined,
               website: website || undefined,
               message,
-              ip: submission.ipAddress || 'unknown'
+              ip: submission.ipAddress || 'unknown',
+              pillar: pillar || 'general',
+              dbSaved: dbSaved, // Include DB status in email
             }),
             attachments: mailAttachments,
           })
@@ -249,13 +244,53 @@ export async function POST(request: NextRequest) {
         )
 
         // Send all emails
-        await Promise.allSettled(emailPromises)
+        const results = await Promise.allSettled(emailPromises)
+        const successCount = results.filter(r => r.status === 'fulfilled').length
         
-      } catch (emailError) {
+        if (successCount > 0) {
+          emailSent = true
+          console.log(`Successfully sent ${successCount} of ${emailPromises.length} emails`)
+        } else {
+          emailError = new Error('All email sends failed')
+          console.error('All email sends failed:', results.map(r => r.status === 'rejected' ? r.reason : null))
+        }
+        
+      } catch (error) {
+        emailError = error instanceof Error ? error : new Error('Unknown email error')
         console.error('Failed to send email notification:', emailError)
-        // We don't fail the request if email sending fails, as long as it's saved in DB
       }
+    } else {
+      console.warn('SMTP not configured - skipping email sending')
     }
+    
+    // 3. Determine response based on what succeeded
+    // If either DB or email succeeded, return success
+    // If both failed, return error
+    if (!dbSaved && !emailSent) {
+      // Both failed - return error
+      const errorDetails = []
+      if (dbError) errorDetails.push(`Database: ${dbError.message}`)
+      if (emailError) errorDetails.push(`Email: ${emailError.message}`)
+      
+      console.error('Contact form submission failed completely:', {
+        dbError: dbError?.message,
+        emailError: emailError?.message,
+      })
+      
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: 'Unable to process your submission. Please try again or contact us directly at hello@makeuslive.com',
+          details: process.env.NODE_ENV === 'development' ? errorDetails : undefined
+        },
+        { status: 500 }
+      )
+    }
+    
+    // At least one succeeded - return success with warning if needed
+    const warnings = []
+    if (!dbSaved) warnings.push('Your submission was received but could not be saved to our database. We have your email and will respond.')
+    if (!emailSent) warnings.push('Your submission was saved but confirmation emails could not be sent.')
 
     // 3. Track Conversion in Google Analytics (Server-Side)
     // This ensures reliable tracking even if client-side scripts are blocked
@@ -290,6 +325,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       message: 'Thank you! Your message has been received.',
+      warnings: warnings.length > 0 ? warnings : undefined,
     })
 
   } catch (error) {

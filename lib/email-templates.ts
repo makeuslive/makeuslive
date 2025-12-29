@@ -82,6 +82,8 @@ const styles = {
 }
 
 export function getAdminEmailTemplate(data: {
+  pillar?: string
+  dbSaved?: boolean
   name: string
   email: string
   phone?: string
@@ -128,6 +130,16 @@ export function getAdminEmailTemplate(data: {
               ${data.website ? `
                 <span style="${styles.label}">Website</span>
                 <a href="${data.website}" target="_blank" style="${styles.value}; color: #D4AF37; text-decoration: none;">${data.website}</a>
+              ` : ''}
+              
+              ${data.pillar ? `
+                <span style="${styles.label}">Interested In</span>
+                <span style="${styles.value}">${data.pillar}</span>
+              ` : ''}
+              
+              ${data.dbSaved !== undefined ? `
+                <span style="${styles.label}">Database Status</span>
+                <span style="${styles.value}; color: ${data.dbSaved ? '#28a745' : '#dc3545'};">${data.dbSaved ? 'Saved' : 'Not Saved'}</span>
               ` : ''}
             </div>
 

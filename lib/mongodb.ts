@@ -5,10 +5,13 @@ const options: MongoClientOptions = {
   // Connection pool settings
   minPoolSize: 1,
   maxPoolSize: 10,
-  // Timeout settings
-  serverSelectionTimeoutMS: 15000,
-  connectTimeoutMS: 15000,
-  socketTimeoutMS: 45000,
+  // Timeout settings - reduced for faster failure detection
+  serverSelectionTimeoutMS: 10000, // Reduced from 15s to 10s
+  connectTimeoutMS: 10000, // Reduced from 15s to 10s
+  socketTimeoutMS: 30000, // Reduced from 45s to 30s
+  // Retry settings
+  retryWrites: true,
+  retryReads: true,
   // App identification
   appName: 'makeuslive',
 }
