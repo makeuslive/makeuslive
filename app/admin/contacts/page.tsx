@@ -11,6 +11,11 @@ interface Contact {
     message: string
     isRead: boolean
     createdAt: string
+    messages?: Array<{
+        message: string
+        createdAt: string
+        website?: string
+    }>
     replies?: Array<{
         message: string
         sentAt: string
@@ -314,28 +319,35 @@ export default function ContactsPage() {
                         <div className="flex-1 p-6 overflow-y-auto">
                             <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">Conversation History</h3>
 
-                            {/* Original Message */}
-                            <div className="mb-4">
-                                <div className="flex items-start gap-3">
-                                    <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
-                                        <span className="text-blue-600 text-xs font-semibold">{selectedContact.name.charAt(0).toUpperCase()}</span>
-                                    </div>
-                                    <div className="flex-1">
-                                        <div className="flex items-center gap-2 mb-1">
-                                            <span className="text-sm font-medium text-gray-900">{selectedContact.name}</span>
-                                            <span className="text-xs text-gray-400">•</span>
-                                            <span className="text-xs text-gray-400">{new Date(selectedContact.createdAt).toLocaleString()}</span>
+                            {/* All Customer Messages from this thread */}
+                            <div className="space-y-4 mb-4">
+                                {(selectedContact.messages || [{ message: selectedContact.message, createdAt: selectedContact.createdAt, website: selectedContact.website }])
+                                    .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+                                    .map((msg, idx) => (
+                                        <div key={`msg-${idx}`}>
+                                            <div className="flex items-start gap-3">
+                                                <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
+                                                    <span className="text-blue-600 text-xs font-semibold">{selectedContact.name.charAt(0).toUpperCase()}</span>
+                                                </div>
+                                                <div className="flex-1">
+                                                    <div className="flex items-center gap-2 mb-1">
+                                                        <span className="text-sm font-medium text-gray-900">{selectedContact.name}</span>
+                                                        <span className="text-xs text-gray-400">•</span>
+                                                        <span className="text-xs text-gray-400">{new Date(msg.createdAt).toLocaleString()}</span>
+                                                    </div>
+                                                    <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
+                                                        <p className="text-sm text-gray-700 whitespace-pre-wrap">{msg.message}</p>
+                                                    </div>
+                                                    {msg.website && (
+                                                        <a href={msg.website} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline mt-2 inline-block">
+                                                            🔗 {msg.website}
+                                                        </a>
+                                                    )}
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
-                                            <p className="text-sm text-gray-700 whitespace-pre-wrap">{selectedContact.message}</p>
-                                        </div>
-                                        {selectedContact.website && (
-                                            <a href={selectedContact.website} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline mt-2 inline-block">
-                                                🔗 {selectedContact.website}
-                                            </a>
-                                        )}
-                                    </div>
-                                </div>
+                                    ))
+                                }
                             </div>
 
                             {/* Replies */}
