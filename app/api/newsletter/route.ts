@@ -60,20 +60,40 @@ export async function POST(request: NextRequest) {
       let sent = 0
       let failed = 0
 
+      console.log(`📨 Broadcasting to ${emails.length} subscribers...`)
+
       for (let i = 0; i < emails.length; i += batchSize) {
         const batch = emails.slice(i, i + batchSize)
+        console.log(`📤 Sending batch ${Math.floor(i / batchSize) + 1}: ${batch.length} emails`)
+        
         const promises = batch.map(to => 
           sendEmail({ to, subject: template.subject, html: template.html })
         )
         const results = await Promise.allSettled(promises)
-        sent += results.filter(r => r.status === 'fulfilled' && (r.value as any).success).length
-        failed += results.filter(r => r.status === 'rejected' || !(r.value as any).success).length
+        
+        // Log each result
+        results.forEach((result, idx) => {
+          if (result.status === 'fulfilled') {
+            if (result.value.success) {
+              sent++
+              console.log(`  ✅ ${batch[idx]}: Success`)
+            } else {
+              failed++
+              console.log(`  ❌ ${batch[idx]}: Failed -`, result.value.error)
+            }
+          } else {
+            failed++
+            console.log(`  ❌ ${batch[idx]}: Rejected -`, result.reason)
+          }
+        })
         
         // Small delay between batches
         if (i + batchSize < emails.length) {
           await new Promise(resolve => setTimeout(resolve, 500))
         }
       }
+
+      console.log(`📊 Broadcast complete: ${sent} sent, ${failed} failed`)
 
       // Log broadcast in database
       const broadcastCollection = await getCollection('newsletter_broadcasts')
