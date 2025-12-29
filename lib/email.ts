@@ -19,9 +19,9 @@ const createTransporter = () => {
     const port = parseInt(process.env.SMTP_PORT || '465')
     const secure = process.env.SMTP_SECURE !== 'false' // Default true for port 465
 
-    console.log(`📧 Email: Configuring SMTP - ${host}:${port} (secure: ${secure})`)
+    console.log(`📧 Email: Configuring SMTP - ${host}:${port} (secure: ${secure}, user: ${user})`)
 
-    return nodemailer.createTransport({
+    return nodemailer.createTransporter({
         host,
         port,
         secure, // true for 465 (SSL), false for 587 (TLS)
@@ -67,18 +67,44 @@ export async function sendEmail({ to, subject, html, text, replyTo }: EmailOptio
     }
 
     try {
+        // Parse SMTP_FROM to extract email if it has format "Name <email@domain.com>"
+        const smtpFrom = process.env.SMTP_FROM || process.env.SMTP_USER || ''
+        const fromEmail = smtpFrom.includes('<') 
+            ? smtpFrom.match(/<(.+)>/)?.[1] || process.env.SMTP_USER
+            : smtpFrom || process.env.SMTP_USER
+
+        console.log('📧 Attempting to send email:', {
+            from: fromEmail,
+            to: Array.isArray(to) ? to.join(', ') : to,
+            subject,
+        })
+
         const info = await transport.sendMail({
-            from: `"MakeUsLive" <${process.env.SMTP_FROM || process.env.SMTP_USER}>`,
+            from: `"MakeUsLive" <${fromEmail}>`,
             to: Array.isArray(to) ? to.join(', ') : to,
             subject,
             html,
             text: text || html.replace(/<[^>]*>/g, ''),
-            replyTo: replyTo || process.env.SMTP_FROM || process.env.SMTP_USER,
+            replyTo: replyTo || fromEmail,
         })
-        console.log('✅ Email sent:', info.messageId, 'to:', to)
+        
+        console.log('✅ Email sent successfully!', {
+            messageId: info.messageId,
+            accepted: info.accepted,
+            rejected: info.rejected,
+            response: info.response,
+        })
+        
         return { success: true, messageId: info.messageId }
-    } catch (error) {
-        console.error('❌ Email failed:', error)
+    } catch (error: any) {
+        console.error('❌ Email sending failed!', {
+            message: error.message,
+            code: error.code,
+            command: error.command,
+            response: error.response,
+            responseCode: error.responseCode,
+            stack: error.stack,
+        })
         return { success: false, error }
     }
 }
