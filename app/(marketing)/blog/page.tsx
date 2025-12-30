@@ -4,15 +4,15 @@ import { PostItem } from '@/types'
 import { useEffect, useRef, useState, memo } from 'react'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
-import { ArrowRight } from '@/components/ui'
+import { ArrowRight, TechIcon } from '@/components/ui'
 
 const CATEGORIES = [
   { name: 'All', icon: null },
-  { name: 'AI & Technology', icon: '💻' },
-  { name: 'Design', icon: '🎨' },
-  { name: 'Development', icon: '⚙️' },
-  { name: 'UX Research', icon: '🔍' },
-  { name: 'Animation', icon: '✨' },
+  { name: 'AI & Technology', icon: 'ai' },
+  { name: 'Design', icon: 'design' },
+  { name: 'Development', icon: 'development' },
+  { name: 'UX Research', icon: 'uxresearch' },
+  { name: 'Animation', icon: 'animation' },
 ]
 
 // Category Icons as small SVG components
@@ -369,7 +369,7 @@ export default function BlogPage() {
                 >
                   {category.name !== 'All' && (
                     <span className={activeCategory === category.name ? 'text-bg' : 'text-white/40'}>
-                      <CategoryIcon category={category.name} />
+                      <TechIcon name={category.icon || ''} size={14} />
                     </span>
                   )}
                   {category.name}
@@ -498,7 +498,7 @@ export default function BlogPage() {
         <div className="max-w-2xl mx-auto px-6 md:px-12 text-center">
           {/* Icon */}
           <div className="w-16 h-16 mx-auto mb-8 rounded-2xl bg-gold/10 border border-gold/20 flex items-center justify-center">
-            <span className="text-2xl">✉️</span>
+            <TechIcon name="email" size={32} className="text-gold" />
           </div>
 
           <h3 className="text-3xl md:text-4xl font-serif font-bold text-white mb-4">

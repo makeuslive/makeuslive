@@ -66,6 +66,42 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ]
 
   // ============================================
+  // SERVICE HUB PAGES - Primary money pages
+  // ============================================
+  const serviceHubPages: MetadataRoute.Sitemap = [
+    {
+      url: `${baseUrl}/web-design`,
+      lastModified: currentDate,
+      changeFrequency: 'weekly',
+      priority: 0.95,
+    },
+    {
+      url: `${baseUrl}/app-development`,
+      lastModified: currentDate,
+      changeFrequency: 'weekly',
+      priority: 0.95,
+    },
+    {
+      url: `${baseUrl}/ui-ux-design`,
+      lastModified: currentDate,
+      changeFrequency: 'weekly',
+      priority: 0.95,
+    },
+    {
+      url: `${baseUrl}/custom-software`,
+      lastModified: currentDate,
+      changeFrequency: 'weekly',
+      priority: 0.95,
+    },
+    {
+      url: `${baseUrl}/mvp-development`,
+      lastModified: currentDate,
+      changeFrequency: 'weekly',
+      priority: 0.95,
+    },
+  ]
+
+  // ============================================
   // SERVICE PAGES - Deep linking for SEO
   // ============================================
   const servicePages: MetadataRoute.Sitemap = [
@@ -139,6 +175,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   return [
     ...corePages,
+    ...serviceHubPages,
     ...servicePages,
     ...blogPosts,
     ...workPages,

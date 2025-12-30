@@ -35,4 +35,20 @@ export {
   SocialIcon,
   socialIconMap,
 } from './social-icons'
+export {
+  TechIcon,
+  techIconMap,
+  FigmaIcon,
+  FramerIcon,
+  NextjsIcon,
+  NodejsIcon,
+  PythonIcon,
+  ReactIcon,
+  JavaIcon,
+  FlutterIcon,
+  N8nIcon,
+  TypescriptIcon,
+  RagIcon,
+  AutomationIcon,
+} from './tech-icons'
 

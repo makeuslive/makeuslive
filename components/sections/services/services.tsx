@@ -39,7 +39,7 @@ const SERVICES_DATA = [
     title: 'Marketing & Content',
     image: '/images/services-art.webp',
     quote: 'Stories that connect, content that converts.',
-  },
+  }
 ]
 
 // Glass UI Generator CSS - inline styles to guarantee they work

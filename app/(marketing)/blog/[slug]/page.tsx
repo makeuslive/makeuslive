@@ -7,6 +7,7 @@ import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { ArrowLeft, Clock, Calendar, Share2, Twitter, Linkedin, Facebook, Link as LinkIcon, ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { TechIcon } from '@/components/ui'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
@@ -372,7 +373,7 @@ export default function BlogPostPage() {
             <div className="max-w-4xl mx-auto mt-24 pt-16 border-t border-white/10 text-center">
                 <div className="inline-block p-1 rounded-full bg-gradient-to-r from-gold via-transparent to-gold bg-[length:400%_100%] animate-shimmer mb-6">
                     <div className="w-16 h-16 rounded-full bg-[#0a0a0a] flex items-center justify-center border border-white/10">
-                        <span className="text-2xl">⚡️</span>
+                        <TechIcon name="zap" size={32} className="text-gold" />
                     </div>
                 </div>
                 <h3 className="text-3xl font-bold text-white mb-4">Make Us Live Agency</h3>
