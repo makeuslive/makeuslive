@@ -337,6 +337,8 @@ export const COPY = {
       { name: 'GitHub', href: 'https://github.com/makeuslivee', icon: 'github' },
       { name: 'Dribbble', href: 'https://dribbble.com/makeuslivee', icon: 'dribbble' },
       { name: 'Instagram', href: 'https://instagram.com/makeuslivee', icon: 'instagram' },
+      { name: 'Facebook', href: 'https://facebook.com/makeuslivee', icon: 'facebook' },
+      { name: 'YouTube', href: 'https://youtube.com/@makeuslivee', icon: 'youtube' },
     ],
     copyright: '© 2025 MakeUsLive. All rights reserved.',
     tagline: 'Built with ❤️ by Engineers + Designers',

@@ -86,7 +86,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   // Basic metadata - Creative Studio focused
   title: {
-    default: `${COPY.brand.name} | Creative Studio & Digital Agency - AI, Web & App Development`,
+    default: `${COPY.brand.name} | AI, Web & Mobile App Development`,
     template: `%s | ${COPY.brand.name}`,
   },
   description:
