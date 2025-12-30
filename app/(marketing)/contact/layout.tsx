@@ -3,7 +3,7 @@ import { Metadata } from 'next'
 export const metadata: Metadata = {
     title: 'Contact Us - Get a Free Consultation',
     description:
-        'Contact MakeUsLive for a free consultation. Tell us about your project and get expert guidance on AI, web development, mobile apps, or design systems. We respond within 24 hours. Email: hello@makeuslive.com',
+        'Contact Make Us Live for a free consultation. Tell us about your project and get expert guidance on AI, web development, mobile apps, or design systems. We respond within 24 hours. Email: hello@makeuslive.com',
     keywords: [
         'contact digital agency',
         'hire web developers',
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
                 url: '/og-contact.png',
                 width: 1200,
                 height: 630,
-                alt: 'Contact MakeUsLive',
+                alt: 'Contact Make Us Live',
             },
         ],
     },

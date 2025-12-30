@@ -1,8 +1,32 @@
+import { Metadata } from 'next'
 import { formatDisplayDate } from '@/lib/date-utils'
 
-export const metadata = {
-    title: 'Privacy Policy',
-    description: 'Privacy Policy for MakeUsLive. Learn how we collect, use, and protect your data.',
+export const metadata: Metadata = {
+    title: 'Privacy Policy - Data Protection & Your Rights | Make Us Live',
+    description:
+        'Read Make Us Live privacy policy. Learn how we collect, use, store, and protect your personal data. Compliant with DPDP Act 2023 and GDPR. Your privacy rights and data protection information.',
+    keywords: [
+        'makeuslive privacy policy',
+        'data protection',
+        'DPDP Act compliance',
+        'GDPR compliance',
+        'privacy rights',
+        'data collection policy',
+        'cookie policy',
+    ],
+    openGraph: {
+        title: 'Privacy Policy | Make Us Live',
+        description: 'How we collect, use, and protect your personal data.',
+        url: 'https://makeuslive.com/privacy-policy',
+        type: 'website',
+    },
+    alternates: {
+        canonical: 'https://makeuslive.com/privacy-policy',
+    },
+    robots: {
+        index: true,
+        follow: true,
+    },
 }
 
 // Effective date and change log
@@ -20,7 +44,7 @@ export default function PrivacyPolicyPage() {
         <div className="max-w-7xl mx-auto px-4 md:px-8 py-24 md:py-32">
             <div className="max-w-3xl mx-auto prose prose-invert">
                 <h1 className="text-4xl font-bold mb-8 text-gold">Privacy Policy</h1>
-                
+
                 <div className="mb-8 p-4 rounded-lg bg-white/5 border border-white/10">
                     <p className="text-text-muted mb-2">
                         <strong className="text-text">Effective Date:</strong> {formatDisplayDate(EFFECTIVE_DATE)}
@@ -49,7 +73,7 @@ export default function PrivacyPolicyPage() {
                 <section className="mb-8">
                     <h2 className="text-2xl font-semibold mb-4 text-text">1. Introduction</h2>
                     <p className="text-text-dim">
-                        Welcome to MakeUsLive. We respect your privacy and are committed to protecting your personal data. This privacy policy will inform you as to how we look after your personal data when you visit our website and tell you about your privacy rights and how the law protects you.
+                        Welcome to Make Us Live. We respect your privacy and are committed to protecting your personal data. This privacy policy will inform you as to how we look after your personal data when you visit our website and tell you about your privacy rights and how the law protects you.
                     </p>
                 </section>
 

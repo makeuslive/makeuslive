@@ -3,7 +3,7 @@ import { Metadata } from 'next'
 export const metadata: Metadata = {
     title: 'Blog - Insights on AI, Design, Development & Technology',
     description:
-        'Read the latest insights from MakeUsLive on AI, web development, design systems, UX research, and technology trends. Expert articles and tutorials from our engineering and design team.',
+        'Read the latest insights from Make Us Live on AI, web development, design systems, UX research, and technology trends. Expert articles and tutorials from our engineering and design team.',
     keywords: [
         'tech blog',
         'AI articles',
@@ -19,9 +19,9 @@ export const metadata: Metadata = {
         'TypeScript guides',
     ],
     openGraph: {
-        title: 'Blog - Insights on AI, Design & Development | MakeUsLive',
+        title: 'Blog - Insights on AI, Design & Development | Make Us Live',
         description:
-            'Expert insights on AI, web development, design systems, and technology trends from the MakeUsLive team.',
+            'Expert insights on AI, web development, design systems, and technology trends from the Make Us Live team.',
         url: 'https://makeuslive.com/blog',
         type: 'website',
         images: [
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
                 url: '/og-blog.png',
                 width: 1200,
                 height: 630,
-                alt: 'MakeUsLive Blog',
+                alt: 'Make Us Live Blog',
             },
         ],
     },

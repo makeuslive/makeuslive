@@ -113,7 +113,7 @@ const FeaturedCard = memo(({ post }: { post: PostItem }) => (
               {post.author?.name?.charAt(0) || 'M'}
             </div>
             <div>
-              <div className="text-white text-sm font-medium">{post.author?.name || 'MakeUsLive'}</div>
+              <div className="text-white text-sm font-medium">{post.author?.name || 'Make Us Live'}</div>
               <div className="text-white/40 text-xs">{post.date}</div>
             </div>
           </div>

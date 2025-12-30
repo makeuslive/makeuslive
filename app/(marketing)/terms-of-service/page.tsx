@@ -1,8 +1,31 @@
+import { Metadata } from 'next'
 import { formatDisplayDate } from '@/lib/date-utils'
 
-export const metadata = {
-    title: 'Terms of Service',
-    description: 'Terms of Service for MakeUsLive. Please read these terms carefully before using our services.',
+export const metadata: Metadata = {
+    title: 'Terms of Service - Legal Agreement | Make Us Live',
+    description:
+        'Read Make Us Live terms of service. Understand the legal terms and conditions for using our website and services. Service agreements, liability, intellectual property, and user obligations.',
+    keywords: [
+        'makeuslive terms of service',
+        'terms and conditions',
+        'service agreement',
+        'legal terms',
+        'website terms',
+        'user agreement',
+    ],
+    openGraph: {
+        title: 'Terms of Service | Make Us Live',
+        description: 'Legal terms and conditions for using Make Us Live services.',
+        url: 'https://makeuslive.com/terms-of-service',
+        type: 'website',
+    },
+    alternates: {
+        canonical: 'https://makeuslive.com/terms-of-service',
+    },
+    robots: {
+        index: true,
+        follow: true,
+    },
 }
 
 // Effective date and change log
@@ -20,7 +43,7 @@ export default function TermsPage() {
         <div className="max-w-7xl mx-auto px-4 md:px-8 py-24 md:py-32">
             <div className="max-w-3xl mx-auto prose prose-invert">
                 <h1 className="text-4xl font-bold mb-8 text-gold">Terms of Service</h1>
-                
+
                 <div className="mb-8 p-4 rounded-lg bg-white/5 border border-white/10">
                     <p className="text-text-muted mb-2">
                         <strong className="text-text">Effective Date:</strong> {formatDisplayDate(EFFECTIVE_DATE)}
@@ -49,7 +72,7 @@ export default function TermsPage() {
                 <section className="mb-8">
                     <h2 className="text-2xl font-semibold mb-4 text-text">1. Agreement to Terms</h2>
                     <p className="text-text-dim">
-                        These Terms of Service constitute a legally binding agreement made between you, whether personally or on behalf of an entity (&quot;you&quot;) and MakeUsLive (&quot;we,&quot; &quot;us&quot; or &quot;our&quot;), concerning your access to and use of the makeuslive.com website as well as any other media form, media channel, mobile website or mobile application related, linked, or otherwise connected thereto (collectively, the &quot;Site&quot;).
+                        These Terms of Service constitute a legally binding agreement made between you, whether personally or on behalf of an entity (&quot;you&quot;) and Make Us Live (&quot;we,&quot; &quot;us&quot; or &quot;our&quot;), concerning your access to and use of the makeuslive.com website as well as any other media form, media channel, mobile website or mobile application related, linked, or otherwise connected thereto (collectively, the &quot;Site&quot;).
                     </p>
                 </section>
 

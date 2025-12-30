@@ -442,7 +442,7 @@ export default function AboutPage() {
                 <Milestone
                   year="2025"
                   title="Agency Launch"
-                  description="Officially launched MakeUsLive as a full-service creative & technology studio. From freelancers to founders—ready to take it to another level."
+                  description="Officially launched Make Us Live as a full-service creative & technology studio. From freelancers to founders—ready to take it to another level."
                   isLast
                 />
               </div>

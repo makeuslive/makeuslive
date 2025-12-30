@@ -96,7 +96,7 @@ export default function CareerPage() {
         <section className="mb-16 p-8 rounded-lg bg-gradient-to-br from-gold/10 to-transparent border border-gold/20">
           <h2 className="text-2xl font-bold text-white mb-4">Diversity & Inclusion</h2>
           <p className="text-white/60 leading-relaxed">
-            At MakeUsLive, we believe that diverse teams create better products. We're committed to
+            At Make Us Live, we believe that diverse teams create better products. We're committed to
             building an inclusive workplace where everyone can thrive, regardless of background,
             identity, or experience. We welcome applications from all qualified candidates.
           </p>

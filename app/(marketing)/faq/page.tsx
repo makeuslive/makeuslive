@@ -11,7 +11,7 @@ import { cn } from '@/lib/utils'
 const FAQ_DATA: AccordionItem[] = [
   {
     id: 'faq-1',
-    question: 'What services does MakeUsLive offer?',
+    question: 'What services does Make Us Live offer?',
     answer: 'We offer a comprehensive range of digital services including AI-powered products, design systems, web development, mobile applications, and technical consulting. Our team specializes in creating scalable, high-performance solutions tailored to your business needs.',
     category: 'services',
   },
