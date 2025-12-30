@@ -16,11 +16,11 @@ export const metadata: Metadata = {
     openGraph: {
         title: 'Terms of Service | Make Us Live',
         description: 'Legal terms and conditions for using Make Us Live services.',
-        url: 'https://makeuslive.com/terms-of-service',
+        url: 'https://www.makeuslive.com/terms-of-service',
         type: 'website',
     },
     alternates: {
-        canonical: 'https://makeuslive.com/terms-of-service',
+        canonical: 'https://www.makeuslive.com/terms-of-service',
     },
     robots: {
         index: true,

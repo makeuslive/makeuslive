@@ -362,7 +362,7 @@ export const metadata: Metadata = {
 
   // Authors and creator
   authors: [
-    { name: 'Make Us Live', url: 'https://makeuslive.com' },
+    { name: 'Make Us Live', url: 'https://www.makeuslive.com' },
     { name: 'Abhishek Jha' },
     { name: 'Rishi Soni' },
     { name: 'Vikramaditya Jha' },
@@ -371,14 +371,14 @@ export const metadata: Metadata = {
   publisher: 'Make Us Live',
 
   // Base URL for all relative URLs
-  metadataBase: new URL('https://makeuslive.com'),
+  metadataBase: new URL('https://www.makeuslive.com'),
 
   // Alternate languages
   alternates: {
-    canonical: 'https://makeuslive.com',
+    canonical: 'https://www.makeuslive.com',
     languages: {
-      'en-US': 'https://makeuslive.com',
-      'en-IN': 'https://makeuslive.com',
+      'en-US': 'https://www.makeuslive.com',
+      'en-IN': 'https://www.makeuslive.com',
     },
   },
 
@@ -386,7 +386,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://makeuslive.com',
+    url: 'https://www.makeuslive.com',
     siteName: 'Make Us Live',
     title: 'Make Us Live (MakeUsLive) - Premium Digital Agency | AI, Web Development, Design',
     description:
@@ -456,7 +456,7 @@ export const metadata: Metadata = {
   // App links
   appLinks: {
     web: {
-      url: 'https://makeuslive.com',
+      url: 'https://www.makeuslive.com',
       should_fallback: true,
     },
   },
@@ -493,7 +493,7 @@ const jsonLd = {
     // Organization Schema - Creative Studio Focus
     {
       '@type': ['Organization', 'CreativeWork'],
-      '@id': 'https://makeuslive.com/#organization',
+      '@id': 'https://www.makeuslive.com/#organization',
       name: 'MakeUsLive',
       legalName: 'MakeUsLive',
       alternateName: [
@@ -516,15 +516,15 @@ const jsonLd = {
         'MakeUsLive Bhopal',
         'Make Us Live Bhopal',
       ],
-      url: 'https://makeuslive.com',
+      url: 'https://www.makeuslive.com',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://makeuslive.com/images/logo.png',
+        url: 'https://www.makeuslive.com/images/logo.png',
         width: 512,
         height: 512,
         caption: 'MakeUsLive Creative Studio Logo',
       },
-      image: 'https://makeuslive.com/images/logo.png',
+      image: 'https://www.makeuslive.com/images/logo.png',
       description: 'Make Us Live (also known as MakeUsLive or Make Us Live Agency) is a boutique creative studio and digital agency that thinks like artists and researches like scientists. We craft AI-powered products, stunning websites, mobile apps, and design systems that inspire, engage, and convert.',
       slogan: 'Design. Think. Build. Automate.',
       disambiguatingDescription: 'Make Us Live Agency (MakeUsLive) - A creative technology studio specializing in AI-powered digital experiences, web development, and design systems. Boutique agency serving startups and enterprises worldwide. Search for: make us live, Make Us Live Agency, MakeUsLive.',
@@ -587,18 +587,18 @@ const jsonLd = {
     // Website Schema with Search Action
     {
       '@type': 'WebSite',
-      '@id': 'https://makeuslive.com/#website',
-      url: 'https://makeuslive.com',
+      '@id': 'https://www.makeuslive.com/#website',
+      url: 'https://www.makeuslive.com',
       name: 'Make Us Live',
       alternateName: ['Make Us Live', 'make us live', 'Make Us Live Agency', 'MakeUsLive Agency'],
       description: 'Make Us Live (MakeUsLive) - Premium Digital Agency - AI, Web Development, Design Systems',
-      publisher: { '@id': 'https://makeuslive.com/#organization' },
+      publisher: { '@id': 'https://www.makeuslive.com/#organization' },
       inLanguage: 'en-US',
       potentialAction: {
         '@type': 'SearchAction',
         target: {
           '@type': 'EntryPoint',
-          urlTemplate: 'https://makeuslive.com/search?q={search_term_string}',
+          urlTemplate: 'https://www.makeuslive.com/search?q={search_term_string}',
         },
         'query-input': 'required name=search_term_string',
       },
@@ -606,11 +606,11 @@ const jsonLd = {
     // LocalBusiness Schema for Local SEO
     {
       '@type': 'LocalBusiness',
-      '@id': 'https://makeuslive.com/#localbusiness',
+      '@id': 'https://www.makeuslive.com/#localbusiness',
       name: 'Make Us Live - Digital Agency Bhopal',
       alternateName: ['Make Us Live Bhopal', 'Make Us Live Agency Bhopal', 'make us live bhopal'],
-      image: 'https://makeuslive.com/images/logo.png',
-      url: 'https://makeuslive.com',
+      image: 'https://www.makeuslive.com/images/logo.png',
+      url: 'https://www.makeuslive.com',
       telephone: '+91-98765-43210',
       email: 'hello@makeuslive.com',
       priceRange: '$$',
@@ -658,11 +658,11 @@ const jsonLd = {
     // ProfessionalService Schema
     {
       '@type': 'ProfessionalService',
-      '@id': 'https://makeuslive.com/#service',
+      '@id': 'https://www.makeuslive.com/#service',
       name: 'MakeUsLive Digital Agency',
       alternateName: ['Make Us Live Digital Agency', 'Make Us Live Agency', 'make us live agency'],
-      image: 'https://makeuslive.com/images/logo.png',
-      url: 'https://makeuslive.com',
+      image: 'https://www.makeuslive.com/images/logo.png',
+      url: 'https://www.makeuslive.com',
       telephone: '+91-98765-43210',
       email: 'hello@makeuslive.com',
       priceRange: '$$',
@@ -695,7 +695,7 @@ const jsonLd = {
               '@type': 'Service',
               name: 'AI & Data Science',
               description: 'Custom AI solutions, machine learning models, LLM integration, generative AI, data science, and business intelligence.',
-              url: 'https://makeuslive.com/services#ai-products',
+              url: 'https://www.makeuslive.com/services#ai-products',
             },
           },
           {
@@ -704,7 +704,7 @@ const jsonLd = {
               '@type': 'Service',
               name: 'Enterprise Software (ERP/CRM)',
               description: 'Custom ERP systems, CRM development, enterprise integration, workflow automation, and backend systems.',
-              url: 'https://makeuslive.com/services#enterprise',
+              url: 'https://www.makeuslive.com/services#enterprise',
             },
           },
           {
@@ -713,7 +713,7 @@ const jsonLd = {
               '@type': 'Service',
               name: 'Web Development',
               description: 'Modern web applications with Next.js, React, TypeScript. E-commerce, SaaS platforms, and PWAs.',
-              url: 'https://makeuslive.com/services#web-development',
+              url: 'https://www.makeuslive.com/services#web-development',
             },
           },
           {
@@ -722,7 +722,7 @@ const jsonLd = {
               '@type': 'Service',
               name: 'Mobile & Desktop Apps',
               description: 'Cross-platform mobile apps (React Native, iOS, Android), desktop apps (Electron), and cross-platform solutions.',
-              url: 'https://makeuslive.com/services#mobile-apps',
+              url: 'https://www.makeuslive.com/services#mobile-apps',
             },
           },
           {
@@ -731,7 +731,7 @@ const jsonLd = {
               '@type': 'Service',
               name: 'Blockchain & Web3',
               description: 'Smart contract development, DeFi platforms, NFT marketplaces, and Web3 applications.',
-              url: 'https://makeuslive.com/services#blockchain',
+              url: 'https://www.makeuslive.com/services#blockchain',
             },
           },
           {
@@ -740,7 +740,7 @@ const jsonLd = {
               '@type': 'Service',
               name: 'AR/VR & Immersive',
               description: 'Augmented reality, virtual reality, mixed reality experiences, and immersive applications.',
-              url: 'https://makeuslive.com/services#ar-vr',
+              url: 'https://www.makeuslive.com/services#ar-vr',
             },
           },
           {
@@ -749,7 +749,7 @@ const jsonLd = {
               '@type': 'Service',
               name: 'Design & Branding',
               description: 'UI/UX design, brand identity, logo design, design systems, motion design, and creative direction.',
-              url: 'https://makeuslive.com/services#design-systems',
+              url: 'https://www.makeuslive.com/services#design-systems',
             },
           },
           {
@@ -758,7 +758,7 @@ const jsonLd = {
               '@type': 'Service',
               name: 'Marketing & SMMA',
               description: 'Social media marketing, digital marketing, SEO, content marketing, growth strategy, and performance marketing.',
-              url: 'https://makeuslive.com/services#marketing',
+              url: 'https://www.makeuslive.com/services#marketing',
             },
           },
           {
@@ -767,7 +767,7 @@ const jsonLd = {
               '@type': 'Service',
               name: 'Technical Consulting',
               description: 'Architecture reviews, code audits, tech strategy, R&D, and team training.',
-              url: 'https://makeuslive.com/services#consulting',
+              url: 'https://www.makeuslive.com/services#consulting',
             },
           },
         ],
@@ -776,20 +776,20 @@ const jsonLd = {
     // BreadcrumbList for Homepage
     {
       '@type': 'BreadcrumbList',
-      '@id': 'https://makeuslive.com/#breadcrumb',
+      '@id': 'https://www.makeuslive.com/#breadcrumb',
       itemListElement: [
         {
           '@type': 'ListItem',
           position: 1,
           name: 'Home',
-          item: 'https://makeuslive.com',
+          item: 'https://www.makeuslive.com',
         },
       ],
     },
     // Brand Schema - Critical for brand name recognition
     {
       '@type': 'Brand',
-      '@id': 'https://makeuslive.com/#brand',
+      '@id': 'https://www.makeuslive.com/#brand',
       name: 'MakeUsLive',
       alternateName: [
         'Make Us Live',
@@ -806,15 +806,15 @@ const jsonLd = {
         'MakeUsLive Creative Studio',
         'Make Us Live Creative Agency',
       ],
-      url: 'https://makeuslive.com',
-      logo: 'https://makeuslive.com/images/logo.png',
+      url: 'https://www.makeuslive.com',
+      logo: 'https://www.makeuslive.com/images/logo.png',
       description: 'Make Us Live (MakeUsLive) is a creative digital agency offering AI development, web development, mobile apps, and design services.',
       slogan: 'Design. Think. Build. Automate.',
     },
     // FAQPage Schema - Comprehensive for maximum search visibility
     {
       '@type': 'FAQPage',
-      '@id': 'https://makeuslive.com/#faq',
+      '@id': 'https://www.makeuslive.com/#faq',
       mainEntity: [
         {
           '@type': 'Question',

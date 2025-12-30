@@ -5,7 +5,7 @@ import { Metadata } from 'next'
 // Enterprise-grade SEO helpers for Next.js 15
 // =====================================================
 
-const SITE_URL = 'https://makeuslive.com'
+const SITE_URL = 'https://www.makeuslive.com'
 const SITE_NAME = 'Make Us Live'
 const SITE_NAME_ALT = 'MakeUsLive'
 const DEFAULT_OG_IMAGE = `${SITE_URL}/images/logo.png`

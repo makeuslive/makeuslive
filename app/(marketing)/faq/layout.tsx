@@ -36,7 +36,7 @@ export const metadata: Metadata = {
         title: 'FAQ - Common Questions | Make Us Live',
         description:
             'Answers to common questions about our services, process, pricing, and technologies.',
-        url: 'https://makeuslive.com/faq',
+        url: 'https://www.makeuslive.com/faq',
         type: 'website',
         images: [
             {
@@ -55,7 +55,7 @@ export const metadata: Metadata = {
         images: ['/twitter-faq.png'],
     },
     alternates: {
-        canonical: 'https://makeuslive.com/faq',
+        canonical: 'https://www.makeuslive.com/faq',
     },
 }
 

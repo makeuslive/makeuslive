@@ -17,11 +17,11 @@ export const metadata: Metadata = {
     openGraph: {
         title: 'Privacy Policy | Make Us Live',
         description: 'How we collect, use, and protect your personal data.',
-        url: 'https://makeuslive.com/privacy-policy',
+        url: 'https://www.makeuslive.com/privacy-policy',
         type: 'website',
     },
     alternates: {
-        canonical: 'https://makeuslive.com/privacy-policy',
+        canonical: 'https://www.makeuslive.com/privacy-policy',
     },
     robots: {
         index: true,

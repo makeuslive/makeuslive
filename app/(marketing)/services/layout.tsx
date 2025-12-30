@@ -44,7 +44,7 @@ export const metadata: Metadata = {
         title: 'Creative Services - AI, Design, Web & Mobile | Make Us Live Studio',
         description:
             'Full-service creative studio: AI products, web development, mobile apps, and design systems. Transform your vision into reality.',
-        url: 'https://makeuslive.com/services',
+        url: 'https://www.makeuslive.com/services',
         type: 'website',
         images: [
             {
@@ -63,7 +63,7 @@ export const metadata: Metadata = {
         images: ['/twitter-services.png'],
     },
     alternates: {
-        canonical: 'https://makeuslive.com/services',
+        canonical: 'https://www.makeuslive.com/services',
     },
 }
 

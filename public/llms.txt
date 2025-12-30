@@ -14,7 +14,7 @@ Bhopal, Madhya Pradesh, India
 Serving clients worldwide
 
 ## Contact
-- Website: https://makeuslive.com
+- Website: https://www.makeuslive.com
 - Email: hello@makeuslive.com
 - Team Email: team@makeuslive.com
 
@@ -55,9 +55,9 @@ Serving clients worldwide
 - Dribbble: /makeuslivee
 
 ## Key URLs
-- Homepage: https://makeuslive.com
-- Services: https://makeuslive.com/services
-- Portfolio: https://makeuslive.com/works
-- Blog: https://makeuslive.com/blog
-- Contact: https://makeuslive.com/contact
-- About: https://makeuslive.com/about
+- Homepage: https://www.makeuslive.com
+- Services: https://www.makeuslive.com/services
+- Portfolio: https://www.makeuslive.com/works
+- Blog: https://www.makeuslive.com/blog
+- Contact: https://www.makeuslive.com/contact
+- About: https://www.makeuslive.com/about

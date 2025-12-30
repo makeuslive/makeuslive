@@ -21,7 +21,7 @@ export const metadata: Metadata = {
         title: 'About Make Us Live - Meet the Creative Studio Team',
         description:
             'Discover the creative minds behind Make Us Live. We think like artists, research like scientists, and build products that scale.',
-        url: 'https://makeuslive.com/about',
+        url: 'https://www.makeuslive.com/about',
         type: 'website',
         images: [
             {
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
         images: ['/twitter-about.png'],
     },
     alternates: {
-        canonical: 'https://makeuslive.com/about',
+        canonical: 'https://www.makeuslive.com/about',
     },
 }
 

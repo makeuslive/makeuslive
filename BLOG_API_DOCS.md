@@ -146,7 +146,7 @@ GET /api/blog/upcoming-post?status=draft
     "seo": {
       "metaTitle": "Building Modern Web Apps | MakeUsLive",
       "metaDescription": "Learn how to build modern web applications...",
-      "canonicalUrl": "https://makeuslive.com/blog/building-modern-web-apps"
+      "canonicalUrl": "https://www.makeuslive.com/blog/building-modern-web-apps"
     },
     "views": 1251,
     "likes": 45,

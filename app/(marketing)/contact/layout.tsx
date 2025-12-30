@@ -20,7 +20,7 @@ export const metadata: Metadata = {
         title: 'Contact Make Us Live - Get a Free Consultation',
         description:
             'Tell us about your project. Free consultation for AI, web development, mobile apps, and design systems. We respond within 24 hours.',
-        url: 'https://makeuslive.com/contact',
+        url: 'https://www.makeuslive.com/contact',
         type: 'website',
         images: [
             {
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
         images: ['/twitter-contact.png'],
     },
     alternates: {
-        canonical: 'https://makeuslive.com/contact',
+        canonical: 'https://www.makeuslive.com/contact',
     },
 }
 

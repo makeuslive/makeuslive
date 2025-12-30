@@ -136,7 +136,7 @@ const emailWrapper = (content: string, preheader?: string) => `
     <table cellpadding="0" cellspacing="0" width="100%" style="${baseStyles.container}">
         <tr>
             <td align="center" style="padding-bottom: 30px;">
-                <a href="https://makeuslive.com" style="text-decoration: none;">
+                <a href="https://www.makeuslive.com" style="text-decoration: none;">
                     <h1 style="color: ${baseStyles.gold}; font-size: 28px; margin: 0; font-weight: bold;">MakeUsLive</h1>
                 </a>
             </td>
@@ -149,7 +149,7 @@ const emailWrapper = (content: string, preheader?: string) => `
         <tr>
             <td align="center" style="padding-top: 30px;">
                 <p style="${baseStyles.footer}">
-                    <a href="https://makeuslive.com" style="color: ${baseStyles.gold}; text-decoration: none;">Website</a> • 
+                    <a href="https://www.makeuslive.com" style="color: ${baseStyles.gold}; text-decoration: none;">Website</a> • 
                     <a href="https://twitter.com/makeuslivee" style="color: ${baseStyles.gold}; text-decoration: none;">Twitter</a> • 
                     <a href="https://linkedin.com/company/makeuslivee" style="color: ${baseStyles.gold}; text-decoration: none;">LinkedIn</a>
                 </p>
@@ -160,7 +160,7 @@ const emailWrapper = (content: string, preheader?: string) => `
                     © 2025 MakeUsLive. All rights reserved.
                 </p>
                 <p style="${baseStyles.footer}">
-                    <a href="https://makeuslive.com/unsubscribe" style="color: rgba(255,255,255,0.3); text-decoration: underline;">Unsubscribe</a>
+                    <a href="https://www.makeuslive.com/unsubscribe" style="color: rgba(255,255,255,0.3); text-decoration: underline;">Unsubscribe</a>
                 </p>
             </td>
         </tr>
@@ -188,7 +188,7 @@ export const emailTemplates = {
                 <li>Early access to our tools and updates</li>
             </ul>
             <div style="margin-top: 24px;">
-                <a href="https://makeuslive.com/blog" style="${baseStyles.button}">Read Our Latest Posts →</a>
+                <a href="https://www.makeuslive.com/blog" style="${baseStyles.button}">Read Our Latest Posts →</a>
             </div>
         `, 'Welcome to MakeUsLive! Here\'s what you can expect...'),
     }),
@@ -220,7 +220,7 @@ export const emailTemplates = {
             <h2 style="${baseStyles.heading} margin-top: 8px;">${post.title}</h2>
             <p style="${baseStyles.text}">${post.excerpt}</p>
             <div style="margin-top: 24px;">
-                <a href="https://makeuslive.com/blog/${post.slug}" style="${baseStyles.button}">Read Article →</a>
+                <a href="https://www.makeuslive.com/blog/${post.slug}" style="${baseStyles.button}">Read Article →</a>
             </div>
         `, post.excerpt),
     }),

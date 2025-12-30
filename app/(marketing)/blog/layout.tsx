@@ -22,7 +22,7 @@ export const metadata: Metadata = {
         title: 'Blog - Insights on AI, Design & Development | Make Us Live',
         description:
             'Expert insights on AI, web development, design systems, and technology trends from the Make Us Live team.',
-        url: 'https://makeuslive.com/blog',
+        url: 'https://www.makeuslive.com/blog',
         type: 'website',
         images: [
             {
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
         images: ['/twitter-blog.png'],
     },
     alternates: {
-        canonical: 'https://makeuslive.com/blog',
+        canonical: 'https://www.makeuslive.com/blog',
     },
 }
 

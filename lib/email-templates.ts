@@ -206,7 +206,7 @@ export function getUserConfirmationEmailTemplate(data: {
             </p>
 
             <div style="text-align: center; margin-top: 40px;">
-              <a href="https://makeuslive.com" style="display: inline-block; background-color: #000; color: #D4AF37; padding: 12px 25px; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 14px;">Return to Website</a>
+              <a href="https://www.makeuslive.com" style="display: inline-block; background-color: #000; color: #D4AF37; padding: 12px 25px; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 14px;">Return to Website</a>
             </div>
           </div>
 
@@ -214,7 +214,7 @@ export function getUserConfirmationEmailTemplate(data: {
           <div style="${styles.footer}">
             <p>MakeUsLive Agency</p>
             <p style="margin-top: 10px;">
-              <a href="https://makeuslive.com" style="${styles.footerLink}">www.makeuslive.com</a>
+              <a href="https://www.makeuslive.com" style="${styles.footerLink}">www.makeuslive.com</a>
             </p>
             <p style="margin-top: 20px; opacity: 0.5;">
               This is an automated message. Please do not reply directly to this email.

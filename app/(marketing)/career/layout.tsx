@@ -37,7 +37,7 @@ export const metadata: Metadata = {
         title: 'Careers - Join Our Creative Team | Make Us Live',
         description:
             'We are hiring! Join our remote-first creative studio. Open positions in engineering, design, and product.',
-        url: 'https://makeuslive.com/career',
+        url: 'https://www.makeuslive.com/career',
         type: 'website',
         images: [
             {
@@ -56,7 +56,7 @@ export const metadata: Metadata = {
         images: ['/twitter-careers.png'],
     },
     alternates: {
-        canonical: 'https://makeuslive.com/career',
+        canonical: 'https://www.makeuslive.com/career',
     },
 }
 
@@ -79,8 +79,8 @@ const jobPostingsStructuredData = {
             hiringOrganization: {
                 '@type': 'Organization',
                 name: 'Make Us Live',
-                sameAs: 'https://makeuslive.com',
-                logo: 'https://makeuslive.com/images/logo.png',
+                sameAs: 'https://www.makeuslive.com',
+                logo: 'https://www.makeuslive.com/images/logo.png',
             },
             jobLocation: {
                 '@type': 'Place',
@@ -122,8 +122,8 @@ const jobPostingsStructuredData = {
             hiringOrganization: {
                 '@type': 'Organization',
                 name: 'Make Us Live',
-                sameAs: 'https://makeuslive.com',
-                logo: 'https://makeuslive.com/images/logo.png',
+                sameAs: 'https://www.makeuslive.com',
+                logo: 'https://www.makeuslive.com/images/logo.png',
             },
             jobLocation: {
                 '@type': 'Place',

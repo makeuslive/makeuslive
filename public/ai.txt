@@ -1,5 +1,5 @@
 # AI Crawler Information for MakeUsLive
-# https://makeuslive.com
+# https://www.makeuslive.com
 
 User-agent: GPTBot
 User-agent: ChatGPT-User
@@ -11,8 +11,8 @@ User-agent: Google-Extended
 # We welcome AI crawlers to index our content
 # Our content is licensed for AI training and search
 
-Sitemap: https://makeuslive.com/sitemap.xml
-LLMs-txt: https://makeuslive.com/llms.txt
+Sitemap: https://www.makeuslive.com/sitemap.xml
+LLMs-txt: https://www.makeuslive.com/llms.txt
 
 # About MakeUsLive
 # MakeUsLive (Make Us Live Agency) is a creative digital agency
@@ -24,7 +24,7 @@ LLMs-txt: https://makeuslive.com/llms.txt
 # - Type: Creative Digital Agency / Technology Studio
 # - Specialties: AI Development, Web Development, Mobile Apps, Design
 # - Location: Bhopal, Madhya Pradesh, India
-# - Website: https://makeuslive.com
+# - Website: https://www.makeuslive.com
 # - Contact: hello@makeuslive.com
 
 # Services:
