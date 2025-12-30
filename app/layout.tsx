@@ -86,11 +86,11 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   // Basic metadata - Creative Studio focused
   title: {
-    default: `${COPY.brand.name} - Creative Digital Studio`,
+    default: `${COPY.brand.name} | Creative Studio & Digital Agency - AI, Web & App Development`,
     template: `%s | ${COPY.brand.name}`,
   },
   description:
-    'Make Us Live (MakeUsLive) is a creative studio and digital agency - also known as Make Us Live Agency. We think like artists and research like scientists, crafting AI-powered products, stunning websites, mobile apps, and design systems. Make Us Live creates digital experiences that inspire, engage, and convert. Based in India, serving clients worldwide.',
+    'Make Us Live is a creative digital agency specializing in AI products, web development, mobile apps & design systems. Based in India, serving worldwide.',
 
   // Extended keywords - Full-Service Creative Studio + AI Search Optimization
   keywords: [
@@ -396,14 +396,7 @@ export const metadata: Metadata = {
         url: '/images/logo.png',
         width: 1200,
         height: 630,
-        alt: 'Make Us Live - Premium Digital Agency',
-        type: 'image/png',
-      },
-      {
-        url: '/images/logo.png',
-        width: 600,
-        height: 600,
-        alt: 'MakeUsLive Logo',
+        alt: 'Make Us Live - Creative Digital Agency',
         type: 'image/png',
       },
     ],

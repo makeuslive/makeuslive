@@ -145,10 +145,10 @@ export const Contact = memo<ContactProps>(({ className }) => {
 
       try {
         // Determine pillar from pathname or referrer
-        const pillar = pathname?.includes('/services') ? 'services' 
+        const pillar = pathname?.includes('/services') ? 'services'
           : pathname?.includes('/blog') ? 'content'
-          : pathname?.includes('/about') ? 'system'
-          : 'system' // default
+            : pathname?.includes('/about') ? 'system'
+              : 'system' // default
 
         // Create FormData with all fields and files
         const formData = new FormData()
@@ -201,8 +201,8 @@ export const Contact = memo<ContactProps>(({ className }) => {
         // If error message wasn't set from API response, use the error object
         if (!errorMessage) {
           setErrorMessage(
-            error instanceof Error 
-              ? error.message 
+            error instanceof Error
+              ? error.message
               : 'An unexpected error occurred. Please try again.'
           )
         }
@@ -340,8 +340,8 @@ export const Contact = memo<ContactProps>(({ className }) => {
                       </span>
                     </div>
 
-                    {/* Main Heading with gradient accent */}
-                    <h1 className="text-[26px] sm:text-[30px] md:text-[36px] lg:text-[44px] xl:text-[48px] font-bold leading-[1.1] mb-6 sm:mb-8">
+                    {/* Main Heading - H2 since hero has the H1 */}
+                    <h2 className="text-[26px] sm:text-[30px] md:text-[36px] lg:text-[44px] xl:text-[48px] font-bold leading-[1.1] mb-6 sm:mb-8">
                       <span className="text-text block">Let&apos;s Build Something</span>
                       <span
                         className="block mt-1 sm:mt-2 bg-clip-text text-transparent"
@@ -351,7 +351,7 @@ export const Contact = memo<ContactProps>(({ className }) => {
                       >
                         That Works
                       </span>
-                    </h1>
+                    </h2>
 
                     {/* Description with better styling */}
                     <p className="text-sm sm:text-base md:text-lg text-[#ADA6A6] leading-relaxed max-w-md relative pl-3 sm:pl-4 border-l-2 border-gold/30">
