@@ -111,6 +111,19 @@ export const Footer = memo(() => {
             </a>
           </nav>
 
+          {/* Services Links - SEO */}
+          <nav className="footer-column hidden md:flex items-center gap-6">
+            <Link href="/web-design" className="text-text-muted text-xs hover:text-text transition-colors">
+              Web Design
+            </Link>
+            <Link href="/app-development" className="text-text-muted text-xs hover:text-text transition-colors">
+              App Dev
+            </Link>
+            <Link href="/mvp-development" className="text-text-muted text-xs hover:text-text transition-colors">
+              MVP
+            </Link>
+          </nav>
+
           {/* Social Icons */}
           <div className="footer-column flex items-center gap-3">
             {socialLinks.map((social) => (

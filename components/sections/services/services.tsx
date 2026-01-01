@@ -1,7 +1,9 @@
 'use client'
 
 import { memo, useEffect, useRef, useState, useCallback } from 'react'
+import Link from 'next/link'
 import Image from 'next/image'
+import { ArrowRight } from '@/components/ui'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { cn } from '@/lib/utils'
@@ -21,24 +23,28 @@ const SERVICES_DATA = [
     title: 'Product Design & Branding',
     image: '/images/services-art.webp',
     quote: 'Make people feel the product before they use it.',
+    href: '/ui-ux-design',
   },
   {
     id: 'development',
     title: 'Web & Mobile Development',
     image: '/images/services-art.webp',
     quote: 'Build experiences that scale and perform beautifully.',
+    href: '/web-design',
   },
   {
     id: 'ai',
     title: 'AI & Automation',
     image: '/images/services-art.webp',
     quote: 'Intelligent systems that learn and adapt to your needs.',
+    href: '/custom-software',
   },
   {
     id: 'marketing',
     title: 'Marketing & Content',
     image: '/images/services-art.webp',
     quote: 'Stories that connect, content that converts.',
+    href: '/services',
   }
 ]
 
@@ -304,13 +310,27 @@ export const Services = memo<ServicesProps>(({ className }) => {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
 
                 {/* Quote at bottom */}
-                <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 lg:p-8 z-10">
+                <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 lg:p-8 z-10 flex flex-col md:flex-row gap-4 justify-between items-end">
                   <p
-                    className="text-lg md:text-xl lg:text-2xl xl:text-[28px] font-medium text-text italic leading-tight"
+                    className="text-lg md:text-xl lg:text-2xl xl:text-[28px] font-medium text-text italic leading-tight max-w-lg"
                     style={{ textShadow: '0 4px 8px rgba(0,0,0,0.8)' }}
                   >
                     {currentService.quote}
                   </p>
+
+                  <Link
+                    href={currentService.href || '/services'}
+                    className={cn(
+                      'group/btn inline-flex items-center gap-2 px-6 py-3 rounded-xl',
+                      'bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20',
+                      'transition-all duration-300 hover:scale-105 hover:border-gold/50'
+                    )}
+                  >
+                    <span className="text-sm font-semibold text-white group-hover/btn:text-gold transition-colors">
+                      Explore
+                    </span>
+                    <ArrowRight size={16} className="text-white group-hover/btn:text-gold transition-colors group-hover/btn:translate-x-1 duration-300" />
+                  </Link>
                 </div>
 
                 {/* Service indicator dots */}
