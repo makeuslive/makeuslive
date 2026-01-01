@@ -8,7 +8,7 @@ import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { cn } from '@/lib/utils'
 import { COPY } from '@/lib/constants'
-import { Button, MenuIcon, CloseIcon, ArrowRight } from '@/components/ui'
+import { MenuIcon, CloseIcon, ArrowRight } from '@/components/ui'
 import { SkipLinks } from './skip-links'
 
 if (typeof window !== 'undefined') {
@@ -126,15 +126,20 @@ export const Navbar = memo(() => {
 
             {/* Right: CTA Button */}
             <div className="justify-self-end">
-              <Link href="/contact">
-                <Button
-                  variant="primary"
-                  size="sm"
-                  rightIcon={<ArrowRight size={16} className="group-hover:translate-x-0.5 transition-transform" />}
-                  className="group"
-                >
-                  {COPY.nav.cta}
-                </Button>
+              <Link
+                href="/contact"
+                className={cn(
+                  'inline-flex items-center justify-center gap-2',
+                  'rounded-full font-medium',
+                  'transition-all duration-300 ease-out-expo',
+                  'focus:outline-none focus:ring-2 focus:ring-gold/50 focus:ring-offset-2 focus:ring-offset-bg',
+                  'bg-white text-bg hover:bg-text hover:scale-105 active:scale-95 shadow-[inset_0_2px_4px_rgba(0,0,0,0.1)]', // primary variant
+                  'px-4 py-2.5 text-sm min-h-[44px]', // sm size
+                  'group'
+                )}
+              >
+                {COPY.nav.cta}
+                <ArrowRight size={16} className="group-hover:translate-x-0.5 transition-transform" />
               </Link>
             </div>
           </div>
@@ -196,19 +201,23 @@ export const Navbar = memo(() => {
               {link.label}
             </Link>
           ))}
-          <Link href="/contact" onClick={closeMenu}>
-            <Button
-              variant="primary"
-              size="lg"
-              rightIcon={<ArrowRight size={20} />}
-              className={cn(
-                'mt-4 transition-all duration-300',
-                isMenuOpen ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
-              )}
-              style={{ transitionDelay: isMenuOpen ? '400ms' : '0ms' }}
-            >
-              {COPY.nav.cta}
-            </Button>
+          <Link
+            href="/contact"
+            onClick={closeMenu}
+            className={cn(
+              'mt-4 transition-all duration-300',
+              isMenuOpen ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0',
+              'inline-flex items-center justify-center gap-2',
+              'rounded-full font-medium',
+              'transition-all duration-300 ease-out-expo',
+              'focus:outline-none focus:ring-2 focus:ring-gold/50 focus:ring-offset-2 focus:ring-offset-bg',
+              'bg-white text-bg hover:bg-text hover:scale-105 active:scale-95 shadow-[inset_0_2px_4px_rgba(0,0,0,0.1)]', // primary variant
+              'px-8 py-4 text-lg min-h-[48px]' // lg size
+            )}
+            style={{ transitionDelay: isMenuOpen ? '400ms' : '0ms' }}
+          >
+            {COPY.nav.cta}
+            <ArrowRight size={20} />
           </Link>
         </div>
       </div>
