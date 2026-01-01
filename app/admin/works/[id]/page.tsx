@@ -48,7 +48,7 @@ export default function EditWorkPage({ params }: { params: Promise<{ id: string 
 
     const fetchWork = async () => {
         try {
-            const res = await fetch('/api/admin/works')
+            const res = await fetch('/api/admin/work')
             const data = await res.json()
             if (Array.isArray(data)) {
                 const work = data.find((w: Work) => w.id === id)
@@ -79,7 +79,7 @@ export default function EditWorkPage({ params }: { params: Promise<{ id: string 
 
         setSaving(true)
         try {
-            const res = await fetch('/api/admin/works', {
+            const res = await fetch('/api/admin/work', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -90,7 +90,7 @@ export default function EditWorkPage({ params }: { params: Promise<{ id: string 
             })
 
             if (res.ok) {
-                router.push('/admin/works')
+                router.push('/admin/work')
             } else {
                 const data = await res.json()
                 alert(data.error || 'Failed to update work')
@@ -107,9 +107,9 @@ export default function EditWorkPage({ params }: { params: Promise<{ id: string 
         if (!confirm('Delete this project? This cannot be undone.')) return
 
         try {
-            const res = await fetch(`/api/admin/works?id=${id}`, { method: 'DELETE' })
+            const res = await fetch(`/api/admin/work?id=${id}`, { method: 'DELETE' })
             if (res.ok) {
-                router.push('/admin/works')
+                router.push('/admin/work')
             }
         } catch (error) {
             console.error('Error deleting work:', error)
@@ -133,7 +133,7 @@ export default function EditWorkPage({ params }: { params: Promise<{ id: string 
                     {/* Header */}
                     <div className="mb-8">
                         <Link
-                            href="/admin/works"
+                            href="/admin/work"
                             className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 mb-4 transition-colors"
                         >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -253,7 +253,7 @@ export default function EditWorkPage({ params }: { params: Promise<{ id: string 
                                 {saving ? 'Saving...' : 'Save Changes'}
                             </button>
                             <Link
-                                href="/admin/works"
+                                href="/admin/work"
                                 className="px-6 py-3 border border-gray-200 text-gray-600 font-medium rounded-lg hover:bg-gray-50 transition-all"
                             >
                                 Cancel

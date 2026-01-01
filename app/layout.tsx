@@ -86,11 +86,11 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   // Basic metadata - Creative Studio focused
   title: {
-    default: `${COPY.brand.name} | AI, Web & Mobile App Development`,
+    default: `${COPY.brand.name} | AI Product Development Agency for Startups`,
     template: `%s | ${COPY.brand.name}`,
   },
   description:
-    'Make Us Live is a creative digital agency specializing in AI products, web development, mobile apps & design systems. Based in India, serving worldwide.',
+    'Premier AI product development agency building scalable web & mobile apps for startups & enterprises. Expert in Next.js, React Native, and AI systems.',
 
   // Extended keywords - Full-Service Creative Studio + AI Search Optimization
   keywords: [

@@ -186,7 +186,7 @@ export const ServiceHub = memo<ServiceHubProps>(({
                                     <div className="absolute inset-0 bg-gradient-to-r from-gold to-amber-400 opacity-0 group-hover:opacity-100 transition-opacity" />
                                 </Link>
                                 <Link
-                                    href="/works"
+                                    href="/work"
                                     className="inline-flex items-center gap-2 px-8 py-4 border border-white/20 text-white font-medium rounded-full hover:border-white/40 hover:bg-white/5 transition-all duration-300"
                                 >
                                     View Case Studies

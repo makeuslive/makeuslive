@@ -67,7 +67,7 @@ export const COPY = {
   },
   hero: {
     greeting: 'नमस्ते',
-    tagline: 'We build Products, Systems and Stories that scale.',
+    tagline: 'Product Development AI Studio for Startups & Enterprises',
     cta: 'Explore Our Work',
   },
   services: {
@@ -307,7 +307,7 @@ export const COPY = {
         items: [
           { label: 'About', href: '/about' },
           { label: 'Services', href: '/services' },
-          { label: 'Works', href: '/works' },
+          { label: 'Works', href: '/work' },
           { label: 'Blog', href: '/blog' },
           { label: 'Careers', href: '/careers' },
         ],

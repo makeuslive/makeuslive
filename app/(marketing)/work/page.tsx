@@ -256,7 +256,7 @@ export default function WorksPage() {
   useEffect(() => {
     async function fetchWorks() {
       try {
-        const response = await fetch('/api/works')
+        const response = await fetch('/api/work')
         const data = await response.json()
 
         if (data.success) {
@@ -376,7 +376,7 @@ export default function WorksPage() {
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-8 leading-[1.05]">
               <span className="text-white">Our </span>
               <span className="bg-gradient-to-r from-white via-gold/90 to-gold bg-clip-text text-transparent">
-                Works
+                Work
               </span>
             </h1>
 

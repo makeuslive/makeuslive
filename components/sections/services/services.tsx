@@ -166,9 +166,9 @@ export const Services = memo<ServicesProps>(({ className }) => {
           </div>
 
           <h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-white leading-tight mb-4">
-            What We Help You{' '}
+            Our Core Services:{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-gold via-amber-300 to-gold">
-              Build
+              Web, Mobile & AI
             </span>
           </h2>
           <p className="text-lg md:text-xl text-white/60 leading-relaxed max-w-2xl mx-auto">

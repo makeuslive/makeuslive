@@ -548,7 +548,7 @@ export default function AboutPage() {
               <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link
-              href="/works"
+              href="/work"
               className={cn(
                 'inline-flex items-center gap-2 px-8 py-4 rounded-xl',
                 'border border-white/20 text-text font-medium',

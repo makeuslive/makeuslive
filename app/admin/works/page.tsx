@@ -24,7 +24,7 @@ export default function WorksPage() {
 
     const fetchWorks = async () => {
         try {
-            const res = await fetch('/api/admin/works')
+            const res = await fetch('/api/admin/work')
             const data = await res.json()
             if (Array.isArray(data)) {
                 setWorks(data)
@@ -39,7 +39,7 @@ export default function WorksPage() {
     const deleteWork = async (id: string) => {
         if (!confirm('Delete this project? This action cannot be undone.')) return
         try {
-            const res = await fetch(`/api/admin/works?id=${id}`, { method: 'DELETE' })
+            const res = await fetch(`/api/admin/work?id=${id}`, { method: 'DELETE' })
             if (res.ok) {
                 setWorks(works.filter(w => w.id !== id))
             }
@@ -75,7 +75,7 @@ export default function WorksPage() {
                         <p className="text-sm text-gray-500 mt-1">Manage your portfolio projects</p>
                     </div>
                     <Link
-                        href="/admin/works/new"
+                        href="/admin/work/new"
                         className="inline-flex items-center gap-2 px-4 py-2.5 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors shadow-sm"
                     >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -111,7 +111,7 @@ export default function WorksPage() {
                         <h3 className="text-lg font-semibold text-gray-900 mb-1">No projects yet</h3>
                         <p className="text-sm text-gray-500 mb-6">Showcase your best work to potential clients</p>
                         <Link
-                            href="/admin/works/new"
+                            href="/admin/work/new"
                             className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
                         >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -140,7 +140,7 @@ export default function WorksPage() {
                                     {/* Hover Actions */}
                                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                                         <Link
-                                            href={`/admin/works/${work.id}`}
+                                            href={`/admin/work/${work.id}`}
                                             className="p-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white rounded-lg transition-colors"
                                         >
                                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

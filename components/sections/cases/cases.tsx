@@ -62,7 +62,7 @@ export const Cases = memo<CasesProps>(({ className }) => {
   useEffect(() => {
     const fetchWorks = async () => {
       try {
-        const res = await fetch('/api/works')
+        const res = await fetch('/api/work')
         const data = await res.json()
         if (data.success && data.data && data.data.length > 0) {
           setWorks(data.data)

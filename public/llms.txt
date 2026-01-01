@@ -57,7 +57,7 @@ Serving clients worldwide
 ## Key URLs
 - Homepage: https://www.makeuslive.com
 - Services: https://www.makeuslive.com/services
-- Portfolio: https://www.makeuslive.com/works
+- Portfolio: https://www.makeuslive.com/work
 - Blog: https://www.makeuslive.com/blog
 - Contact: https://www.makeuslive.com/contact
 - About: https://www.makeuslive.com/about

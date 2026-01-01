@@ -35,7 +35,7 @@ export default function NewWorkPage() {
 
         setLoading(true)
         try {
-            const res = await fetch('/api/admin/works', {
+            const res = await fetch('/api/admin/work', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -45,7 +45,7 @@ export default function NewWorkPage() {
             })
 
             if (res.ok) {
-                router.push('/admin/works')
+                router.push('/admin/work')
             } else {
                 const data = await res.json()
                 alert(data.error || 'Failed to create work')
@@ -65,7 +65,7 @@ export default function NewWorkPage() {
                     {/* Header */}
                     <div className="mb-8">
                         <Link
-                            href="/admin/works"
+                            href="/admin/work"
                             className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 mb-4 transition-colors"
                         >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -172,7 +172,7 @@ export default function NewWorkPage() {
                                 {loading ? 'Creating...' : 'Create Project'}
                             </button>
                             <Link
-                                href="/admin/works"
+                                href="/admin/work"
                                 className="px-6 py-3 border border-gray-200 text-gray-600 font-medium rounded-lg hover:bg-gray-50 transition-all"
                             >
                                 Cancel

@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     title: 'Portfolio & Case Studies - Our Work | Make Us Live',
     description:
       'Explore our portfolio of production-ready projects: Enterprise platforms, mobile apps with 10K+ downloads, AI solutions, and web development.',
-    url: 'https://www.makeuslive.com/works',
+    url: 'https://www.makeuslive.com/work',
     type: 'website',
     images: [
       {
@@ -56,7 +56,7 @@ export const metadata: Metadata = {
     images: ['/twitter-works.png'],
   },
   alternates: {
-    canonical: 'https://www.makeuslive.com/works',
+    canonical: 'https://www.makeuslive.com/work',
   },
 }
 

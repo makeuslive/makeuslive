@@ -28,7 +28,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.95,
     },
     {
-      url: `${baseUrl}/works`,
+      url: `${baseUrl}/work`,
       lastModified: currentDate,
       changeFrequency: 'weekly',
       priority: 0.9,
@@ -148,7 +148,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const works = await collection.find({}).sort({ order: 1 }).toArray()
     
     workPages = works.map(work => ({
-      url: `${baseUrl}/works/${work._id.toString()}`,
+      url: `${baseUrl}/work/${work._id.toString()}`,
       lastModified: work.updatedAt || work.createdAt || currentDate,
       changeFrequency: 'yearly' as const,
       priority: work.order === 0 ? 0.8 : 0.7,

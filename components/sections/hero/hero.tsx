@@ -163,22 +163,22 @@ export const Hero = memo<HeroProps>(({ className }) => {
         </div>
 
         {/* Tagline */}
-        <p
+        <h1
           className={cn(
             'hero-tagline',
             'text-lg sm:text-xl md:text-2xl lg:text-3xl',
             'font-bold italic text-text-muted',
-            'max-w-[90%] sm:max-w-xl md:max-w-2xl lg:max-w-3xl mx-auto mb-8 md:mb-10',
+            'max-w-[90%] sm:max-w-2xl md:max-w-4xl lg:max-w-6xl mx-auto mb-8 md:mb-10',
             'drop-shadow-lg',
             'leading-relaxed'
           )}
         >
           {COPY.hero.tagline}
-        </p>
+        </h1>
 
         {/* CTA Buttons */}
         <div className="hero-cta flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Link href="/works">
+          <Link href="/work">
             <Button
               variant="primary"
               size="lg"

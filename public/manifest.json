@@ -67,7 +67,7 @@
             "name": "Our Work",
             "short_name": "Works",
             "description": "View our portfolio",
-            "url": "/works",
+            "url": "/work",
             "icons": [
                 {
                     "src": "/icon-192x192.png",
