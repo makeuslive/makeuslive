@@ -173,11 +173,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${baseUrl}/llms.txt`, lastModified: currentDate, changeFrequency: 'monthly', priority: 0.5 },
   ]
 
+  // ============================================
+  // CAREER PAGES - Static job listings
+  // ============================================
+  const careerPages: MetadataRoute.Sitemap = [
+    { url: `${baseUrl}/career/senior-frontend-engineer`, lastModified: currentDate, changeFrequency: 'weekly', priority: 0.7 },
+    { url: `${baseUrl}/career/ui-ux-designer`, lastModified: currentDate, changeFrequency: 'weekly', priority: 0.7 },
+  ]
+
   return [
     ...corePages,
     ...serviceHubPages,
     ...servicePages,
     ...blogPosts,
+    ...workPages,
+    ...careerPages,
     ...legalPages,
   ]
 }
