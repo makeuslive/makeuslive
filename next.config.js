@@ -48,6 +48,16 @@ const nextConfig = {
           },
         ],
       },
+      // Prevent indexing of utility files while keeping them accessible to bots
+      {
+        source: '/(llms.txt|ai.txt|sitemap.xml)',
+        headers: [
+          {
+            key: 'X-Robots-Tag',
+            value: 'noindex, follow',
+          },
+        ],
+      },
     ]
   },
   async redirects() {

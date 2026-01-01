@@ -52,9 +52,9 @@ export const ServiceHub = memo<ServiceHubProps>(({
     description,
     primaryCTA,
     stats = [
-        { value: '70%', label: 'Faster Delivery' },
+        { value: '60%', label: 'Faster Delivery' },
         { value: '40%', label: 'Cost Reduction' },
-        { value: '98%', label: 'Client Satisfaction' },
+        { value: '95%', label: 'Client Satisfaction' },
     ],
     tools = [
         { name: 'Figma', icon: 'figma' },
@@ -175,19 +175,21 @@ export const ServiceHub = memo<ServiceHubProps>(({
                             </p>
 
                             <div className="hero-animate flex flex-wrap gap-4">
-                                <Link href="/contact">
-                                    <button className="group relative inline-flex items-center gap-3 px-8 py-4 bg-gold text-bg font-semibold rounded-full overflow-hidden transition-all duration-300 hover:shadow-[0_0_40px_rgba(212,175,55,0.3)] hover:scale-105">
-                                        <span className="relative z-10">{primaryCTA}</span>
-                                        <svg className="w-5 h-5 relative z-10 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                                        </svg>
-                                        <div className="absolute inset-0 bg-gradient-to-r from-gold to-amber-400 opacity-0 group-hover:opacity-100 transition-opacity" />
-                                    </button>
+                                <Link
+                                    href="/contact"
+                                    className="group relative inline-flex items-center gap-3 px-8 py-4 bg-gold text-bg font-semibold rounded-full overflow-hidden transition-all duration-300 hover:shadow-[0_0_40px_rgba(212,175,55,0.3)] hover:scale-105"
+                                >
+                                    <span className="relative z-10">{primaryCTA}</span>
+                                    <svg className="w-5 h-5 relative z-10 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                                    </svg>
+                                    <div className="absolute inset-0 bg-gradient-to-r from-gold to-amber-400 opacity-0 group-hover:opacity-100 transition-opacity" />
                                 </Link>
-                                <Link href="/works">
-                                    <button className="inline-flex items-center gap-2 px-8 py-4 border border-white/20 text-white font-medium rounded-full hover:border-white/40 hover:bg-white/5 transition-all duration-300">
-                                        View Case Studies
-                                    </button>
+                                <Link
+                                    href="/works"
+                                    className="inline-flex items-center gap-2 px-8 py-4 border border-white/20 text-white font-medium rounded-full hover:border-white/40 hover:bg-white/5 transition-all duration-300"
+                                >
+                                    View Case Studies
                                 </Link>
                             </div>
                         </div>
@@ -256,13 +258,14 @@ export const ServiceHub = memo<ServiceHubProps>(({
                             <p className="text-lg text-white/50 mb-8">
                                 Every project is tailored to your unique needs, backed by years of experience and cutting-edge technology.
                             </p>
-                            <Link href="/contact">
-                                <button className="inline-flex items-center gap-2 text-gold font-medium hover:gap-3 transition-all">
-                                    Discuss Your Project
-                                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                                    </svg>
-                                </button>
+                            <Link
+                                href="/contact"
+                                className="inline-flex items-center gap-2 text-gold font-medium hover:gap-3 transition-all"
+                            >
+                                Discuss Your Project
+                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                                </svg>
                             </Link>
                         </div>
 
@@ -377,10 +380,12 @@ export const ServiceHub = memo<ServiceHubProps>(({
                         </div>
                         <div className="flex flex-wrap gap-3">
                             {relatedServices.map((service, i) => (
-                                <Link key={i} href={service.href}>
-                                    <button className="px-6 py-3 rounded-full border border-white/10 text-white/70 hover:border-gold/30 hover:text-gold hover:bg-gold/5 transition-all duration-300">
-                                        {service.title}
-                                    </button>
+                                <Link
+                                    key={i}
+                                    href={service.href}
+                                    className="px-6 py-3 rounded-full border border-white/10 text-white/70 hover:border-gold/30 hover:text-gold hover:bg-gold/5 transition-all duration-300"
+                                >
+                                    {service.title}
                                 </Link>
                             ))}
                         </div>
@@ -403,13 +408,14 @@ export const ServiceHub = memo<ServiceHubProps>(({
                     <p className="text-xl text-white/50 mb-10 max-w-2xl mx-auto">
                         Let&apos;s discuss your project and see how we can help bring your vision to life.
                     </p>
-                    <Link href="/contact">
-                        <button className="group relative inline-flex items-center gap-3 px-10 py-5 bg-white text-bg font-semibold text-lg rounded-full overflow-hidden transition-all duration-300 hover:shadow-[0_0_60px_rgba(255,255,255,0.2)] hover:scale-105">
-                            <span className="relative z-10">Get a Free Consultation</span>
-                            <svg className="w-6 h-6 relative z-10 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                            </svg>
-                        </button>
+                    <Link
+                        href="/contact"
+                        className="group relative inline-flex items-center gap-3 px-10 py-5 bg-white text-bg font-semibold text-lg rounded-full overflow-hidden transition-all duration-300 hover:shadow-[0_0_60px_rgba(255,255,255,0.2)] hover:scale-105"
+                    >
+                        <span className="relative z-10">Get a Free Consultation</span>
+                        <svg className="w-6 h-6 relative z-10 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                        </svg>
                     </Link>
                 </div>
             </div>

@@ -18,6 +18,8 @@ export default function robots(): MetadataRoute.Robots {
           '/search?*',
           '/_next/',
           '/static/',
+          '/llms.txt',
+          '/ai.txt',
         ],
       },
 
