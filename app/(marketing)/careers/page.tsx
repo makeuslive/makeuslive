@@ -173,7 +173,7 @@ export default function CareerPage() {
                         )}
                       </div>
                     </div>
-                    <Link href={`/career/${job.id}`}>
+                    <Link href={`/careers/${job.id}`}>
                       <Button variant="primary">View Details</Button>
                     </Link>
                   </div>

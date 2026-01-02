@@ -21,28 +21,28 @@ const SERVICES_DATA = [
   {
     id: 'design',
     title: 'Product Design & Branding',
-    image: '/images/services-art.webp',
+    image: '/images/services/product.png',
     quote: 'Make people feel the product before they use it.',
     href: '/ui-ux-design',
   },
   {
     id: 'development',
     title: 'Web & Mobile Development',
-    image: '/images/services-art.webp',
+    image: '/images/services/web.png',
     quote: 'Build experiences that scale and perform beautifully.',
     href: '/web-design',
   },
   {
     id: 'ai',
     title: 'AI & Automation',
-    image: '/images/services-art.webp',
+    image: '/images/services/ai.png',
     quote: 'Intelligent systems that learn and adapt to your needs.',
     href: '/custom-software',
   },
   {
     id: 'marketing',
     title: 'Marketing & Content',
-    image: '/images/services-art.webp',
+    image: '/images/services/marketing.png',
     quote: 'Stories that connect, content that converts.',
     href: '/services',
   }

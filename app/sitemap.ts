@@ -52,7 +52,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/career`,
+      url: `${baseUrl}/careers`,
       lastModified: currentDate,
       changeFrequency: 'weekly',
       priority: 0.8,
@@ -177,8 +177,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // CAREER PAGES - Static job listings
   // ============================================
   const careerPages: MetadataRoute.Sitemap = [
-    { url: `${baseUrl}/career/senior-frontend-engineer`, lastModified: currentDate, changeFrequency: 'weekly', priority: 0.7 },
-    { url: `${baseUrl}/career/ui-ux-designer`, lastModified: currentDate, changeFrequency: 'weekly', priority: 0.7 },
+    { url: `${baseUrl}/careers/senior-frontend-engineer`, lastModified: currentDate, changeFrequency: 'weekly', priority: 0.7 },
+    { url: `${baseUrl}/careers/ui-ux-designer`, lastModified: currentDate, changeFrequency: 'weekly', priority: 0.7 },
   ]
 
   return [

@@ -309,7 +309,7 @@ export const COPY = {
           { label: 'Services', href: '/services' },
           { label: 'Works', href: '/work' },
           { label: 'Blog', href: '/blog' },
-          { label: 'Careers', href: '/career' },
+          { label: 'Careers', href: '/careers' },
         ],
       },
       {

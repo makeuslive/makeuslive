@@ -81,7 +81,7 @@ export default function JobDetailPage({ params }: { params: Promise<{ id: string
 
         setSubmitting(true)
         try {
-            const res = await fetch('/api/career/apply', {
+            const res = await fetch('/api/careers/apply', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

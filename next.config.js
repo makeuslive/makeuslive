@@ -63,6 +63,16 @@ const nextConfig = {
   async redirects() {
     return [
       {
+        source: '/career/:path*',
+        destination: '/careers/:path*',
+        permanent: true,
+      },
+      {
+        source: '/works/:path*',
+        destination: '/work/:path*',
+        permanent: true,
+      },
+      {
         source: '/privacy',
         destination: '/privacy-policy',
         permanent: true,
