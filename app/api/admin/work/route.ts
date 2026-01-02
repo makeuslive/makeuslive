@@ -140,7 +140,7 @@ export async function POST(request: NextRequest) {
     })
 
     // Revalidate the works cache
-    revalidateTag('works')
+    revalidateTag('works', 'max')
 
     return NextResponse.json({ 
       id: result.insertedId.toString(),
@@ -207,7 +207,7 @@ export async function PUT(request: NextRequest) {
     )
 
     // Revalidate the works cache
-    revalidateTag('works')
+    revalidateTag('works', 'max')
 
     return NextResponse.json({ message: 'Work updated successfully' })
   } catch (error) {
@@ -230,7 +230,7 @@ export async function DELETE(request: NextRequest) {
     await collection.deleteOne({ _id: new ObjectId(id) })
 
     // Revalidate the works cache
-    revalidateTag('works')
+    revalidateTag('works', 'max')
 
     return NextResponse.json({ message: 'Work deleted successfully' })
   } catch (error) {
