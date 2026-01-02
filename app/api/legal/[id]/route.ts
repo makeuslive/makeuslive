@@ -5,9 +5,10 @@ import { ObjectId } from 'mongodb'
 // GET single legal page by ID
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  props: { params: Promise<{ id: string }> }
 ) {
   try {
+    const params = await props.params;
     const { id } = params
     const collection = await getCollection('legal_pages')
     
@@ -36,9 +37,10 @@ export async function GET(
 // PUT update legal page
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  props: { params: Promise<{ id: string }> }
 ) {
   try {
+    const params = await props.params;
     const { id } = params
     const body = await request.json()
     const { title, content, effectiveDate, changeLog, metaTitle, metaDescription, status, lastUpdated } = body
@@ -81,9 +83,10 @@ export async function PUT(
 // DELETE legal page
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  props: { params: Promise<{ id: string }> }
 ) {
   try {
+    const params = await props.params;
     const { id } = params
     const collection = await getCollection('legal_pages')
     
