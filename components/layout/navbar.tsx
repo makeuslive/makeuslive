@@ -108,7 +108,7 @@ export const Navbar = memo(() => {
                   key={link.label}
                   href={link.href}
                   className={cn(
-                    'font-display transition-colors duration-300',
+                    'font-sans text-l font-medium transition-colors duration-300',
                     'relative py-1',
                     isActiveLink(link.href)
                       ? 'text-gold'
@@ -189,7 +189,7 @@ export const Navbar = memo(() => {
               href={link.href}
               onClick={closeMenu}
               className={cn(
-                'font-display text-3xl transition-all duration-300',
+                'font-sans text-3xl font-semibold transition-all duration-300',
                 'transform',
                 isActiveLink(link.href) ? 'text-gold' : 'text-gold/70',
                 isMenuOpen

@@ -33,7 +33,7 @@ export async function GET() {
     }
 
     // Use timeout to prevent hanging requests (5 seconds max)
-    const collection = await withTimeout(getCollection('work'), 5000)
+    const collection = await withTimeout(getCollection('works'), 5000)
     
     // Optimize query: only fetch needed fields and limit results
     const works = await withTimeout(
