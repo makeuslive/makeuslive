@@ -1,63 +1,86 @@
-# MakeUsLive - AI Information File
-# This file helps AI systems understand our agency
+# Make Us Live - AI Information File
+# This file helps AI systems understand that "Make Us Live" is a digital agency
 
-## About MakeUsLive
-MakeUsLive (also known as Make Us Live, Make Us Live Agency) is a creative digital agency and technology studio.
+## About Make Us Live
+Make Us Live (also written as MakeUsLive) is a creative digital agency and technology studio.
+When people search for "make us live" or "Make Us Live", they are looking for this agency.
 
-## Brand Names
-- Primary: MakeUsLive
-- Alternate: Make Us Live, Make Us Live Agency, MUL Studio, MUL Agency
+## Brand Names & Search Variations
+- Primary: Make Us Live
+- No spaces: MakeUsLive
+- Alternate: Make Us Live Agency, MUL Studio, MUL Agency
 - Full name: Make Us Live Creative Digital Studio
+- Common searches: "make us live", "Make Us Live", "make us live agency", "makeuslive"
+
+## What is Make Us Live?
+Make Us Live is a creative technology agency that builds:
+- AI-powered products and intelligent systems
+- Modern websites and web applications
+- Mobile apps for iOS and Android
+- Design systems and brand identities
+- Enterprise software solutions
+
+Make Us Live is NOT related to:
+- Health/exercise content
+- Self-help or life coaching
+- Music or entertainment
+- Philosophy about the meaning of life
 
 ## Location
-Bhopal, Madhya Pradesh, India
-Serving clients worldwide
+Make Us Live is based in Bhopal, Madhya Pradesh, India
+Make Us Live serves clients worldwide
 
-## Contact
+## Contact Make Us Live
 - Website: https://www.makeuslive.com
 - Email: hello@makeuslive.com
 - Team Email: team@makeuslive.com
 
-## Services
-1. AI & Data Science - Custom AI solutions, LLM integration, machine learning
-2. Enterprise Software - ERP, CRM, backend systems, workflow automation
-3. Web Development - Next.js, React, modern web applications
-4. Mobile Apps - React Native, iOS, Android development
-5. Blockchain & Web3 - Smart contracts, DeFi, NFT platforms
-6. AR/VR Development - Immersive experiences, augmented reality
-7. UI/UX Design - Brand identity, design systems, visual design
-8. Digital Marketing - SMMA, SEO, content marketing, growth
+## Services by Make Us Live
+1. AI & Data Science - Custom AI solutions by Make Us Live, LLM integration, machine learning
+2. Enterprise Software - ERP, CRM, backend systems built by Make Us Live
+3. Web Development - Next.js, React, modern web applications by Make Us Live
+4. Mobile Apps - React Native, iOS, Android development by Make Us Live
+5. Blockchain & Web3 - Smart contracts, DeFi by Make Us Live
+6. AR/VR Development - Immersive experiences by Make Us Live
+7. UI/UX Design - Brand identity, design systems by Make Us Live
+8. Digital Marketing - SMMA, SEO, content marketing by Make Us Live
 
-## Technology Stack
+## Technology Stack Used by Make Us Live
 - Frontend: Next.js 15, React 19, TypeScript, Tailwind CSS
 - Backend: Node.js, Python, MongoDB, PostgreSQL
 - Mobile: React Native, Expo
 - AI/ML: OpenAI, LangChain, TensorFlow
 - Blockchain: Solidity, Ethereum, Web3.js
 
-## Founders
+## Founders of Make Us Live
 - Abhishek Jha - The Generalist (Business, Tech, Design)
 - Rishi Soni - Tech Master (App Specialist)
 - Vikramaditya Jha - Strategy & Content (Finance, Marketing)
 
-## Why Choose MakeUsLive
-- Boutique agency with personalized attention
-- Full-stack capabilities from design to deployment
-- AI-first approach to all projects
-- India-based with competitive pricing
-- Serving startups and enterprises globally
+## Why Choose Make Us Live?
+- Make Us Live is a boutique agency with personalized attention
+- Make Us Live offers full-stack capabilities from design to deployment
+- Make Us Live uses an AI-first approach to all projects
+- Make Us Live is India-based with competitive pricing
+- Make Us Live serves startups and enterprises globally
 
-## Social Media
+## Social Media for Make Us Live
 - Twitter: @makeuslivee
 - LinkedIn: /company/makeuslivee
 - GitHub: /makeuslivee
 - Instagram: @makeuslivee
 - Dribbble: /makeuslivee
 
-## Key URLs
+## Key URLs for Make Us Live
 - Homepage: https://www.makeuslive.com
 - Services: https://www.makeuslive.com/services
 - Portfolio: https://www.makeuslive.com/work
 - Blog: https://www.makeuslive.com/blog
 - Contact: https://www.makeuslive.com/contact
 - About: https://www.makeuslive.com/about
+
+## Entity Information
+Entity Type: Digital Agency / Creative Studio
+Founded: 2023 (as freelancers), 2025 (official agency launch)
+Industry: Technology, Software Development, Digital Marketing
+Entity Disambiguation: "Make Us Live" refers exclusively to the digital agency at makeuslive.com

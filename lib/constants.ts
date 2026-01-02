@@ -68,7 +68,7 @@ export const COPY = {
   hero: {
     greeting: 'नमस्ते',
     tagline: 'Product Development AI Studio for Startups & Enterprises',
-    cta: 'Explore Our Work',
+    cta: 'Explore Make Us Live',
   },
   services: {
     badge: 'Our Services',
@@ -178,7 +178,7 @@ export const COPY = {
     items: [
       {
         id: 'testimonial-1',
-        quote: 'MakeUsLive transformed our digital presence completely. Their attention to detail and innovative approach exceeded our expectations. The team delivered on time and the results speak for themselves.',
+        quote: 'Make Us Live transformed our digital presence completely. Their attention to detail and innovative approach exceeded our expectations. The team delivered on time and the results speak for themselves.',
         author: 'Sarah Chen',
         role: 'CEO, TechStart Inc.',
         industry: 'SaaS',
@@ -187,7 +187,7 @@ export const COPY = {
       },
       {
         id: 'testimonial-2',
-        quote: 'Working with MakeUsLive was a game-changer for our startup. They delivered a product that truly represents our brand vision and helped us scale from 0 to 50K users in 6 months.',
+        quote: 'Working with the Make Us Live team was a game-changer for our startup. They delivered a product that truly represents our brand vision and helped us scale from 0 to 50K users in 6 months.',
         author: 'Michael Torres',
         role: 'Founder, Bloom Studio',
         industry: 'E-commerce',
@@ -205,7 +205,7 @@ export const COPY = {
       },
       {
         id: 'testimonial-4',
-        quote: 'Exceptional quality and professionalism. They understood our vision from day one and executed it flawlessly. Highly recommend for any serious project.',
+        quote: 'Exceptional quality and professionalism from the Make Us Live team. They understood our vision from day one and executed it flawlessly. Highly recommend for any serious project.',
         author: 'David Park',
         role: 'Product Lead, InnovateCo',
         industry: 'Healthcare',
@@ -214,7 +214,7 @@ export const COPY = {
       },
       {
         id: 'testimonial-5',
-        quote: "The design system they built for us has saved countless hours and maintained consistency across all our products. It's become the foundation of everything we build.",
+        quote: "The design system that Make Us Live built for us has saved countless hours and maintained consistency across all our products. It's become the foundation of everything we build.",
         author: 'Lisa Johnson',
         role: 'Design Director, Scale Labs',
         industry: 'Technology',
@@ -340,7 +340,7 @@ export const COPY = {
       { name: 'Facebook', href: 'https://facebook.com/makeuslivee', icon: 'facebook' },
       { name: 'YouTube', href: 'https://youtube.com/@makeuslivee', icon: 'youtube' },
     ],
-    copyright: '© 2025 MakeUsLive. All rights reserved.',
+    copyright: '© 2025 Make Us Live. All rights reserved.',
     tagline: 'Built with ❤️ by Engineers + Designers',
   },
 } as const

@@ -74,7 +74,7 @@ const FeaturedCard = memo(({ post }: { post: PostItem }) => (
         {post.featuredImage && (post.featuredImage.startsWith('/') || post.featuredImage.startsWith('http')) ? (
           <img
             src={post.featuredImage}
-            alt={post.title}
+            alt={`Make Us Live Blog - ${post.title}`}
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           />
         ) : (
@@ -331,23 +331,32 @@ export default function BlogPage() {
   return (
     <div ref={pageRef} className="min-h-screen bg-bg text-white">
       {/* Hero Section */}
-      <section className="pt-32 md:pt-40 pb-16 md:pb-24">
-        <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-16">
+      <section className="relative pt-32 md:pt-40 pb-16 md:pb-24 overflow-hidden">
+        {/* Subtle gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-b from-gold/[0.02] via-transparent to-transparent pointer-events-none" />
+
+        <div className="max-w-7xl mx-auto px-6 md:px-8">
 
           {/* Page Header */}
-          <header className="mb-16 md:mb-24">
+          <header className="mb-16 md:mb-20">
             {/* Eyebrow */}
-            <p className="text-gold/80 text-sm font-medium uppercase tracking-[0.2em] mb-6">
-              Insights & Stories
-            </p>
+            <div className="inline-flex items-center gap-3 mb-8">
+              <span className="w-12 h-px bg-gradient-to-r from-gold to-transparent" />
+              <span className="text-[11px] font-semibold uppercase tracking-[0.3em] text-gold/80">
+                Insights & Stories
+              </span>
+            </div>
 
-            {/* Large Title */}
-            <h1 className="text-6xl md:text-8xl lg:text-9xl font-serif font-bold text-white leading-[0.9] tracking-tight mb-8">
-              Blog
+            {/* Main heading with gradient */}
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-8 leading-[1.05]">
+              <span className="text-white">Our </span>
+              <span className="bg-gradient-to-r from-white via-gold/90 to-gold bg-clip-text text-transparent">
+                Blog
+              </span>
             </h1>
 
             {/* Subtitle */}
-            <p className="text-white/50 text-lg md:text-xl max-w-2xl leading-relaxed">
+            <p className="text-lg md:text-xl text-white/50 leading-relaxed max-w-2xl">
               Dive into well-crafted stories, interviews, and guides designed to inform,
               inspire, and keep you updated with the latest in tech, design, and creativity.
             </p>
@@ -379,49 +388,14 @@ export default function BlogPage() {
           </nav>
 
           {/* Featured Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
-
-            {/* Left Column - Featured Article */}
-            {featuredPost && (
-              <div className="lg:col-span-7">
-                <div className="mb-6">
-                  <span className="text-xs font-medium uppercase tracking-[0.15em] text-white/40">Featured Article</span>
-                </div>
-                <FeaturedCard post={featuredPost} />
+          {featuredPost && (
+            <div className="mb-16">
+              <div className="mb-6">
+                <span className="text-xs font-medium uppercase tracking-[0.15em] text-white/40">Featured Article</span>
               </div>
-            )}
-
-            {/* Right Column - Text & Newsletter */}
-            <div className="lg:col-span-5 flex flex-col justify-between">
-              <div className="mb-12 lg:mb-0">
-                <h2 className="text-3xl md:text-4xl font-serif font-bold text-white leading-tight mb-6">
-                  A modern magazine<br />for curious minds
-                </h2>
-                <p className="text-white/50 text-base leading-relaxed mb-8">
-                  Stories and insights from the intersection of design, technology, and creativity.
-                  Written by practitioners, for practitioners.
-                </p>
-
-                {/* Stats */}
-                <div className="flex gap-8 mb-10 pb-10 border-b border-white/10">
-                  <div>
-                    <div className="text-3xl font-bold text-gold mb-1">50+</div>
-                    <div className="text-xs text-white/40 uppercase tracking-wider">Articles</div>
-                  </div>
-                  <div>
-                    <div className="text-3xl font-bold text-gold mb-1">10K+</div>
-                    <div className="text-xs text-white/40 uppercase tracking-wider">Readers</div>
-                  </div>
-                  <div>
-                    <div className="text-3xl font-bold text-gold mb-1">Weekly</div>
-                    <div className="text-xs text-white/40 uppercase tracking-wider">Updates</div>
-                  </div>
-                </div>
-              </div>
-
-              <HeroNewsletter />
+              <FeaturedCard post={featuredPost} />
             </div>
-          </div>
+          )}
         </div>
       </section>
 
@@ -509,10 +483,6 @@ export default function BlogPage() {
           </p>
 
           <HeroNewsletter />
-
-          <p className="mt-6 text-xs text-white/30">
-            Join 2,000+ designers and developers
-          </p>
         </div>
       </section>
     </div>

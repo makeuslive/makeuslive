@@ -180,7 +180,7 @@ export default function BlogPostPage() {
                     )} />
                     <img
                         src={post.featuredImage}
-                        alt={post.title}
+                        alt={`Make Us Live Blog - ${post.title}`}
                         className="w-full h-full object-cover transform scale-100 group-hover:scale-105 transition-transform duration-[1.5s]"
                     />
 

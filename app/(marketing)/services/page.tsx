@@ -245,67 +245,57 @@ export default function ServicesPage() {
   return (
     <div ref={pageRef} className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden pt-32 pb-20">
-        {/* Background Effects */}
-        <div className="absolute inset-0 -z-10">
-          <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-gold/5 rounded-full blur-[150px]" />
-          <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-indigo-500/5 rounded-full blur-[120px]" />
-          {/* Grid pattern */}
-          <div className="absolute inset-0 opacity-[0.02]"
-            style={{
-              backgroundImage: 'linear-gradient(to right, white 1px, transparent 1px), linear-gradient(to bottom, white 1px, transparent 1px)',
-              backgroundSize: '60px 60px'
-            }}
-          />
-        </div>
+      <section className="relative pt-32 md:pt-40 pb-16 md:pb-24 overflow-hidden">
+        {/* Subtle gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-b from-gold/[0.02] via-transparent to-transparent pointer-events-none" />
 
-        <div className="max-w-5xl mx-auto px-4 text-center">
-          {/* Badge */}
-          <div className="services-hero-badge inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-8">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-gold"></span>
-            </span>
-            <span className="text-sm font-medium text-white/70">What We Build</span>
-          </div>
+        <div className="max-w-7xl mx-auto px-6 md:px-8">
+          <div className="max-w-4xl">
+            {/* Eyebrow */}
+            <div className="services-hero-badge inline-flex items-center gap-3 mb-8">
+              <span className="w-12 h-px bg-gradient-to-r from-gold to-transparent" />
+              <span className="text-[11px] font-semibold uppercase tracking-[0.3em] text-gold/80">
+                What We Build
+              </span>
+            </div>
 
-          {/* Title */}
-          <h1 className="services-hero-title text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-8 leading-[0.95]">
-            <span className="text-white">Services that</span>
-            <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-gold via-amber-300 to-gold">
-              Scale
-            </span>
-          </h1>
+            {/* Main heading with gradient */}
+            <h1 className="services-hero-title text-5xl md:text-6xl lg:text-7xl font-bold mb-8 leading-[1.05]">
+              <span className="text-white">Services that </span>
+              <span className="bg-gradient-to-r from-white via-gold/90 to-gold bg-clip-text text-transparent">
+                Scale
+              </span>
+            </h1>
 
-          {/* Subtitle */}
-          <p className="services-hero-subtitle text-lg md:text-xl text-white/50 max-w-2xl mx-auto leading-relaxed mb-10">
-            From mobile apps to enterprise software, we design, build, and scale digital experiences that captivate and convert.
-          </p>
+            {/* Subheading */}
+            <p className="services-hero-subtitle text-lg md:text-xl text-white/50 leading-relaxed max-w-2xl mb-10">
+              Make Us Live designs, builds, and scales digital experiences that captivate and convert. From mobile apps to enterprise software.
+            </p>
 
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link
-              href="/contact"
-              className={cn(
-                'group inline-flex items-center gap-3 px-8 py-4 rounded-xl',
-                'bg-gradient-to-r from-gold to-gold-dark text-bg font-semibold',
-                'transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-gold/20'
-              )}
-            >
-              Start a Project
-              <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
-            </Link>
-            <Link
-              href="/work"
-              className={cn(
-                'inline-flex items-center gap-3 px-8 py-4 rounded-xl',
-                'border border-white/20 text-white font-medium',
-                'transition-all duration-300 hover:border-gold/40 hover:bg-white/5'
-              )}
-            >
-              View Our Work
-            </Link>
+            {/* CTA Buttons */}
+            <div className="flex flex-wrap gap-4">
+              <Link
+                href="/contact"
+                className={cn(
+                  'group inline-flex items-center gap-3 px-8 py-4 rounded-xl',
+                  'bg-gradient-to-r from-gold to-gold-dark text-bg font-semibold',
+                  'transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-gold/20'
+                )}
+              >
+                Start a Project
+                <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+              </Link>
+              <Link
+                href="/work"
+                className={cn(
+                  'inline-flex items-center gap-3 px-8 py-4 rounded-xl',
+                  'border border-white/20 text-white font-medium',
+                  'transition-all duration-300 hover:border-gold/40 hover:bg-white/5'
+                )}
+              >
+                View Our Work
+              </Link>
+            </div>
           </div>
         </div>
       </section>
@@ -344,7 +334,7 @@ export default function ServicesPage() {
             ?
           </h2>
           <p className="text-white/50 text-lg max-w-xl mx-auto mb-10">
-            Let's discuss your project and see how we can help bring your vision to life.
+            Let's discuss your project. Make Us Live helps bring your vision to life.
           </p>
           <Link
             href="/contact"

@@ -382,8 +382,8 @@ export default function WorksPage() {
 
             {/* Subheading */}
             <p className="text-lg md:text-xl text-white/50 leading-relaxed max-w-2xl">
-              Explore our portfolio of successful projects and case studies.
-              Each project represents our commitment to excellence and innovation.
+              Explore Make Us Live's portfolio of successful projects.
+              Each project reflects our commitment to excellence and innovation.
             </p>
           </div>
         </div>
@@ -473,7 +473,7 @@ export default function WorksPage() {
                   Ready to Start Your Project?
                 </h2>
                 <p className="text-lg text-white/50 mb-10 leading-relaxed">
-                  Let's work together to bring your vision to life.
+                  Let Make Us Live bring your vision to life.
                   Get in touch and let's discuss how we can help.
                 </p>
                 <Link href="/contact">

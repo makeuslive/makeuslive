@@ -186,7 +186,7 @@ export const Services = memo<ServicesProps>(({ className }) => {
           >
             <Image
               src="/images/services-art.webp"
-              alt="Services Background"
+              alt="Digital services abstract background"
               fill
               className="object-cover"
               sizes="100vw"

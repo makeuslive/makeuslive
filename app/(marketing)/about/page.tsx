@@ -204,74 +204,42 @@ export default function AboutPage() {
 
   return (
     <div ref={pageRef} className="min-h-screen">
-      {/* Hero Section - Epic & Immersive */}
-      <section className="relative min-h-[90vh] flex items-center overflow-hidden pt-24 pb-16">
-        {/* Background effects */}
-        <div className="absolute inset-0 -z-10">
-          <div className="absolute top-1/4 left-1/3 w-[600px] h-[600px] bg-gold/5 rounded-full blur-[120px]" />
-          <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-gold/3 rounded-full blur-[100px]" />
-          {/* Light beam effect */}
-          <div
-            className="hero-visual absolute top-0 right-1/4 w-[2px] h-[60vh] bg-gradient-to-b from-white via-gold/50 to-transparent"
-            style={{ transform: 'rotate(15deg)', transformOrigin: 'top' }}
-          />
-        </div>
+      {/* Hero Section */}
+      <section className="relative pt-32 md:pt-40 pb-16 md:pb-24 overflow-hidden">
+        {/* Subtle gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-b from-gold/[0.02] via-transparent to-transparent pointer-events-none" />
 
-        <div className="max-w-7xl mx-auto px-4 md:px-8 w-full">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-            {/* Left: Content */}
-            <div>
-              {/* Badge */}
-              <div className="hero-badge inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-8">
-                <span className="w-2 h-2 rounded-full bg-gold animate-pulse" />
-                <span className="text-sm font-medium text-text-muted tracking-wide">Our Mission</span>
-              </div>
-
-              {/* Main Title */}
-              <h1 className="hero-title text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-text leading-[1.05] mb-8">
-                Understand<br />
-                <span className="text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(135deg, #D4AF37 0%, #F5E6A3 50%, #D4AF37 100%)' }}>
-                  the Universe
-                </span>
-              </h1>
-
-              {/* Subtitle */}
-              <p className="hero-subtitle text-lg md:text-xl text-text-muted leading-relaxed max-w-xl mb-10">
-                We started as freelancers in 2023—grinding on SMM, building MVPs, and helping businesses
-                find their digital footing. Now in 2025, we&apos;re a full-service studio tackling enterprise
-                backends, AI systems, and brands that demand excellence.
-              </p>
-
-              {/* Philosophy Quote */}
-              <div className="hero-philosophy relative pl-6 border-l-2 border-gold/40">
-                <p className="text-text italic text-lg mb-2">
-                  &ldquo;From freelancers to founders. We know the hustle because we lived it.&rdquo;
-                </p>
-                <p className="text-gold/80 text-sm">— Our Story</p>
-              </div>
+        <div className="max-w-7xl mx-auto px-6 md:px-8">
+          <div className="max-w-4xl">
+            {/* Eyebrow */}
+            <div className="hero-badge inline-flex items-center gap-3 mb-8">
+              <span className="w-12 h-px bg-gradient-to-r from-gold to-transparent" />
+              <span className="text-[11px] font-semibold uppercase tracking-[0.3em] text-gold/80">
+                About Us
+              </span>
             </div>
 
-            {/* Right: Stats/Visual */}
-            <div className="hero-visual relative hidden lg:block">
-              <div className="absolute inset-0 bg-gradient-radial from-gold/10 via-transparent to-transparent rounded-full" />
-              <div className="grid grid-cols-2 gap-6">
-                <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/10 backdrop-blur-sm">
-                  <p className="text-4xl font-bold text-gold mb-2">50+</p>
-                  <p className="text-text-muted text-sm">Projects Delivered</p>
-                </div>
-                <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/10 backdrop-blur-sm mt-8">
-                  <p className="text-4xl font-bold text-gold mb-2">98%</p>
-                  <p className="text-text-muted text-sm">Client Satisfaction</p>
-                </div>
-                <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/10 backdrop-blur-sm">
-                  <p className="text-4xl font-bold text-gold mb-2">2+</p>
-                  <p className="text-text-muted text-sm">Years of Grinding</p>
-                </div>
-                <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/10 backdrop-blur-sm mt-8">
-                  <p className="text-4xl font-bold text-gold mb-2">24/7</p>
-                  <p className="text-text-muted text-sm">Obsessed with Quality</p>
-                </div>
-              </div>
+            {/* Main heading with gradient */}
+            <h1 className="hero-title text-5xl md:text-6xl lg:text-7xl font-bold mb-8 leading-[1.05]">
+              <span className="text-white">We Are </span>
+              <span className="bg-gradient-to-r from-white via-gold/90 to-gold bg-clip-text text-transparent">
+                Make Us Live
+              </span>
+            </h1>
+
+            {/* Subheading */}
+            <p className="hero-subtitle text-lg md:text-xl text-white/50 leading-relaxed max-w-2xl mb-10">
+              Make Us Live started as freelancers in 2023—grinding on SMM, building MVPs, and helping businesses
+              find their digital footing. Now in 2025, we&apos;re a full-service creative studio tackling enterprise
+              backends, AI systems, and brands that demand excellence.
+            </p>
+
+            {/* Philosophy Quote */}
+            <div className="hero-philosophy relative pl-6 border-l-2 border-gold/40">
+              <p className="text-white/80 italic text-lg mb-2">
+                &ldquo;From freelancers to founders. We know the hustle because we lived it.&rdquo;
+              </p>
+              <p className="text-gold/80 text-sm">— Our Story</p>
             </div>
           </div>
         </div>

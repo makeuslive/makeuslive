@@ -406,7 +406,7 @@ export const ServiceHub = memo<ServiceHubProps>(({
                         ?
                     </h2>
                     <p className="text-xl text-white/50 mb-10 max-w-2xl mx-auto">
-                        Let&apos;s discuss your project and see how we can help bring your vision to life.
+                        Let&apos;s discuss your project. Make Us Live helps bring your vision to reality.
                     </p>
                     <Link
                         href="/contact"

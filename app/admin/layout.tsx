@@ -167,7 +167,7 @@ export default function AdminLayout({
                     <div className="w-10" /> {/* Spacer */}
                 </header>
 
-                <div className="flex-1 overflow-hidden bg-gray-50 relative">
+                <div className="flex-1 overflow-y-auto bg-gray-50 relative">
                     {children}
                 </div>
             </main>

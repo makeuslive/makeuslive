@@ -77,72 +77,80 @@ export const Footer = memo(() => {
       ref={footerRef}
       className="relative bg-black/50 backdrop-blur-sm border-t border-white/10"
     >
-      <div className="max-w-7xl mx-auto px-4 md:px-8 py-6">
-        {/* Footer Content */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-          {/* Left: Brand & Copyright */}
-          <div className="footer-column flex items-center gap-3">
-            <span className="text-text font-semibold text-sm">MAKEUSLIVE</span>
-            <span className="hidden md:block w-px h-4 bg-white/20" />
-            <span className="text-text-muted text-xs">
-              © {new Date().getFullYear()} All rights reserved
-            </span>
-          </div>
+      <div className="max-w-7xl mx-auto px-4 md:px-8 py-8">
+        {/* Row 1: Brand Name */}
+        <div className="footer-column text-center mb-6">
+          <span className="text-text font-bold text-lg tracking-wide">Make Us Live</span>
+        </div>
 
-          {/* Center: Nav Links */}
-          <nav className="footer-column flex items-center gap-6">
-            <Link
-              href="/privacy-policy"
-              className="text-text-muted text-xs hover:text-text transition-colors"
-            >
-              Privacy
-            </Link>
-            <Link
-              href="/terms-of-service"
-              className="text-text-muted text-xs hover:text-text transition-colors"
-            >
-              Terms
-            </Link>
-            <a
-              href="mailto:hello@makeuslive.com"
-              className="text-text-muted text-xs hover:text-gold transition-colors"
-            >
-              hello@makeuslive.com
-            </a>
-          </nav>
-
-          {/* Services Links - SEO */}
-          <nav className="footer-column hidden md:flex items-center gap-6">
-            <Link href="/web-design" className="text-text-muted text-xs hover:text-text transition-colors">
+        {/* Row 2: Links & Social */}
+        <div className="footer-column flex flex-col md:flex-row items-center justify-center gap-6 md:gap-8 mb-6">
+          {/* Navigation Links */}
+          <nav className="flex items-center gap-4 md:gap-6">
+            <Link href="/web-design" className="text-text-muted text-sm hover:text-gold transition-colors">
               Web Design
             </Link>
-            <Link href="/app-development" className="text-text-muted text-xs hover:text-text transition-colors">
-              App Dev
+            <span className="hidden md:block w-px h-3 bg-white/20" />
+            <Link href="/app-development" className="text-text-muted text-sm hover:text-gold transition-colors">
+              App Development
             </Link>
-            <Link href="/mvp-development" className="text-text-muted text-xs hover:text-text transition-colors">
+            <span className="hidden md:block w-px h-3 bg-white/20" />
+            <Link href="/mvp-development" className="text-text-muted text-sm hover:text-gold transition-colors">
               MVP
+            </Link>
+            <span className="hidden md:block w-px h-3 bg-white/20" />
+            <Link href="/careers" className="text-text-muted text-sm hover:text-gold transition-colors">
+              Careers
             </Link>
           </nav>
 
+          {/* Divider */}
+          <span className="hidden md:block w-px h-4 bg-white/20" />
+
           {/* Social Icons */}
-          <div className="footer-column flex items-center gap-3">
+          <div className="flex items-center gap-4">
             {socialLinks.map((social) => (
               <a
                 key={social.name}
                 href={social.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label={social.name}
+                aria-label={`Follow Make Us Live on ${social.name}`}
                 className="text-text-muted hover:text-gold transition-colors"
               >
                 {SocialIcons[social.icon as keyof typeof SocialIcons]}
               </a>
             ))}
           </div>
+        </div>
 
-          {/* Right: Full Address */}
-          <address className="footer-column text-text-muted text-xs not-italic">
-            Bhopal, Madhya Pradesh, India 462043
+        {/* Row 3: Copyright, Legal & Contact */}
+        <div className="footer-column flex flex-col md:flex-row items-center justify-center gap-3 md:gap-6 text-center">
+          <span className="text-text-dim text-xs">
+            © {new Date().getFullYear()} Make Us Live. All rights reserved.
+          </span>
+
+          <span className="hidden md:block w-px h-3 bg-white/20" />
+
+          <div className="flex items-center gap-4">
+            <Link href="/privacy-policy" className="text-text-dim text-xs hover:text-text transition-colors">
+              Privacy
+            </Link>
+            <Link href="/terms-of-service" className="text-text-dim text-xs hover:text-text transition-colors">
+              Terms
+            </Link>
+            <a
+              href="mailto:hello@makeuslive.com"
+              className="text-text-dim text-xs hover:text-gold transition-colors"
+            >
+              hello@makeuslive.com
+            </a>
+          </div>
+
+          <span className="hidden md:block w-px h-3 bg-white/20" />
+
+          <address className="text-text-dim text-xs not-italic">
+            Bhopal, Madhya Pradesh, India
           </address>
         </div>
       </div>

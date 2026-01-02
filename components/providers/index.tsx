@@ -1,6 +1,7 @@
 'use client'
 
-import type { ReactNode } from 'react'
+import { type ReactNode } from 'react'
+import { usePathname } from 'next/navigation'
 import { LenisProvider } from './lenis-provider'
 import { GSAPProvider } from './gsap-provider'
 import { GreetingProvider } from './greeting-provider'
@@ -14,21 +15,30 @@ interface ProvidersProps {
 }
 
 export function Providers({ children }: ProvidersProps) {
+  const pathname = usePathname()
+  const isAdmin = pathname?.startsWith('/admin')
+
   return (
     <ConsentManager>
       <ConditionalAnalytics
         gaId={process.env.NEXT_PUBLIC_GA_ID || 'G-EC3FCCNML9'}
         clarityId={process.env.NEXT_PUBLIC_CLARITY_ID || 'urpwf3kysj'}
       />
-    <AuthProvider>
-      <GSAPProvider>
-        <LenisProvider>
-          <GreetingProvider>
-            <LoadingProvider>{children}</LoadingProvider>
-          </GreetingProvider>
-        </LenisProvider>
-      </GSAPProvider>
-    </AuthProvider>
+      <AuthProvider>
+        {isAdmin ? (
+          // Admin routes don't need animation providers
+          children
+        ) : (
+          // Public routes get full experience
+          <GSAPProvider>
+            <LenisProvider>
+              <GreetingProvider>
+                <LoadingProvider>{children}</LoadingProvider>
+              </GreetingProvider>
+            </LenisProvider>
+          </GSAPProvider>
+        )}
+      </AuthProvider>
     </ConsentManager>
   )
 }

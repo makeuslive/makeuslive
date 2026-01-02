@@ -12,7 +12,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     {
       url: baseUrl,
       lastModified: currentDate,
-      changeFrequency: 'weekly',
+      changeFrequency: 'daily',
       priority: 1.0,
     },
     {
@@ -170,7 +170,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // UTILITY PAGES - For AI crawlers
   // ============================================
   const utilityPages: MetadataRoute.Sitemap = [
-    { url: `${baseUrl}/llms.txt`, lastModified: currentDate, changeFrequency: 'monthly', priority: 0.5 },
+    { url: `${baseUrl}/llms.txt`, lastModified: currentDate, changeFrequency: 'monthly', priority: 0.9 },
   ]
 
   // ============================================
@@ -189,5 +189,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...workPages,
     ...careerPages,
     ...legalPages,
+    ...utilityPages,
   ]
 }

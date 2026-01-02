@@ -279,7 +279,7 @@ export const Contact = memo<ContactProps>(({ className }) => {
       <section
         ref={sectionRef}
         id="contact"
-        className={cn('relative py-16 md:py-24', className)}
+        className={cn('relative py-10 md:py-16', className)}
       >
         <div className="max-w-7xl mx-auto px-4 md:px-8">
           {/* Main Glass Container matching Services section design */}
@@ -290,7 +290,7 @@ export const Contact = memo<ContactProps>(({ className }) => {
             <div className="absolute inset-0 z-0">
               <Image
                 src="/images/contact us.png"
-                alt="MakeUsLive Office - Contact Us"
+                alt="Creative studio workspace"
                 fill
                 className="object-cover"
               />
@@ -355,7 +355,7 @@ export const Contact = memo<ContactProps>(({ className }) => {
 
                     {/* Description with better styling */}
                     <p className="text-sm sm:text-base md:text-lg text-[#ADA6A6] leading-relaxed max-w-md relative pl-3 sm:pl-4 border-l-2 border-gold/30">
-                      Tell us about your idea, product, or challenge. We&apos;ll take a look and respond thoughtfully.
+                      Make Us Live is ready to hear your idea, product, or challenge. We&apos;ll take a look and respond thoughtfully.
                     </p>
                   </div>
 
