@@ -55,6 +55,7 @@ export const StarsCanvas = memo(() => {
         camera={{ position: [0, 0, 1] }}
         gl={{ powerPreference: 'high-performance', antialias: false, alpha: true }}
         dpr={[1, 1.5]} // Limit pixel ratio to save battery/performance on mobile
+        style={{ pointerEvents: 'none' }}
       >
         <Suspense fallback={null}>
           <StarBackground />
