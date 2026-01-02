@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse, unstable_after as after } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { getCollection } from '@/lib/mongodb'
 import { contactFormSchema } from '@/lib/validations'
 import nodemailer from 'nodemailer'
@@ -133,18 +133,23 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // 2. Schedule Background Tasks (Email & GA) - Non-blocking
-    after(async () => {
-      // Send Emails
-      await sendEmails(submission, dbSaved)
-      
-      // Track GA
-      const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_ID
-      const GA_API_SECRET = process.env.GA_API_SECRET
-      if (GA_MEASUREMENT_ID && GA_API_SECRET) {
-        await trackConversion(GA_MEASUREMENT_ID, GA_API_SECRET)
+    // 2. Schedule Background Tasks (Email & GA) - Fire and forget (non-blocking)
+    // Using void to explicitly ignore the promise - these run in background
+    void (async () => {
+      try {
+        // Send Emails
+        await sendEmails(submission, dbSaved)
+        
+        // Track GA
+        const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_ID
+        const GA_API_SECRET = process.env.GA_API_SECRET
+        if (GA_MEASUREMENT_ID && GA_API_SECRET) {
+          await trackConversion(GA_MEASUREMENT_ID, GA_API_SECRET)
+        }
+      } catch (error) {
+        console.error('Background task error:', error)
       }
-    })
+    })()
 
     // 3. Return Success Immediately
     return NextResponse.json({
