@@ -1,5 +1,6 @@
 import { Metadata } from 'next'
 import { Contact } from '@/components/sections'
+import { contactPageSchema } from '@/lib/schema/global'
 
 export const metadata: Metadata = {
   title: 'Contact Make Us Live - AI & Web Development Agency',
@@ -25,6 +26,11 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   return (
     <div className="min-h-screen">
+      {/* Page-specific JSON-LD */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(contactPageSchema) }}
+      />
       {/* Hero Section - Optimized for less scrolling */}
       <section className="relative pt-28 md:pt-32 pb-8 md:pb-12 overflow-hidden">
         {/* Subtle gradient background */}

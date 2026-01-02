@@ -1,86 +1,44 @@
-'use client'
-
-import { useState } from 'react'
-import { useParams } from 'next/navigation'
+import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { formatDisplayDate, formatDisplayDateTime } from '@/lib/date-utils'
+import { Metadata } from 'next'
 import { Button } from '@/components/ui'
-import { cn } from '@/lib/utils'
+import { formatDisplayDate } from '@/lib/date-utils'
+import { getCaseStudy } from '@/lib/data/case-studies'
+import { CaseStudyDownload } from './case-study-download'
 
-// Mock case study data - would come from CMS/API
-const CASE_STUDIES: Record<string, any> = {
-  'internal-ticket-sla-system': {
-    title: 'Internal Ticket & SLA Management System',
-    client: 'Enterprise Client',
-    sector: 'Technology',
-    challenge: 'The client needed a comprehensive system to manage internal tickets, projects, and SLA commitments across multiple engineering and operations teams.',
-    solution: 'We built a production-ready workflow platform using FastAPI, MongoDB, and Next.js. The system includes real-time notifications, automated SLA tracking, and comprehensive reporting.',
-    results: [
-      { metric: '95%', label: 'SLA Compliance Rate', methodology: 'Measured against defined SLA targets over 6 months' },
-      { metric: '40%', label: 'Faster Ticket Resolution', methodology: 'Compared to previous manual process' },
-      { metric: 'Multi-Team', label: 'Daily Operations', methodology: 'Serving 5+ teams simultaneously' },
-    ],
-    methodology: 'Results measured over 6 months of production use. SLA compliance tracked against defined targets. Resolution time compared to baseline manual process.',
-    testimonial: {
-      quote: 'The system has transformed how we manage internal operations. The automated SLA tracking alone has saved us countless hours.',
-      author: 'Engineering Director',
-      company: 'Enterprise Client',
-    },
-    pdfVersion: '1.0',
-    pdfLastUpdated: new Date('2025-12-15'),
-  },
-  'realtime-distraction-alert': {
-    title: 'Real-Time Distraction Alert Mobile App',
-    client: 'Safety Tech Startup',
-    sector: 'Mobile Safety',
-    challenge: 'Building a mobile app that detects user distraction near roadways and provides intelligent safety alerts in real-time.',
-    solution: 'Developed a production-grade mobile app using Flutter with background services, geofencing, and activity recognition. The app runs efficiently in the background while maintaining battery life.',
-    results: [
-      { metric: 'Real-Time', label: 'Background Operations', methodology: 'Continuous monitoring with minimal battery impact' },
-      { metric: '99.9%', label: 'Uptime', methodology: 'Measured over 3 months of production use' },
-    ],
-    methodology: 'Uptime measured via monitoring services. Battery impact tested across multiple devices over 30-day periods.',
-    testimonial: {
-      quote: 'The app works seamlessly in the background and has helped prevent numerous potential accidents.',
-      author: 'Product Manager',
-      company: 'Safety Tech Startup',
-    },
-    pdfVersion: '1.0',
-    pdfLastUpdated: new Date('2025-11-20'),
-  },
+interface CaseStudyPageProps {
+  params: Promise<{
+    slug: string
+  }>
 }
 
-export default function CaseStudyDetailPage() {
-  const params = useParams()
-  const slug = params?.slug as string
-  const caseStudy = CASE_STUDIES[slug]
+export async function generateMetadata({ params }: CaseStudyPageProps): Promise<Metadata> {
+  const { slug } = await params
+  const caseStudy = getCaseStudy(slug)
 
   if (!caseStudy) {
-    return (
-      <div className="min-h-screen pt-24 pb-16 flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold text-white mb-4">Case Study Not Found</h1>
-          <p className="text-white/60 mb-8">The case study you're looking for doesn't exist.</p>
-          <Link href="/" className="text-gold hover:underline">
-            Back to Home
-          </Link>
-        </div>
-      </div>
-    )
+    return {
+      title: 'Case Study Not Found',
+    }
   }
 
-  const handleDownload = () => {
-    // Track download event
-    if (typeof window !== 'undefined' && 'gtag' in window) {
-      const gtag = (window as unknown as { gtag: (...args: unknown[]) => void }).gtag
-      gtag('event', 'case_study_download', {
-        slug,
-        version: caseStudy.pdfVersion,
-      })
-    }
+  return {
+    title: `${caseStudy.title} | Case Study | Make Us Live`,
+    description: caseStudy.challenge,
+    openGraph: {
+      title: caseStudy.title,
+      description: caseStudy.challenge,
+      type: 'article',
+    },
+  }
+}
 
-    // In a real app, this would download the PDF
-    alert(`Downloading case study PDF (v${caseStudy.pdfVersion})...`)
+export default async function CaseStudyDetailPage({ params }: CaseStudyPageProps) {
+  const { slug } = await params
+  const caseStudy = getCaseStudy(slug)
+
+  if (!caseStudy) {
+    notFound()
   }
 
   return (
@@ -121,7 +79,7 @@ export default function CaseStudyDetailPage() {
         <section className="mb-12">
           <h2 className="text-2xl font-semibold text-white mb-4">Results</h2>
           <div className="grid md:grid-cols-3 gap-6 mb-6">
-            {caseStudy.results.map((result: any, index: number) => (
+            {caseStudy.results.map((result, index) => (
               <div
                 key={index}
                 className="p-6 rounded-lg bg-white/5 border border-white/10"
@@ -160,9 +118,7 @@ export default function CaseStudyDetailPage() {
           <p className="text-white/60 text-sm mb-4">
             Version {caseStudy.pdfVersion} • Last updated: {formatDisplayDate(caseStudy.pdfLastUpdated)}
           </p>
-          <Button onClick={handleDownload} variant="primary">
-            Download PDF
-          </Button>
+          <CaseStudyDownload slug={caseStudy.slug} pdfVersion={caseStudy.pdfVersion} />
         </section>
 
         {/* CTA */}
@@ -181,4 +137,3 @@ export default function CaseStudyDetailPage() {
     </div>
   )
 }
-
