@@ -6,7 +6,18 @@ import nodemailer from 'nodemailer'
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { jobId, name, email, phone, coverLetter, resumeUploaded } = body
+    const { 
+      jobId, 
+      jobTitle,
+      name, 
+      email, 
+      phone, 
+      coverLetter, 
+      resumeUrl,
+      portfolioUrl,
+      referenceWork,
+      expectedSalary
+    } = body
 
     // Validate required fields
     if (!jobId || !name || !email) {
@@ -20,11 +31,16 @@ export async function POST(request: NextRequest) {
     const collection = await getCollection('career_applications')
     const application = {
       jobId,
+      jobTitle: jobTitle || 'Unknown Position',
       name,
       email,
       phone: phone || undefined,
       coverLetter: coverLetter || undefined,
-      resumeUploaded: !!resumeUploaded,
+      resumeUrl: resumeUrl || undefined,
+      portfolioUrl: portfolioUrl || undefined,
+      referenceWork: referenceWork || undefined,
+      expectedSalary: expectedSalary || undefined,
+      status: 'new',
       submittedAt: new Date(),
       timestamp: formatStorageDate(new Date()),
       ipAddress:
@@ -50,10 +66,10 @@ export async function POST(request: NextRequest) {
       await transporter.sendMail({
         from: process.env.SMTP_FROM || 'noreply@makeuslive.com',
         to: email,
-        subject: 'Application Received - MakeUsLive',
+        subject: `Application Received - ${jobTitle || 'MakeUsLive'}`,
         html: `
           <h2>Thank you for your application!</h2>
-          <p>We've received your application for the position at MakeUsLive.</p>
+          <p>We've received your application for <strong>${jobTitle || 'the position'}</strong> at MakeUsLive.</p>
           <p>We'll review your application and get back to you soon.</p>
           <p>Submitted at: ${new Date().toLocaleString()}</p>
         `,
@@ -72,4 +88,3 @@ export async function POST(request: NextRequest) {
     )
   }
 }
-

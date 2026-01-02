@@ -18,6 +18,7 @@ export async function GET() {
       company: doc.company,
       quote: doc.quote,
       rating: doc.rating,
+      status: doc.status || 'active',
       createdAt: doc.createdAt,
     }))
     

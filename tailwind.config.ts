@@ -62,6 +62,8 @@ const config: Config = {
         'marquee-reverse': 'marquee 30s linear infinite reverse',
         float: 'float 6s ease-in-out infinite',
         'spin-slow': 'spin 10s linear infinite',
+        shimmer: 'shimmer 2s ease-in-out infinite',
+        shrink: 'shrink linear forwards',
       },
       keyframes: {
         fadeIn: {
@@ -83,6 +85,14 @@ const config: Config = {
         float: {
           '0%, 100%': { transform: 'translateY(0)' },
           '50%': { transform: 'translateY(-20px)' },
+        },
+        shimmer: {
+          '0%': { transform: 'translateX(-100%)' },
+          '100%': { transform: 'translateX(100%)' },
+        },
+        shrink: {
+          '0%': { width: '100%' },
+          '100%': { width: '0%' },
         },
       },
       transitionTimingFunction: {

@@ -1,60 +1,54 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { formatDisplayDate } from '@/lib/date-utils'
 import { Button } from '@/components/ui'
-import { cn } from '@/lib/utils'
 
-// Mock job listings - would come from CMS/API
-const JOB_LISTINGS = [
-  {
-    id: 'senior-frontend-engineer',
-    title: 'Senior Frontend Engineer',
-    department: 'Engineering',
-    location: 'Remote / Bhopal, India',
-    type: 'Full-time',
-    description: 'We are looking for an experienced frontend engineer to join our team and help build amazing user experiences.',
-    requirements: [
-      '5+ years of experience with React/Next.js',
-      'Strong TypeScript skills',
-      'Experience with modern CSS frameworks',
-      'Portfolio of high-quality work',
-    ],
-  },
-  {
-    id: 'ui-ux-designer',
-    title: 'UI/UX Designer',
-    department: 'Design',
-    location: 'Remote / Bhopal, India',
-    type: 'Full-time',
-    description: 'Join our design team to create beautiful, functional interfaces that users love.',
-    requirements: [
-      '3+ years of UI/UX design experience',
-      'Proficiency in Figma',
-      'Strong portfolio',
-      'Understanding of design systems',
-    ],
-  },
-]
+interface Job {
+  id: string
+  title: string
+  department: string
+  location: string
+  type: string
+  description: string
+  requirements: string[]
+  salaryRange?: string
+  resumeRequired: boolean
+  portfolioRequired: boolean
+  referenceWorkRequired: boolean
+}
 
-const DEPARTMENTS = ['All', 'Engineering', 'Design', 'Product', 'Marketing'] as const
+const DEPARTMENTS = ['All', 'Engineering', 'Design', 'Product', 'Marketing', 'Operations', 'Sales'] as const
 const LOCATIONS = ['All', 'Remote', 'Bhopal, India', 'Hybrid'] as const
 
 export default function CareerPage() {
+  const [jobs, setJobs] = useState<Job[]>([])
+  const [loading, setLoading] = useState(true)
   const [selectedDepartment, setSelectedDepartment] = useState<string>('All')
   const [selectedLocation, setSelectedLocation] = useState<string>('All')
-  const [selectedJob, setSelectedJob] = useState<string | null>(null)
 
-  const filteredJobs = JOB_LISTINGS.filter((job) => {
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        const res = await fetch('/api/jobs')
+        const data = await res.json()
+        if (data.success && Array.isArray(data.data)) {
+          setJobs(data.data)
+        }
+      } catch (error) {
+        console.error('Error fetching jobs:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchJobs()
+  }, [])
+
+  const filteredJobs = jobs.filter((job) => {
     if (selectedDepartment !== 'All' && job.department !== selectedDepartment) return false
     if (selectedLocation !== 'All' && !job.location.includes(selectedLocation)) return false
     return true
   })
-
-  const displayedJob = selectedJob
-    ? JOB_LISTINGS.find((job) => job.id === selectedJob)
-    : null
 
   return (
     <div className="min-h-screen pt-24 pb-16">
@@ -137,7 +131,13 @@ export default function CareerPage() {
         {/* Job Listings */}
         <section>
           <h2 className="text-2xl font-bold text-white mb-8">Open Roles</h2>
-          {filteredJobs.length > 0 ? (
+
+          {loading ? (
+            <div className="text-center py-16">
+              <div className="animate-spin rounded-full h-8 w-8 border-2 border-white/20 border-t-gold mx-auto"></div>
+              <p className="text-white/60 mt-4">Loading positions...</p>
+            </div>
+          ) : filteredJobs.length > 0 ? (
             <div className="space-y-4">
               {filteredJobs.map((job) => (
                 <div
@@ -153,6 +153,24 @@ export default function CareerPage() {
                         <span>{job.location}</span>
                         <span>•</span>
                         <span>{job.type}</span>
+                        {job.salaryRange && (
+                          <>
+                            <span>•</span>
+                            <span className="text-gold">{job.salaryRange}</span>
+                          </>
+                        )}
+                      </div>
+                      {/* Application requirements badges */}
+                      <div className="flex flex-wrap gap-2 mt-3">
+                        {job.resumeRequired && (
+                          <span className="px-2 py-0.5 text-xs bg-blue-500/20 text-blue-300 rounded-md">Resume Required</span>
+                        )}
+                        {job.portfolioRequired && (
+                          <span className="px-2 py-0.5 text-xs bg-purple-500/20 text-purple-300 rounded-md">Portfolio Required</span>
+                        )}
+                        {job.referenceWorkRequired && (
+                          <span className="px-2 py-0.5 text-xs bg-indigo-500/20 text-indigo-300 rounded-md">Reference Work Required</span>
+                        )}
                       </div>
                     </div>
                     <Link href={`/career/${job.id}`}>
@@ -171,21 +189,7 @@ export default function CareerPage() {
             </div>
           )}
         </section>
-
-        {/* Application Form (would be in detail page) */}
-        {displayedJob && (
-          <div className="mt-12 p-8 rounded-lg bg-white/5 border border-white/10">
-            <h3 className="text-2xl font-bold text-white mb-6">Apply for {displayedJob.title}</h3>
-            <p className="text-white/60 mb-6">
-              Application form would be here. For now, please contact us at{' '}
-              <a href="mailto:careers@makeuslive.com" className="text-gold hover:underline">
-                careers@makeuslive.com
-              </a>
-            </p>
-          </div>
-        )}
       </div>
     </div>
   )
 }
-
