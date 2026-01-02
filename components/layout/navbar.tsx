@@ -92,11 +92,11 @@ export const Navbar = memo(() => {
             {/* Left: Logo */}
             <Link href="/" className="flex items-center gap-2 justify-self-start">
               <Image
-                src="/images/logo.png"
+                src="/images/biglogo.png"
                 alt="MakeUsLive"
-                width={120}
-                height={40}
-                className="h-10 w-auto"
+                width={50}
+                height={50}
+                className="h-12 w-auto"
                 priority
               />
             </Link>
@@ -149,10 +149,10 @@ export const Navbar = memo(() => {
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2">
               <Image
-                src="/images/logo.png"
+                src="/images/biglogo.png"
                 alt="MakeUsLive"
-                width={120}
-                height={40}
+                width={50}
+                height={50}
                 className="h-10 w-auto"
                 priority
               />

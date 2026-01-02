@@ -80,7 +80,7 @@ const jobPostingsStructuredData = {
                 '@type': 'Organization',
                 name: 'Make Us Live',
                 sameAs: 'https://www.makeuslive.com',
-                logo: 'https://www.makeuslive.com/images/logo.png',
+                logo: 'https://www.makeuslive.com/images/biglogo.png',
             },
             jobLocation: {
                 '@type': 'Place',
@@ -123,7 +123,7 @@ const jobPostingsStructuredData = {
                 '@type': 'Organization',
                 name: 'Make Us Live',
                 sameAs: 'https://www.makeuslive.com',
-                logo: 'https://www.makeuslive.com/images/logo.png',
+                logo: 'https://www.makeuslive.com/images/biglogo.png',
             },
             jobLocation: {
                 '@type': 'Place',

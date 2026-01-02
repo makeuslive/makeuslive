@@ -393,7 +393,7 @@ export const metadata: Metadata = {
       'Transform your business with Make Us Live (MakeUsLive Agency). We specialize in AI-powered products, web development, mobile apps, and design systems. Make Us Live helps you build products that scale.',
     images: [
       {
-        url: '/images/logo.png',
+        url: '/images/biglogo.png',
         width: 1200,
         height: 630,
         alt: 'Make Us Live - Creative Digital Agency',
@@ -410,7 +410,7 @@ export const metadata: Metadata = {
     title: 'Make Us Live (MakeUsLive) - Premium Digital Agency | AI, Web Development, Design',
     description:
       'Transform your business with Make Us Live (MakeUsLive Agency). AI-powered products, web development, mobile apps, and design systems.',
-    images: ['/images/logo.png'],
+    images: ['/images/biglogo.png'],
   },
 
   // Robots directives
@@ -512,12 +512,12 @@ const jsonLd = {
       url: 'https://www.makeuslive.com',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://www.makeuslive.com/images/logo.png',
+        url: 'https://www.makeuslive.com/images/biglogo.png',
         width: 512,
         height: 512,
         caption: 'MakeUsLive Creative Studio Logo',
       },
-      image: 'https://www.makeuslive.com/images/logo.png',
+      image: 'https://www.makeuslive.com/images/biglogo.png',
       description: 'Make Us Live (also known as MakeUsLive or Make Us Live Agency) is a boutique creative studio and digital agency that thinks like artists and researches like scientists. We craft AI-powered products, stunning websites, mobile apps, and design systems that inspire, engage, and convert.',
       slogan: 'Design. Think. Build. Automate.',
       disambiguatingDescription: 'Make Us Live Agency (MakeUsLive) - A creative technology studio specializing in AI-powered digital experiences, web development, and design systems. Boutique agency serving startups and enterprises worldwide. Search for: make us live, Make Us Live Agency, MakeUsLive.',
@@ -602,7 +602,7 @@ const jsonLd = {
       '@id': 'https://www.makeuslive.com/#localbusiness',
       name: 'Make Us Live - Digital Agency Bhopal',
       alternateName: ['Make Us Live Bhopal', 'Make Us Live Agency Bhopal', 'make us live bhopal'],
-      image: 'https://www.makeuslive.com/images/logo.png',
+      image: 'https://www.makeuslive.com/images/biglogo.png',
       url: 'https://www.makeuslive.com',
       telephone: '+91-98765-43210',
       email: 'hello@makeuslive.com',
@@ -654,7 +654,7 @@ const jsonLd = {
       '@id': 'https://www.makeuslive.com/#service',
       name: 'MakeUsLive Digital Agency',
       alternateName: ['Make Us Live Digital Agency', 'Make Us Live Agency', 'make us live agency'],
-      image: 'https://www.makeuslive.com/images/logo.png',
+      image: 'https://www.makeuslive.com/images/biglogo.png',
       url: 'https://www.makeuslive.com',
       telephone: '+91-98765-43210',
       email: 'hello@makeuslive.com',
