@@ -133,6 +133,18 @@ export const Testimonials = memo<TestimonialsProps>(({ className }) => {
           start: 'top 85%',
         },
       })
+
+      // Parallax effect for marquee
+      gsap.to(marqueeRef.current, {
+        y: -30,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: section,
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: 1,
+        },
+      })
     }, section)
 
     return () => ctx.revert()

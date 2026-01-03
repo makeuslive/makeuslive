@@ -40,6 +40,7 @@ export const HowWeWork = memo<HowWeWorkProps>(({ className }) => {
       steps.forEach((step, index) => {
         const element = step as HTMLElement
 
+        // Reveal animation (fade/slide in)
         gsap.from(element, {
           x: index % 2 === 0 ? -60 : 60,
           opacity: 0,
@@ -48,6 +49,18 @@ export const HowWeWork = memo<HowWeWorkProps>(({ className }) => {
           scrollTrigger: {
             trigger: element,
             start: 'top 85%',
+          },
+        })
+
+        // Parallax movement for phased feel
+        gsap.to(element, {
+          y: -40, // Gentle parallax lift
+          ease: 'none',
+          scrollTrigger: {
+            trigger: element,
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: 1, // Smooth scrub
           },
         })
 

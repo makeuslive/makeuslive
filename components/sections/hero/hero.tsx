@@ -46,38 +46,38 @@ export const Hero = memo<HeroProps>(({ className }) => {
 
       // Background parallax on scroll
       gsap.to('.hero-bg', {
-        yPercent: 30,
+        yPercent: 50, // Increased from 30 for more pronounced parallax
         ease: 'none',
         scrollTrigger: {
           trigger: container,
           start: 'top top',
           end: 'bottom top',
-          scrub: true,
+          scrub: 0.5, // Smoother phasing
         },
       })
 
       // Greeting parallax on scroll
       gsap.to('.hero-greeting-wrapper', {
-        yPercent: 40,
-        opacity: 0.3,
+        yPercent: 60, // Increased from 40
+        opacity: 0, // Fade out completely
         ease: 'none',
         scrollTrigger: {
           trigger: container,
           start: 'top top',
-          end: 'bottom top',
-          scrub: 0.6,
+          end: '40% top', // Faster fade out
+          scrub: 0.5,
         },
       })
 
       // Scroll indicator fade out
       gsap.to('.scroll-indicator', {
         opacity: 0,
-        y: 20,
+        y: 50, // More movement
         ease: 'none',
         scrollTrigger: {
           trigger: container,
           start: 'top top',
-          end: '20% top',
+          end: '15% top',
           scrub: true,
         },
       })

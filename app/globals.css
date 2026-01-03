@@ -129,6 +129,65 @@ svg {
   contain-intrinsic-size: 0 500px;
 }
 
+/* ================================
+   High Refresh Rate Optimizations (144Hz, 165Hz, 300Hz+)
+   ================================ */
+/* Enable smooth sub-pixel rendering for high-fps displays */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Optimize for high refresh rate scrolling */
+@supports (scroll-behavior: smooth) {
+  html {
+    scroll-behavior: smooth;
+    scroll-timeline: --page-scroll block;
+  }
+}
+
+/* Force compositing layer for smoother animations on high-fps displays */
+.high-fps-element,
+[data-high-fps="true"] {
+  transform: translateZ(0);
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  contain: layout style paint;
+}
+
+/* Optimize transitions for high refresh rates */
+@media (prefers-reduced-motion: no-preference) {
+  .smooth-transition {
+    transition-timing-function: cubic-bezier(0.33, 1, 0.68, 1);
+    /* Smooth ease-out for 144Hz+ */
+    transition-property: transform, opacity;
+  }
+
+  /* Ultra-smooth hover states */
+  .hover-smooth:hover {
+    transition-duration: 0.15s;
+    /* Shorter duration feels better at high fps */
+  }
+}
+
+/* GPU compositing hints for animations */
+@keyframes gpu-hint {
+  from {
+    transform: translateZ(0);
+  }
+
+  to {
+    transform: translateZ(0);
+  }
+}
+
+/* Enable paint worklet compositing for modern browsers */
+.paint-layer {
+  isolation: isolate;
+  contain: strict;
+}
+
 /* Selection */
 ::selection {
   background-color: var(--color-gold);
@@ -457,16 +516,23 @@ p {
 .animate-float {
   animation: float 6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
   will-change: transform;
+  transform: translateZ(0);
+  /* GPU acceleration hint */
 }
 
 .animate-scale-in {
-  animation: scale-in 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: scale-in 0.35s cubic-bezier(0.33, 1, 0.68, 1) forwards;
+  /* Snappier for high-fps */
   will-change: transform, opacity;
+  transform: translateZ(0);
+  /* GPU acceleration hint */
 }
 
 .animate-marquee {
   animation: marquee 35s linear infinite;
   will-change: transform;
+  transform: translateZ(0);
+  /* GPU acceleration hint */
 }
 
 /* Pause marquee on hover */

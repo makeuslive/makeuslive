@@ -43,19 +43,19 @@ export function LenisProvider({ children }: LenisProviderProps) {
       return
     }
 
-    // Initialize Lenis with optimized settings
+    // Initialize Lenis with optimized settings for high refresh rate displays
+    // Lerp-based smoothing works better than duration for 144Hz+ monitors
     const lenis = new Lenis({
-      duration: 1.0, // Slightly faster for snappier feel
-      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Expo easing
+      lerp: 0.1, // Lerp-based smoothing (lower = smoother, higher = snappier)
       orientation: 'vertical',
       gestureOrientation: 'vertical',
       smoothWheel: true,
-      wheelMultiplier: 1,
+      wheelMultiplier: 1.2, // Slightly higher for responsive feel on high-fps displays
       touchMultiplier: 2,
       infinite: false,
       autoResize: true,
       syncTouch: false, // Disable for better iOS performance
-      anchors: true, // Enable smooth anchor scrolling
+      autoRaf: false, // We'll use GSAP ticker for precise frame sync
     })
 
     lenisRef.current = lenis
@@ -63,13 +63,17 @@ export function LenisProvider({ children }: LenisProviderProps) {
     // Sync Lenis with GSAP ScrollTrigger
     lenis.on('scroll', ScrollTrigger.update)
 
+    // Configure GSAP ticker for high refresh rate displays
+    // This ensures animations run at the display's native refresh rate
+    gsap.ticker.fps(-1) // Uncapped FPS - uses native requestAnimationFrame
+
     // Add Lenis to GSAP's ticker for smooth animation frame updates
     const rafCallback = (time: number) => {
       lenis.raf(time * 1000)
     }
     gsap.ticker.add(rafCallback)
 
-    // Disable GSAP's default lag smoothing for smoother scroll
+    // Disable GSAP's default lag smoothing for smoother scroll on high-fps displays
     gsap.ticker.lagSmoothing(0)
 
     // Handle visibility change to prevent scroll issues when tab is inactive

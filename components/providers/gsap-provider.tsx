@@ -15,16 +15,24 @@ interface GSAPProviderProps {
 
 export function GSAPProvider({ children }: GSAPProviderProps) {
   useEffect(() => {
-    // Configure GSAP defaults
+    // Configure GSAP defaults optimized for high refresh rate displays
     gsap.defaults({
       ease: 'power3.out',
-      duration: 0.8,
+      duration: 0.6, // Slightly shorter for snappier feel on high-fps displays
+      force3D: true, // Force GPU acceleration
+      overwrite: 'auto', // Prevent animation conflicts
     })
+
+    // Configure GSAP ticker for high refresh rate displays
+    gsap.ticker.fps(-1) // Uncapped FPS - uses native requestAnimationFrame (144Hz, 165Hz, 300Hz+)
+    gsap.ticker.lagSmoothing(0) // Disable lag smoothing for smoother animations
 
     // Configure ScrollTrigger defaults
     ScrollTrigger.defaults({
       toggleActions: 'play none none reverse',
       start: 'top 85%',
+      fastScrollEnd: true, // Better performance during fast scrolls
+      preventOverlaps: true, // Prevent animation overlaps
     })
 
     // Refresh ScrollTrigger on resize

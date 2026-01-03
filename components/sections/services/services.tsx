@@ -125,7 +125,7 @@ export const Services = memo<ServicesProps>(({ className }) => {
         },
       })
 
-      // Image panel animation
+      // Image panel animation with parallax
       gsap.from('.services-image-panel', {
         x: 100,
         opacity: 0,
@@ -138,7 +138,17 @@ export const Services = memo<ServicesProps>(({ className }) => {
         },
       })
 
-      // Background is now static - no parallax effect
+      // Parallax effect for image panel
+      gsap.to('.services-image-panel', {
+        y: -40,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '.services-wrapper',
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: 1,
+        },
+      })
     }, section)
 
     return () => ctx.revert()

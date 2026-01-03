@@ -10,6 +10,7 @@ import { cn } from '@/lib/utils'
 import { COPY } from '@/lib/constants'
 import { MenuIcon, CloseIcon, ArrowRight } from '@/components/ui'
 import { SkipLinks } from './skip-links'
+import { useLenis } from '@/components/providers/lenis-provider'
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
@@ -21,6 +22,7 @@ export const Navbar = memo(() => {
   const [isScrolled, setIsScrolled] = useState(false)
   const lastScrollY = useRef(0)
   const pathname = usePathname()
+  const lenis = useLenis()
 
   const toggleMenu = useCallback(() => {
     setIsMenuOpen((prev) => !prev)
@@ -36,6 +38,22 @@ export const Navbar = memo(() => {
       return pathname.startsWith(href)
     },
     [pathname]
+  )
+
+  // Handle logo click - scroll to top when on homepage
+  const handleLogoClick = useCallback(
+    (e: React.MouseEvent) => {
+      if (pathname === '/') {
+        e.preventDefault()
+        // Use Lenis for smooth scroll if available, otherwise use native
+        if (lenis) {
+          lenis.scrollTo(0, { duration: 1.2 })
+        } else {
+          window.scrollTo({ top: 0, behavior: 'smooth' })
+        }
+      }
+    },
+    [pathname, lenis]
   )
 
   useEffect(() => {
@@ -90,7 +108,7 @@ export const Navbar = memo(() => {
           {/* Desktop: 3-column layout for true center alignment */}
           <div className="hidden md:grid md:grid-cols-3 items-center">
             {/* Left: Logo */}
-            <Link href="/" className="flex items-center gap-2 justify-self-start">
+            <Link href="/" onClick={handleLogoClick} className="flex items-center gap-2 justify-self-start">
               <Image
                 src="/images/logo.png"
                 alt="Make Us Live logo"
@@ -147,7 +165,7 @@ export const Navbar = memo(() => {
           {/* Mobile: Simple flex layout */}
           <div className="flex md:hidden items-center justify-between">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2">
+            <Link href="/" onClick={handleLogoClick} className="flex items-center gap-2">
               <Image
                 src="/images/biglogo.png"
                 alt="Make Us Live logo"
