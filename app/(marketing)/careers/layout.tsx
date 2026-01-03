@@ -73,8 +73,8 @@ const jobPostingsStructuredData = {
                 name: 'Make Us Live',
                 value: 'senior-frontend-engineer',
             },
-            datePosted: '2024-12-01',
-            validThrough: '2025-03-01',
+            datePosted: '2025-12-01',
+            validThrough: '2026-06-01',
             employmentType: 'FULL_TIME',
             hiringOrganization: {
                 '@type': 'Organization',
@@ -117,7 +117,7 @@ const jobPostingsStructuredData = {
                 value: 'ui-ux-designer',
             },
             datePosted: '2024-12-01',
-            validThrough: '2025-03-01',
+            validThrough: '2026-06-01',
             employmentType: 'FULL_TIME',
             hiringOrganization: {
                 '@type': 'Organization',
@@ -135,6 +135,20 @@ const jobPostingsStructuredData = {
                 },
             },
             jobLocationType: 'TELECOMMUTE',
+            applicantLocationRequirements: {
+                '@type': 'Country',
+                name: 'India',
+            },
+            baseSalary: {
+                '@type': 'MonetaryAmount',
+                currency: 'INR',
+                value: {
+                    '@type': 'QuantitativeValue',
+                    minValue: 800000,
+                    maxValue: 1800000,
+                    unitText: 'YEAR',
+                },
+            },
         },
     ],
 }
