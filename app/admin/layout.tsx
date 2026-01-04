@@ -12,9 +12,16 @@ export default function AdminLayout({
 }) {
     const pathname = usePathname()
     const router = useRouter()
-    const { user, signOut } = useAuth()
+    const { user, loading, signOut } = useAuth()
     const [isSidebarOpen, setIsSidebarOpen] = useState(false)
     const [isCollapsed, setIsCollapsed] = useState(false)
+
+    // Redirect to login if not authenticated (except on login page)
+    useEffect(() => {
+        if (!loading && !user && pathname !== '/admin/login') {
+            router.replace('/admin/login')
+        }
+    }, [user, loading, pathname, router])
 
     // Load collapsed state from local storage
     useEffect(() => {
@@ -52,6 +59,30 @@ export default function AdminLayout({
     // Don't show sidebar on login page
     if (pathname === '/admin/login') {
         return <>{children}</>
+    }
+
+    // Show loading state while checking auth
+    if (loading) {
+        return (
+            <div className="h-screen bg-gray-50 flex items-center justify-center">
+                <div className="flex flex-col items-center gap-4">
+                    <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+                    <p className="text-sm text-gray-500">Checking authentication...</p>
+                </div>
+            </div>
+        )
+    }
+
+    // Don't render if not authenticated (redirect will happen via useEffect)
+    if (!user) {
+        return (
+            <div className="h-screen bg-gray-50 flex items-center justify-center">
+                <div className="flex flex-col items-center gap-4">
+                    <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+                    <p className="text-sm text-gray-500">Redirecting to login...</p>
+                </div>
+            </div>
+        )
     }
 
     return (

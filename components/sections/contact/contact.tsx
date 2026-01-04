@@ -20,6 +20,7 @@ import {
   LocationIcon,
   Confetti,
 } from '@/components/ui'
+import { BookCallButton } from '@/components/calendly-widget'
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
@@ -381,6 +382,14 @@ export const Contact = memo<ContactProps>(({ className }) => {
                       <LocationIcon size={24} className="text-text" />
                       <span className="text-base md:text-lg">Bhopal (M.P)</span>
                     </div>
+                  </div>
+
+                  {/* Book a Call CTA */}
+                  <div className="mt-8 pt-6 border-t border-white/10">
+                    <p className="text-sm text-text-muted mb-4">
+                      Prefer a quick conversation? Book a call with our team.
+                    </p>
+                    <BookCallButton className="w-full" />
                   </div>
                 </div>
 

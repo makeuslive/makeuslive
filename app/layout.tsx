@@ -7,6 +7,7 @@ import { Analytics } from '@vercel/analytics/next'
 import { Providers } from '@/components/providers'
 import { LayoutWrapper } from '@/components/layout/layout-wrapper'
 import { WebVitalsInit } from '@/components/web-vitals-init'
+import { CalendlyWidget } from '@/components/calendly-widget'
 import { COPY } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 import { globalJsonLd } from '@/lib/schema/global'
@@ -218,6 +219,8 @@ export default function RootLayout({ children }: RootLayoutProps) {
           <LayoutWrapper>
             {children}
           </LayoutWrapper>
+          {/* Calendly booking widget - bottom right */}
+          <CalendlyWidget />
         </Providers>
         <SpeedInsights />
         <Analytics />
