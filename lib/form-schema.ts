@@ -219,28 +219,28 @@ export function buildDynamicFormSchema(fields: FormField[]): z.ZodObject<Record<
         break
     }
 
-    // Apply validation rules
-    if (field.validation) {
-      if (fieldSchema instanceof z.ZodString) {
-        if (field.validation.minLength) {
-          fieldSchema = fieldSchema.min(
-            field.validation.minLength,
-            `Minimum ${field.validation.minLength} characters required`
-          )
-        }
-        if (field.validation.maxLength) {
-          fieldSchema = fieldSchema.max(
-            field.validation.maxLength,
-            `Maximum ${field.validation.maxLength} characters allowed`
-          )
-        }
-        if (field.validation.pattern) {
-          fieldSchema = fieldSchema.regex(
-            new RegExp(field.validation.pattern),
-            'Invalid format'
-          )
-        }
+    // Apply validation rules for string types
+    if (field.validation && (field.type === 'text' || field.type === 'textarea' || field.type === 'email' || field.type === 'phone')) {
+      let stringSchema = fieldSchema as z.ZodString
+      if (field.validation.minLength) {
+        stringSchema = stringSchema.min(
+          field.validation.minLength,
+          `Minimum ${field.validation.minLength} characters required`
+        )
       }
+      if (field.validation.maxLength) {
+        stringSchema = stringSchema.max(
+          field.validation.maxLength,
+          `Maximum ${field.validation.maxLength} characters allowed`
+        )
+      }
+      if (field.validation.pattern) {
+        stringSchema = stringSchema.regex(
+          new RegExp(field.validation.pattern),
+          'Invalid format'
+        )
+      }
+      fieldSchema = stringSchema
     }
 
     // Handle required vs optional
