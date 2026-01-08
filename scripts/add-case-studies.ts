@@ -62,7 +62,7 @@ This project showcases building mobile applications that operate under real-worl
     order: 1
   },
   {
-    title: "DocIt – Secure Document Locker",
+    title: "Documate – Secure Document Locker",
     category: "Mobile App",
     description: `A secure mobile document locker that allows users to scan, store, and manage sensitive documents with offline access. Live on Google Play with real users.
 

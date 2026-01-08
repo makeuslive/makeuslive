@@ -39,14 +39,14 @@ const FALLBACK_CASES = [
   },
   {
     id: 'case-3',
-    title: 'DocIt – Secure Document Locker',
+    title: 'Documate – Secure Document Locker',
     category: 'Production Mobile App',
     description: 'Live on Google Play with 10K+ downloads and 4.4★ rating. Secure document locker with offline access.',
     stats: { metric: '10K+', label: 'Active Users' },
     tags: ['Flutter', 'Secure Storage', 'Offline-First', 'Document Scanning'],
     gradient: 'from-emerald-500/20 to-teal-600/20',
     accentColor: 'emerald',
-    link: 'https://play.google.com/store/apps/details?id=com.docit.app',
+    link: 'https://play.google.com/store/apps/details?id=com.Documate.app',
   },
 ]
 
@@ -239,7 +239,7 @@ export const Cases = memo<CasesProps>(({ className }) => {
                 {/* Top row */}
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex flex-col gap-2">
-                    {/* Live badge for DocIt */}
+                    {/* Live badge for Documate */}
                     {'link' in caseItem && caseItem.link && (
                       <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 w-fit">
                         <span className="relative flex h-2 w-2">

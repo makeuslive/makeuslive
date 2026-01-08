@@ -214,7 +214,7 @@ The website includes a **complete content management system** at `/admin`:
 - **Stack:** Flutter, Background Services, GPS, Activity Recognition
 - **Impact:** Real-time safety alerts near roadways
 
-### 3. DocIt — Secure Document Locker
+### 3. Documate — Secure Document Locker
 - **Type:** Production Mobile App
 - **Stack:** Flutter, Secure Storage, Offline-First, Document Scanning
 - **Stats:** 10K+ downloads, 4.4★ on Google Play

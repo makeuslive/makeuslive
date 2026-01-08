@@ -4,11 +4,11 @@ import { ServiceHub } from '@/components/sections/service-hub'
 
 const mvpData = {
     slug: 'mvp-development',
-    badge: 'Startup Development',
-    headline: 'Launch Your MVP Fast',
-    subheadline: 'We help founders go from idea to launched product in weeks, not months.',
-    description: 'Validate your concept with real users before investing heavily. We build lean MVPs that test your hypothesis while setting the foundation for scale.',
-    primaryCTA: 'Launch Your Idea',
+    badge: 'MVP Development',
+    headline: 'Build Your MVP',
+    subheadline: 'Go from idea to launched product in weeks, not months.',
+    description: 'Validate your concept with real users before investing heavily. We build MVPs that test your hypothesis and set the foundation for scale.',
+    primaryCTA: 'Get in Touch',
     features: [
         {
             icon: 'rocket',

@@ -4,11 +4,11 @@ import { ServiceHub } from '@/components/sections/service-hub'
 
 const webDesignData = {
     slug: 'web-design',
-    badge: 'Web Design Services',
-    headline: 'Web Design That Converts',
-    subheadline: 'We design stunning, high-performance websites that turn visitors into customers.',
-    description: 'From startups to enterprises, we create custom web designs that perfectly represent your brand while driving measurable business results.',
-    primaryCTA: 'Get a Free Design Consultation',
+    badge: 'Web Design',
+    headline: 'Websites That Work',
+    subheadline: 'Modern websites that look good and perform well.',
+    description: 'From startups to enterprises, we create web designs that represent your brand and drive results.',
+    primaryCTA: 'Get in Touch',
     features: [
         {
             icon: 'palette',

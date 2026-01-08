@@ -119,10 +119,10 @@ export function CalendlyWidget() {
                                     <span className="text-gold">
                                         <CalendarIcon />
                                     </span>
-                                    Book a Call
+                                    Schedule a Call
                                 </h3>
                                 <p className="text-sm text-text-muted mt-1">
-                                    Schedule a free consultation
+                                    20-minute call. No pitch.
                                 </p>
                             </div>
 
@@ -133,7 +133,7 @@ export function CalendlyWidget() {
                                         <span className="text-gold text-xs">✓</span>
                                     </div>
                                     <p className="text-sm text-text-muted">
-                                        Discuss your project requirements
+                                        Understand what you need
                                     </p>
                                 </div>
                                 <div className="flex items-start gap-3">
@@ -141,7 +141,7 @@ export function CalendlyWidget() {
                                         <span className="text-gold text-xs">✓</span>
                                     </div>
                                     <p className="text-sm text-text-muted">
-                                        Get expert advice & solutions
+                                        Share how we can help
                                     </p>
                                 </div>
                                 <div className="flex items-start gap-3">
@@ -149,7 +149,7 @@ export function CalendlyWidget() {
                                         <span className="text-gold text-xs">✓</span>
                                     </div>
                                     <p className="text-sm text-text-muted">
-                                        No commitment, just conversation
+                                        Decide if it's a fit
                                     </p>
                                 </div>
                             </div>
@@ -161,13 +161,13 @@ export function CalendlyWidget() {
                                 rel="noopener noreferrer"
                                 className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl bg-gradient-to-r from-gold to-gold-dark text-bg font-semibold transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:shadow-gold/25 active:scale-[0.98]"
                             >
-                                Schedule Now
+                                Pick a Time
                                 <ExternalLinkIcon />
                             </a>
 
                             {/* Footer text */}
                             <p className="text-xs text-text-dim text-center mt-3">
-                                Usually responds within 24 hours
+                                20-30 min · No obligation
                             </p>
                         </div>
                     </motion.div>
@@ -191,7 +191,7 @@ export function CalendlyWidget() {
                         {/* Button content */}
                         <span className="relative flex items-center gap-2 px-5 py-3 rounded-full bg-gradient-to-r from-gold to-gold-dark text-bg font-semibold shadow-lg shadow-gold/20 transition-all duration-300 group-hover:scale-105 group-hover:shadow-xl group-hover:shadow-gold/30">
                             <CalendarIcon />
-                            <span className="hidden sm:inline">Book a Call</span>
+                            <span className="hidden sm:inline">Schedule a Call</span>
                         </span>
                     </motion.button>
                 )}
@@ -210,7 +210,7 @@ export function BookCallButton({ className = '' }: { className?: string }) {
             className={`group flex items-center justify-center gap-3 px-6 py-3 rounded-xl bg-gradient-to-r from-gold/20 to-gold-dark/20 border border-gold/30 text-gold font-medium transition-all duration-300 hover:border-gold/60 hover:bg-gold/10 hover:scale-[1.02] ${className}`}
         >
             <CalendarIcon size={18} />
-            <span>Schedule a Call Instead</span>
+            <span>Schedule a Call</span>
             <ExternalLinkIcon />
         </a>
     )

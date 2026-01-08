@@ -4,11 +4,11 @@ import { ServiceHub } from '@/components/sections/service-hub'
 
 const uiuxData = {
     slug: 'ui-ux-design',
-    badge: 'UI UX Design Agency',
-    headline: 'Design That Delights',
-    subheadline: 'We create intuitive, beautiful interfaces that users love and businesses rely on.',
-    description: 'Research-driven UX design combined with stunning visual interfaces. From user research to design systems, we craft experiences that convert.',
-    primaryCTA: 'Start a Design Project',
+    badge: 'UI/UX Design',
+    headline: 'UI/UX Design',
+    subheadline: 'Interfaces that are easy to use and look good.',
+    description: 'Research-driven UX design combined with clean visual interfaces. From user research to design systems.',
+    primaryCTA: 'Get in Touch',
     features: [
         {
             icon: 'search',

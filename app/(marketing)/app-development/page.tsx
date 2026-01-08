@@ -4,11 +4,11 @@ import { ServiceHub } from '@/components/sections/service-hub'
 
 const appDevData = {
     slug: 'app-development',
-    badge: 'Mobile App Development',
-    headline: 'Apps That Users Love',
-    subheadline: 'We build high-performance mobile apps for iOS, Android, and cross-platform.',
-    description: 'From concept to App Store, we create mobile experiences that engage users and drive business growth. Native performance, beautiful design.',
-    primaryCTA: 'Discuss Your App Idea',
+    badge: 'Mobile Apps',
+    headline: 'Mobile Apps',
+    subheadline: 'iOS and Android apps that work well and look good.',
+    description: 'From concept to App Store, we build mobile apps that engage users and grow your business.',
+    primaryCTA: 'Get in Touch',
     features: [
         {
             icon: 'smartphone',

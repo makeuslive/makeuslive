@@ -47,7 +47,7 @@ export const FALLBACK_WORKS: Work[] = [
   },
   {
     id: 'case-3',
-    title: 'DocIt – Secure Document Locker',
+    title: 'Documate – Secure Document Locker',
     category: 'Production Mobile App',
     description: 'Live on Google Play with 10K+ downloads and 4.4★ rating. Secure document locker with offline access and advanced encryption.',
     stats: { metric: '10K+', label: 'Active Downloads' },

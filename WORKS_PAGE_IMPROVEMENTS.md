@@ -85,7 +85,7 @@ The works page has been transformed into a **premium, production-grade portfolio
    - Safety-critical positioning
    - Battery/performance highlights
 
-3. **DocIt – Secure Document Locker**
+3. **Documate – Secure Document Locker**
    - **Verifiable proof**: Live Play Store link
    - 10K+ downloads, 4.4★ rating
    - Startup internship context
@@ -130,7 +130,7 @@ The works page has been transformed into a **premium, production-grade portfolio
 
 ## 🔗 Verifiable Elements
 
-✅ DocIt Play Store link  
+✅ Documate Play Store link  
 ✅ 10K+ downloads (real number)  
 ✅ 4.4★ rating (real number)  
 ✅ Production status badges  

@@ -343,24 +343,22 @@ export const Contact = memo<ContactProps>(({ className }) => {
 
                     {/* Main Heading - H2 since hero has the H1 */}
                     <h2 className="text-[26px] sm:text-[30px] md:text-[36px] lg:text-[44px] xl:text-[48px] font-bold leading-[1.1] mb-6 sm:mb-8">
-                      <span className="text-text block">Let&apos;s Build Something</span>
+                      <span className="text-text block">Let&apos;s Talk About Your</span>
                       <span
                         className="block mt-1 sm:mt-2 bg-clip-text text-transparent"
                         style={{
                           backgroundImage: 'linear-gradient(135deg, #D4AF37 0%, #F5E6A3 50%, #D4AF37 100%)',
                         }}
                       >
-                        That Works
+                        System
                       </span>
                     </h2>
 
                     {/* Description with better styling */}
                     <p className="text-sm sm:text-base md:text-lg text-[#ADA6A6] leading-relaxed max-w-md relative pl-3 sm:pl-4 border-l-2 border-gold/30">
-                      Make Us Live is ready to hear your idea, product, or challenge. We&apos;ll take a look and respond thoughtfully.
+                      Tell us what you&apos;re trying to build or fix. We&apos;ll respond with honest feedback.
                     </p>
                   </div>
-
-                  {/* Contact Details */}
                   <div className="space-y-0 mt-12">
                     <a
                       href={`mailto:${COPY.contact.info.email}`}
@@ -387,7 +385,7 @@ export const Contact = memo<ContactProps>(({ className }) => {
                   {/* Book a Call CTA */}
                   <div className="mt-8 pt-6 border-t border-white/10">
                     <p className="text-sm text-text-muted mb-4">
-                      Prefer a quick conversation? Book a call with our team.
+                      Prefer a live discussion? Schedule a 20-minute call.
                     </p>
                     <BookCallButton className="w-full" />
                   </div>
@@ -408,7 +406,7 @@ export const Contact = memo<ContactProps>(({ className }) => {
                           Submitted at {submitTimestamp}
                         </p>
                       )}
-                      <p className="text-text-muted mb-8">We&apos;ll get back to you within 24 hours.</p>
+                      <p className="text-text-muted mb-8">We got your message. We&apos;ll reply within 24 hours.</p>
                       <Button variant="glass" onClick={handleReset}>Send Another Message</Button>
                     </div>
                   ) : step === 'error' ? (
@@ -619,7 +617,7 @@ export const Contact = memo<ContactProps>(({ className }) => {
             </div>
           </div>
         </div>
-      </section >
+      </section>
     </>
   )
 })

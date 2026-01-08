@@ -45,7 +45,7 @@ const COPY = {
             },
             {
                 id: 'case-3',
-                title: 'DocIt – Secure Document Locker',
+                title: 'Documate – Secure Document Locker',
                 category: 'Production Mobile App',
                 description: 'Live on Google Play with 10K+ downloads and 4.4★ rating. Secure document locker with offline access, scanning, and long-term reliability.',
                 image: '/images/case-3.jpg',

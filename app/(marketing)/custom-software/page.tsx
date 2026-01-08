@@ -4,11 +4,11 @@ import { ServiceHub } from '@/components/sections/service-hub'
 
 const customSoftwareData = {
     slug: 'custom-software',
-    badge: 'Enterprise Solutions',
-    headline: 'Software Built for Your Business',
-    subheadline: 'We develop custom software solutions that solve your unique business challenges.',
-    description: 'From ERP systems to CRM platforms, we build enterprise-grade software that scales with your growth and integrates with your existing systems.',
-    primaryCTA: 'Discuss Your Requirements',
+    badge: 'Custom Software',
+    headline: 'Custom Software for Your Business',
+    subheadline: 'We develop software solutions that solve your specific challenges.',
+    description: 'From CRM to internal tools, we build software that fits your business and scales with your growth.',
+    primaryCTA: 'Get in Touch',
     features: [
         {
             icon: 'building',

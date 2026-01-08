@@ -9,7 +9,7 @@ import ServicesHeroAnimator from './services-hero-animator'
 
 export const metadata: Metadata = {
   title: 'Services | Make Us Live',
-  description: 'Comprehensive digital solutions. From mobile apps to enterprise software, we design, build, and scale digital experiences.',
+  description: 'Internal systems, software, and automation for businesses.',
 }
 
 export default function ServicesPage() {
@@ -33,21 +33,21 @@ export default function ServicesPage() {
             <div className="services-hero-badge inline-flex items-center gap-3 mb-8">
               <span className="w-12 h-px bg-gradient-to-r from-gold to-transparent" />
               <span className="text-[11px] font-semibold uppercase tracking-[0.3em] text-gold/80">
-                What We Build
+                Our Services
               </span>
             </div>
 
             {/* Main heading with gradient */}
             <h1 className="services-hero-title text-5xl md:text-6xl lg:text-7xl font-bold mb-8 leading-[1.05]">
-              <span className="text-white">Services that </span>
+              <span className="text-white">What We </span>
               <span className="bg-gradient-to-r from-white via-gold/90 to-gold bg-clip-text text-transparent">
-                Scale
+                Build
               </span>
             </h1>
 
             {/* Subheading */}
             <p className="services-hero-subtitle text-lg md:text-xl text-white/50 leading-relaxed max-w-2xl mb-10">
-              Make Us Live designs, builds, and scales digital experiences that captivate and convert. From mobile apps to enterprise software.
+              Internal systems, software, and automation for businesses.
             </p>
 
             {/* CTA Buttons */}
@@ -60,7 +60,7 @@ export default function ServicesPage() {
                   'transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-gold/20'
                 )}
               >
-                Start a Project
+                Get in Touch
                 <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
               </Link>
               <Link
@@ -71,7 +71,7 @@ export default function ServicesPage() {
                   'transition-all duration-300 hover:border-gold/40 hover:bg-white/5'
                 )}
               >
-                View Our Work
+                See Our Work
               </Link>
             </div>
           </div>
@@ -83,12 +83,12 @@ export default function ServicesPage() {
         <div className="max-w-7xl mx-auto px-4 md:px-8">
           {/* Section Header */}
           <div className="text-center mb-16">
-            <p className="text-gold text-sm font-medium tracking-wider uppercase mb-4">Our Expertise</p>
+            <p className="text-gold text-sm font-medium tracking-wider uppercase mb-4">Our Services</p>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6">
-              Comprehensive Digital Solutions
+              What We Build
             </h2>
             <p className="text-white/50 text-lg max-w-2xl mx-auto">
-              Choose the service that fits your needs. Each one is crafted with expertise and delivered with excellence.
+              Systems, software, and automation.
             </p>
           </div>
 
@@ -101,14 +101,14 @@ export default function ServicesPage() {
       <section className="py-20 md:py-32">
         <div className="max-w-4xl mx-auto px-4 md:px-8 text-center">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6">
-            Ready to Build<br />
+            Ready to<br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-gold via-amber-300 to-gold">
-              Something Amazing
+              Get Started
             </span>
             ?
           </h2>
           <p className="text-white/50 text-lg max-w-xl mx-auto mb-10">
-            Let's discuss your project. Make Us Live helps bring your vision to life.
+            Tell us what you're trying to build or fix.
           </p>
           <Link
             href="/contact"
@@ -118,7 +118,7 @@ export default function ServicesPage() {
               'transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-white/20'
             )}
           >
-            Get a Free Consultation
+            Talk to Us
             <ArrowRight size={24} className="group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>

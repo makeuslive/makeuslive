@@ -17,13 +17,21 @@ interface ServicesProps {
 }
 
 // Service data with different images and quotes
+// MULAS first as the foundation, then services in order of technical complexity
 const SERVICES_DATA = [
   {
-    id: 'design',
-    title: 'Product Design & Branding',
-    image: '/images/services/product.png',
-    quote: 'Make people feel the product before they use it.',
-    href: '/ui-ux-design',
+    id: 'mulas',
+    title: 'MULAS',
+    image: '/images/services/marketing.png',
+    quote: 'The operating system that powers everything we build.',
+    href: '/mulas',
+  },
+  {
+    id: 'ai',
+    title: 'AI & Automation',
+    image: '/images/services/ai.png',
+    quote: 'Less manual work, more visibility.',
+    href: '/custom-software',
   },
   {
     id: 'development',
@@ -33,18 +41,11 @@ const SERVICES_DATA = [
     href: '/web-design',
   },
   {
-    id: 'ai',
-    title: 'AI & Automation',
-    image: '/images/services/ai.png',
-    quote: 'Intelligent systems that learn and adapt to your needs.',
-    href: '/custom-software',
-  },
-  {
-    id: 'marketing',
-    title: 'Marketing & Content',
-    image: '/images/services/marketing.png',
-    quote: 'Stories that connect, content that converts.',
-    href: '/services',
+    id: 'design',
+    title: 'Product Design & Branding',
+    image: '/images/services/product.png',
+    quote: 'Clear interfaces for complex systems.',
+    href: '/ui-ux-design',
   }
 ]
 
@@ -176,13 +177,13 @@ export const Services = memo<ServicesProps>(({ className }) => {
           </div>
 
           <h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-white leading-tight mb-4">
-            Our Core Services:{' '}
+            What We{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-gold via-amber-300 to-gold">
-              Web, Mobile & AI
+              Build
             </span>
           </h2>
-          <p className="text-lg md:text-xl text-white/60 leading-relaxed max-w-2xl mx-auto">
-            Full-stack capabilities to bring your vision to life
+          <p className="text-lg md:text-xl text-white/60 leading-relaxed max-w-2xl mx-auto mb-6">
+            Enterprise-grade systems, intelligent automation, and custom software—all powered by MULAS.
           </p>
         </div>
 
@@ -235,14 +236,14 @@ export const Services = memo<ServicesProps>(({ className }) => {
                   className="text-xl md:text-2xl lg:text-3xl xl:text-[36px] font-bold text-text leading-tight mb-3 md:mb-4"
                   style={{ textShadow: '0 4px 4px rgba(0,0,0,0.25)' }}
                 >
-                  We design, build, & scale<br className="hidden md:block" />
-                  with AI at the core
+                  Systems that run<br className="hidden md:block" />
+                  your business
                 </h3>
                 <p
                   className="text-sm md:text-base lg:text-lg text-[#CCC9C9] leading-relaxed max-w-md"
                   style={{ textShadow: '0 4px 4px rgba(0,0,0,0.25)' }}
                 >
-                  We partner with founders and teams to build brands, design software, and deploy AI systems that solve real business problems.
+                  We build internal tools, automate workflows, and ship software that works—all built with <span className="font-semibold text-gold">MULAS</span>, our enterprise operating system.
                 </p>
               </div>
 
