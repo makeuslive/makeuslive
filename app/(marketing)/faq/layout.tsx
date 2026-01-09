@@ -63,6 +63,7 @@ export const metadata: Metadata = {
 const faqStructuredData = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
+    '@id': 'https://www.makeuslive.com/faq#faqpage',
     mainEntity: [
         {
             '@type': 'Question',

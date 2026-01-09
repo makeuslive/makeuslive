@@ -53,25 +53,195 @@ export default function MulasPage() {
         if (!section) return
 
         const ctx = gsap.context(() => {
-            // Hero animation
+            // Enhanced hero animation with scale and rotation
             gsap.from('.hero-animate', {
-                y: 60,
+                y: 80,
                 opacity: 0,
-                duration: 0.8,
-                stagger: 0.15,
-                ease: 'power3.out',
+                scale: 0.95,
+                rotationX: 5,
+                duration: 1,
+                stagger: 0.12,
+                ease: 'power4.out',
             })
 
-            // Section animations
-            gsap.from('.section-animate', {
-                y: 40,
-                opacity: 0,
-                duration: 0.6,
-                stagger: 0.1,
-                ease: 'power3.out',
+            // Hero parallax - more pronounced upward movement with scale
+            gsap.to('.hero-content', {
+                y: -120,
+                scale: 0.98,
+                ease: 'none',
                 scrollTrigger: {
-                    trigger: '.section-animate',
-                    start: 'top 85%',
+                    trigger: '.hero-section',
+                    start: 'top top',
+                    end: 'bottom top',
+                    scrub: 1.2,
+                },
+            })
+
+            // Background gradient parallax with enhanced movement
+            gsap.to('.hero-gradient', {
+                y: 150,
+                opacity: 0,
+                scale: 1.1,
+                ease: 'none',
+                scrollTrigger: {
+                    trigger: '.hero-section',
+                    start: 'top top',
+                    end: 'bottom top',
+                    scrub: 0.8,
+                },
+            })
+
+            // Section animations with enhanced parallax and scale
+            gsap.utils.toArray('.section-animate').forEach((element: any, index) => {
+                // Fade in animation
+                gsap.from(element, {
+                    y: 80,
+                    opacity: 0,
+                    scale: 0.96,
+                    duration: 1,
+                    ease: 'power4.out',
+                    scrollTrigger: {
+                        trigger: element,
+                        start: 'top 88%',
+                        toggleActions: 'play none none reverse',
+                    },
+                })
+
+                // Enhanced parallax with subtle rotation
+                gsap.to(element, {
+                    y: -50,
+                    ease: 'none',
+                    scrollTrigger: {
+                        trigger: element,
+                        start: 'top bottom',
+                        end: 'bottom top',
+                        scrub: 1.2,
+                    },
+                })
+            })
+
+            // Core service cards - alternating parallax with scale and tilt
+            gsap.utils.toArray('.service-card').forEach((card: any, index) => {
+                const direction = index % 2 === 0 ? -40 : 40
+                const rotation = index % 2 === 0 ? -1 : 1
+
+                // Parallax movement
+                gsap.to(card, {
+                    y: direction,
+                    rotationY: rotation,
+                    ease: 'none',
+                    scrollTrigger: {
+                        trigger: card,
+                        start: 'top bottom',
+                        end: 'bottom top',
+                        scrub: 1.5,
+                    },
+                })
+
+                // Hover-like scale on scroll
+                gsap.fromTo(card,
+                    { scale: 0.98 },
+                    {
+                        scale: 1,
+                        ease: 'none',
+                        scrollTrigger: {
+                            trigger: card,
+                            start: 'top 80%',
+                            end: 'top 50%',
+                            scrub: 1,
+                        },
+                    }
+                )
+            })
+
+            // Supporting cards - wave parallax with stagger and scale
+            gsap.utils.toArray('.supporting-card').forEach((card: any, index) => {
+                const yMovement = -25 * (index + 1)
+
+                gsap.to(card, {
+                    y: yMovement,
+                    ease: 'none',
+                    scrollTrigger: {
+                        trigger: '.supporting-section',
+                        start: 'top bottom',
+                        end: 'bottom top',
+                        scrub: 1.3,
+                    },
+                })
+
+                // Individual card scale animation
+                gsap.fromTo(card,
+                    { scale: 0.95, opacity: 0.8 },
+                    {
+                        scale: 1,
+                        opacity: 1,
+                        ease: 'power3.out',
+                        scrollTrigger: {
+                            trigger: card,
+                            start: 'top 85%',
+                            end: 'top 60%',
+                            scrub: 1,
+                        },
+                    }
+                )
+            })
+
+            // Process steps - enhanced wave with rotation and scale
+            gsap.utils.toArray('.process-step').forEach((step: any, index) => {
+                const yMovement = -15 * (4 - index)
+                const rotation = (index - 1.5) * 2 // Creates subtle rotation wave
+
+                gsap.to(step, {
+                    y: yMovement,
+                    rotationZ: rotation,
+                    ease: 'none',
+                    scrollTrigger: {
+                        trigger: '.process-section',
+                        start: 'top bottom',
+                        end: 'bottom top',
+                        scrub: 0.8,
+                    },
+                })
+
+                // Staggered fade-in with bounce
+                gsap.from(step, {
+                    scale: 0.8,
+                    opacity: 0,
+                    y: 40,
+                    duration: 0.8,
+                    ease: 'back.out(1.4)',
+                    scrollTrigger: {
+                        trigger: step,
+                        start: 'top 85%',
+                        toggleActions: 'play none none reverse',
+                    },
+                    delay: index * 0.1,
+                })
+            })
+
+            // Final CTA - enhanced parallax with scale
+            gsap.to('.final-cta', {
+                y: -60,
+                scale: 1.02,
+                ease: 'none',
+                scrollTrigger: {
+                    trigger: '.final-cta-section',
+                    start: 'top bottom',
+                    end: 'bottom top',
+                    scrub: 1.3,
+                },
+            })
+
+            // CTA button pulse animation
+            gsap.from('.cta-button', {
+                scale: 0.9,
+                opacity: 0,
+                duration: 0.8,
+                ease: 'elastic.out(1, 0.6)',
+                scrollTrigger: {
+                    trigger: '.cta-button',
+                    start: 'top 90%',
+                    toggleActions: 'play none none reverse',
                 },
             })
         }, section)
@@ -82,11 +252,11 @@ export default function MulasPage() {
     return (
         <div ref={sectionRef} className="min-h-screen">
             {/* Hero Section */}
-            <section className="relative pt-32 md:pt-40 pb-20 md:pb-32 overflow-hidden">
+            <section className="hero-section relative pt-32 md:pt-40 pb-20 md:pb-32 overflow-hidden">
                 {/* Background gradient */}
-                <div className="absolute inset-0 bg-gradient-to-b from-gold/[0.03] via-transparent to-transparent pointer-events-none" />
+                <div className="hero-gradient absolute inset-0 bg-gradient-to-b from-gold/[0.03] via-transparent to-transparent pointer-events-none" />
 
-                <div className="max-w-7xl mx-auto px-6 md:px-8">
+                <div className="hero-content max-w-7xl mx-auto px-6 md:px-8">
                     <div className="max-w-4xl">
                         {/* Badge */}
                         <div className="hero-animate inline-flex items-center gap-3 mb-8">
@@ -161,7 +331,7 @@ export default function MulasPage() {
                         {CORE_SERVICES.map((service) => (
                             <div
                                 key={service.id}
-                                className="section-animate group relative p-8 rounded-2xl border border-white/10 bg-white/[0.02] hover:border-gold/30 transition-all duration-300"
+                                className="service-card section-animate group relative p-8 rounded-2xl border border-white/10 bg-white/[0.02] hover:border-gold/30 transition-all duration-300"
                             >
                                 <h3 className="text-2xl font-bold text-white mb-4">{service.title}</h3>
                                 <p className="text-white/50 mb-6">{service.description}</p>
@@ -190,7 +360,7 @@ export default function MulasPage() {
             </section>
 
             {/* Supporting Capabilities */}
-            <section className="py-20 md:py-32 bg-white/[0.01]">
+            <section className="supporting-section py-20 md:py-32 bg-white/[0.01]">
                 <div className="max-w-7xl mx-auto px-6 md:px-8">
                     <div className="section-animate text-center mb-12">
                         <p className="text-gold text-sm font-medium tracking-wider uppercase mb-4">Supporting Capabilities</p>
@@ -207,7 +377,7 @@ export default function MulasPage() {
                             <Link
                                 key={item.title}
                                 href={item.href}
-                                className="section-animate group p-6 rounded-xl border border-white/10 hover:border-gold/30 bg-white/[0.02] transition-all duration-300"
+                                className="supporting-card section-animate group p-6 rounded-xl border border-white/10 hover:border-gold/30 bg-white/[0.02] transition-all duration-300"
                             >
                                 <h3 className="text-lg font-semibold text-white mb-2 group-hover:text-gold transition-colors">
                                     {item.title}
@@ -220,7 +390,7 @@ export default function MulasPage() {
             </section>
 
             {/* How It Works */}
-            <section className="py-20 md:py-32">
+            <section className="process-section py-20 md:py-32">
                 <div className="max-w-7xl mx-auto px-6 md:px-8">
                     <div className="section-animate text-center mb-16">
                         <p className="text-gold text-sm font-medium tracking-wider uppercase mb-4">Process</p>
@@ -231,7 +401,7 @@ export default function MulasPage() {
 
                     <div className="grid md:grid-cols-4 gap-8">
                         {HOW_IT_WORKS.map((step) => (
-                            <div key={step.step} className="section-animate text-center">
+                            <div key={step.step} className="process-step section-animate text-center">
                                 <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center">
                                     <span className="text-gold font-bold">{step.step}</span>
                                 </div>
@@ -244,8 +414,8 @@ export default function MulasPage() {
             </section>
 
             {/* Final CTA */}
-            <section className="py-20 md:py-32">
-                <div className="max-w-3xl mx-auto px-6 md:px-8 text-center">
+            <section className="final-cta-section py-20 md:py-32">
+                <div className="final-cta max-w-3xl mx-auto px-6 md:px-8 text-center">
                     <h2 className="section-animate text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6">
                         Ready to Build Your System?
                     </h2>
@@ -255,7 +425,7 @@ export default function MulasPage() {
                     <Link
                         href="/contact"
                         className={cn(
-                            'section-animate group inline-flex items-center gap-3 px-10 py-5 rounded-xl',
+                            'cta-button section-animate group inline-flex items-center gap-3 px-10 py-5 rounded-xl',
                             'bg-gradient-to-r from-gold to-gold-dark text-bg font-semibold text-lg',
                             'transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-gold/20'
                         )}

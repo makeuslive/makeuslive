@@ -66,6 +66,7 @@ const jobPostingsStructuredData = {
     '@graph': [
         {
             '@type': 'JobPosting',
+            '@id': 'https://www.makeuslive.com/careers#senior-frontend-engineer',
             title: 'Senior Frontend Engineer',
             description: 'We are looking for an experienced frontend engineer with 5+ years of React/Next.js experience to help build amazing user experiences.',
             identifier: {
@@ -109,6 +110,7 @@ const jobPostingsStructuredData = {
         },
         {
             '@type': 'JobPosting',
+            '@id': 'https://www.makeuslive.com/careers#ui-ux-designer',
             title: 'UI/UX Designer',
             description: 'Join our design team to create beautiful, functional interfaces. 3+ years of UI/UX design experience required.',
             identifier: {
@@ -116,7 +118,7 @@ const jobPostingsStructuredData = {
                 name: 'Make Us Live',
                 value: 'ui-ux-designer',
             },
-            datePosted: '2024-12-01',
+            datePosted: '2025-12-01',
             validThrough: '2026-06-01',
             employmentType: 'FULL_TIME',
             hiringOrganization: {
